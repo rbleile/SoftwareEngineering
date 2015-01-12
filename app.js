@@ -66,6 +66,15 @@ app.post('/do_post', function(req, res) {
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 });
 
+var all_debug_txt = "";
+
+function debug(txt) {
+    all_debug_txt = all_debug_txt + txt;
+    box.setContent(all_debug_txt);
+    screen.render();
+    return;
+}
+
 function someFunction()
 {
 	var post_data = ' ';		
@@ -76,42 +85,31 @@ function someFunction()
 		method: 'POST',
 		headers: {} //{"Content-Type" , "application/json;charset=UTF-8" }
 	};
-    console.log("9");
 	var post_request = http.request(post_options, function() {});
-    console.log("10");
 	post_request.write(post_data);
-    console.log("11");
-	post_request.end();
-    console.log("done w/somefunction");
+        post_request.end();
+        debug("sF():done ");
 }
 
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
 	var the_body = req.body;	//see connect package above
 	//console.log ( "token received: " + the_body );
-    console.log("1");
         box.setContent("Post with body: " + the_body);
-    console.log("2");
 	box.style.bg = 'red';	//red for pass
-    console.log("3");
 	screen.render();
-    console.log("4");
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
-    console.log("5");
 	setTimeout(wait, 500);
-    console.log("done w/do_pass");
+        debug("do_pass:done ");
 });
 
 // callback function - set myself to black
 function wait()
 {
-    console.log("6");
 	box.style.bg = 'black';	//black after pass
-    console.log("7");
 	screen.render();
-    console.log("8");
-	someFunction();
-    console.log("done w/wait");
+        someFunction();
+        debug("wait():done ");
 }
 
 // Quit on Escape, q, or Control-C.
