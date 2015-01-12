@@ -75,7 +75,7 @@ function someFunction()
 		port: '3000',
 		path: '/do_pass',
 		method: 'POST',
-		headers: {"Content-Type" , "application/json;charset=UTF-8" }
+		headers: {} //{"Content-Type" , "application/json;charset=UTF-8" }
 	};
 
 	var post_request = http.request(post_options, function() {});
