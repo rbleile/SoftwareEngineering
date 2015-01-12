@@ -71,7 +71,7 @@ app.post('/do_post', function(req, res) {
 function nodeExample()
 {
 
-var post_data = querystring.stringify( { "NOW": 1 } );
+var post_data = querystring.stringify( { n: 1 } );
 
 	var options = {
 		hostname: my_group[( (my_index + 1) % my_group.length )],
@@ -120,8 +120,10 @@ console.log( "Done" );
 app.post('/do_pass', function(req, res) {
     var the_body = req.body;	//see connect package above
 
+    console.log(" ");
+    console.log("My Responce Body");
     console.log( the_body );
-    console.log( JSON.stringify( the_body ) );
+//    console.log( JSON.stringify( the_body ) );
 
 
 //    console.log ( req );
