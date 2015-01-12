@@ -66,6 +66,31 @@ app.post('/do_post', function(req, res) {
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 });
 
+function examplePost()
+{
+
+var post_data = JSON.stringify({ 'one' : 2, 'two' : 2, 'three' : 3  });
+
+var post_options = {
+	host: my_group[( (my_index + 1) % my_group.length )],
+	port: '3000',
+	path: 'do/pass',
+	method: 'POST',
+	headers: { 'Content-Type' : 'application/JSON', 'Content-Length' : post_data.length }
+
+};
+
+var post_req = http.request( post_options, function(res){ 
+	res.setEncoding('utf-8');
+	res.on( 'data' , function(chunk){  console.log( 'Responce: ' + chunk );  } );
+});
+
+post_req.write(post_data);
+post_req.end();
+
+}
+
+/*
 function someFunction()
 {
 	var post_data = ' empty string ';		
@@ -80,18 +105,19 @@ function someFunction()
 	post_request.write(post_data);
 	post_request.end();
 }
+*/
+
 
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
-var the_body = req.body;	//see connect package above
+    var the_body = req.body;	//see connect package above
 
+    console.log ( the_body );
 
-console.log ( the_body );
-
-box.setContent("Post with body: " + the_body);
+        box.setContent("Post with body: " + the_body);
 	box.style.bg = 'red';	//red for pass
 	screen.render();
-//	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
+	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 	setTimeout(wait, 500);
 });
 
@@ -100,7 +126,8 @@ function wait()
 {
 	box.style.bg = 'black';	//black after pass
 	screen.render();
-	someFunction();
+	examplePost();
+//	someFunction();
 }
 
 // Quit on Escape, q, or Control-C.
