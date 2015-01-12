@@ -66,6 +66,39 @@ app.post('/do_post', function(req, res) {
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 });
 
+function nodeExample()
+{
+
+	var options = {
+		hostname: my_group[( (my_index + 1) % my_group.length )],
+		port: 3000,
+		path: '/do_pass',
+		method: 'POST'
+	};
+
+	var req = http.request( options, function(res){
+		console.log('STATUS: ' + res.statusCode);
+		console.log('HEADERS: ' + JSON.stringify( res.headers ));
+
+		res.setEncoding('utf8');
+
+		res.on('data', function (chunk) {
+			console.log('BODY: ' + chunk );
+		});
+	});
+
+	req.on('error', function(e){
+	
+		console.log('problem with request: ' + e.message);
+
+	});
+
+	re.write('data\n');
+	re.write('data\n');
+	req.end();
+
+}
+
 function examplePost()
 {
 
@@ -125,7 +158,11 @@ console.log( "Done" );
 app.post('/do_pass', function(req, res) {
     var the_body = req.body;	//see connect package above
 
-    console.log ( the_body );
+    console.log ( req );
+    console.log(" ");
+    console.log(" ");
+    console.log(" ");
+   // console.log ( res );
 
         box.setContent("Post with body: " + the_body);
 	box.style.bg = 'red';	//red for pass
@@ -141,8 +178,9 @@ function wait()
 {
 	box.style.bg = 'black';	//black after pass
 	screen.render();
+        nodeExample();
 //	examplePost();
-	someFunction();
+//	someFunction();
 }
 
 // Quit on Escape, q, or Control-C.
