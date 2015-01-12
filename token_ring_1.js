@@ -69,14 +69,18 @@ app.post('/do_post', function(req, res) {
 function nodeExample()
 {
 
+var post_data = "NOW NOW";
+
 	var options = {
 		hostname: my_group[( (my_index + 1) % my_group.length )],
 		port: 3000,
 		path: '/do_pass',
-		method: 'POST'
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json', 'Content-Length' : post_data.length }
 	};
 
 	var req = http.request( options, function(res){
+
 		console.log('STATUS: ' + res.statusCode);
 		console.log('HEADERS: ' + JSON.stringify( res.headers ));
 
@@ -93,7 +97,7 @@ function nodeExample()
 
 	});
 
-	req.write('LOOK AT ME PUNK');
+	req.write( post_data );
 //	req.write('NOW NOW NOW NOW');
 	req.end();
 
@@ -118,7 +122,7 @@ app.post('/do_pass', function(req, res) {
     console.log( JSON.stringify( the_body ) );
 
 
-//    console.log ( req );
+    console.log ( req );
     console.log(" ");
     console.log(" ");
 //    console.log(" ");
