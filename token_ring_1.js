@@ -1,4 +1,5 @@
 var os = require('os');
+var fs = require('fs');
 var http = require('http');
 var express = require('express');
 var connect = require("connect");
@@ -76,13 +77,13 @@ var post_data = "NOW NOW";
 		port: 3000,
 		path: '/do_pass',
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json', 'Content-Length' : post_data.length }
+		headers: { 'Content-Type': 'x-www-form-urlencoded', 'Content-Length' : post_data.length }
 	};
 
 	var req = http.request( options, function(res){
 
-		console.log('STATUS: ' + res.statusCode);
-		console.log('HEADERS: ' + JSON.stringify( res.headers ));
+	//	console.log('STATUS: ' + res.statusCode);
+	//	console.log('HEADERS: ' + JSON.stringify( res.headers ));
 
 		res.setEncoding('utf8');
 
@@ -123,6 +124,12 @@ app.post('/do_pass', function(req, res) {
 
 
     console.log ( req );
+
+
+    fs.writeFile( "test.txt", JSON.stringify( req ), function( err ){ if (err){ console.log(err)}  } );
+
+
+
     console.log(" ");
     console.log(" ");
 //    console.log(" ");
