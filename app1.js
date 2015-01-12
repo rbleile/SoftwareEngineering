@@ -91,17 +91,13 @@ var the_body = req.body;	//see connect package above
 	screen.render();
 //	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 	setTimeout(wait, 500);
-    console.log("done w/do_pass");
 });
 
 // callback function - set myself to black
 function wait()
 {
-    console.log("6");
 	box.style.bg = 'black';	//black after pass
-    console.log("7");
 	screen.render();
-    console.log("8");
 	someFunction();
 }
 
