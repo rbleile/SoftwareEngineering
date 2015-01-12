@@ -114,11 +114,13 @@ console.log( "Done" );
 app.post('/do_pass', function(req, res) {
     var the_body = req.body;	//see connect package above
 
+    console.log( the_body );
+    console.log( JSON.stringify( the_body ) );
 
 
 //    console.log ( req );
-//    console.log(" ");
-//    console.log(" ");
+    console.log(" ");
+    console.log(" ");
 //    console.log(" ");
    // console.log ( res );
 
