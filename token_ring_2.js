@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var querystring = require('querystring');
 var app = express();
 
-//app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded());
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -41,102 +41,50 @@ screen.append(box);
 
 app.set('port', process.env.PORT || 3000);
 
-var my_group = ["192.168.1.102", "192.168.1.101"];	// replace with real IPs of group
+var my_group = ["192.168.1.102", "192.168.1.101", "192.168.1.102"];	// replace with real IPs of group
 
-var my_index = 0;	// replace with index of my IP in my_group
+var my_index = 1;	// replace with index of my IP in my_group
 
 box.setContent('this node (' + my_group[my_index] + ') will attempt to send its token to other nodes on network. ');
 screen.render();
 
-// handle GET requests
-app.get('/do_get', function (req, res){
-	var the_body = req.query;
-	console.log ( "get body: " + the_body );
-	box.setContent("Get with query: " + the_body);
-	box.style.bg = 'green';	//green for get
-	screen.render();
-	res.json({"query": the_body, "id": JSON.stringify(my_group[my_index])});
-});
-
-// handle POST requests
-app.post('/do_post', function(req, res) {
-	var the_body = req.body;	//see connect package above
-	console.log ( "post body: " + the_body );
-	box.setContent("Post with body: " + the_body);
-	box.style.bg = 'blue';	//blue for post
-	screen.render();
-	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
-});
-
-function nodeExample()
+function PostC()
 {
 
-var post_data = querystring.stringify( { n: 1 } );
+	var querystring = require('querystring');
+	
+	var post_data = querystring.stringify({ n: 12, c: 123, k: 1234 });
 
-	var options = {
-		hostname: my_group[( (my_index + 1) % my_group.length )],
-		port: 3000,
+	var post_options = 
+	{
+		host: my_group[my_index+1],
+		port: '3000',
 		path: '/do_pass',
 		method: 'POST',
-		headers: { 'Content-Type': 'x-www-form-urlencoded', 'Content-Length' : post_data.length }
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Content-Length': Buffer.byteLength(post_data);
+		}
 	};
 
-	var req = http.request( options, function(res){
-
-	//	console.log('STATUS: ' + res.statusCode);
-	//	console.log('HEADERS: ' + JSON.stringify( res.headers ));
-
+	var post_req = http.request(post_options, function(res){
 		res.setEncoding('utf8');
-
-		res.on('data', function (chunk) {
-			console.log('BODY: ' + chunk );
+		res.on('data', function(chunk){
+			console.log('Response: ' + chunk);
 		});
 	});
 
-	req.on('error', function(e){
-	
-		console.log('problem with request: ' + e.message);
-
-	});
-
-	req.write( post_data );
-//	req.write('NOW NOW NOW NOW');
-	req.end();
+	post_req.write(post_data);
+	post_req.end();
 
 }
-
-app.post('/start_pass', function(req, res) {
-
-        box.setContent("BODY");
-	box.style.bg = 'red';	//red for pass
-	screen.render();
-	res.json({ "id": JSON.stringify(my_group[my_index])});
-	setTimeout(wait, 500);
-console.log( "Done" );
-
-});
 
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
     var the_body = req.body;	//see connect package above
 
-    console.log(" ");
-    console.log("My Responce Body");
+    console.log("My Request Body");
     console.log( the_body );
-//    console.log( JSON.stringify( the_body ) );
-
-
-//    console.log ( req );
-
-
-    //fs.writeFile( "test.txt", JSON.stringify( req ), function( err ){ if (err){ console.log(err)}  } );
-
-
-
-    console.log(" ");
-    console.log(" ");
-//    console.log(" ");
-   // console.log ( res );
 
         box.setContent("Post with body: " + the_body);
 	box.style.bg = 'red';	//red for pass
@@ -144,7 +92,6 @@ app.post('/do_pass', function(req, res) {
 	res.json({"id":"responce"});
 	setTimeout(wait, 500);
 
-console.log( "In Example" );
 });
 
 // callback function - set myself to black
@@ -152,9 +99,7 @@ function wait()
 {
 	box.style.bg = 'black';	//black after pass
 	screen.render();
-        nodeExample();
-//	examplePost();
-//	someFunction();
+	PostC();
 }
 
 // Quit on Escape, q, or Control-C.
