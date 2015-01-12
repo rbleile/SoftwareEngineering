@@ -41,7 +41,7 @@ app.set('port', process.env.PORT || 3000);
 
 var my_group = ["192.168.1.100", "192.168.1.101", "192.168.1.102"];	// replace with real IPs of group
 
-var my_index = 0;	// replace with index of my IP in my_group
+var my_index = 2;	// replace with index of my IP in my_group
 
 box.setContent('this node (' + my_group[my_index] + ') will attempt to send its token to other nodes on network. ');
 screen.render();
@@ -68,8 +68,7 @@ app.post('/do_post', function(req, res) {
 
 function someFunction()
 {
-	var post_data = ' ';
-		
+	var post_data = ' ';		
 	var post_options = {
 		host: my_group[(my_index+1) % my_group.length],
 		port: '3000',
@@ -77,31 +76,42 @@ function someFunction()
 		method: 'POST',
 		headers: { }
 	};
-
+    console.log("9");
 	var post_request = http.request(post_options, function() {});
-
+    console.log("10");
 	post_request.write(post_data);
+    console.log("11");
 	post_request.end();
+    console.log("done w/somefunction");
 }
 
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
 	var the_body = req.body;	//see connect package above
-	console.log ( "token received: " + the_body );
-	box.setContent("Post with body: " + the_body);
+	//console.log ( "token received: " + the_body );
+    console.log("1");
+        box.setContent("Post with body: " + the_body);
+    console.log("2");
 	box.style.bg = 'red';	//red for pass
+    console.log("3");
 	screen.render();
+    console.log("4");
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
+    console.log("5");
 	setTimeout(wait, 500);
-	//wait();	
+    console.log("done w/do_pass");
 });
 
 // callback function - set myself to black
 function wait()
 {
+    console.log("6");
 	box.style.bg = 'black';	//black after pass
+    console.log("7");
 	screen.render();
+    console.log("8");
 	someFunction();
+    console.log("done w/wait");
 }
 
 // Quit on Escape, q, or Control-C.
