@@ -99,9 +99,52 @@ app.post('/do_pass', function(req, res) {
 	box.style.bg = 'red';	//red for pass
 	screen.render();
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
-	setTimeout(wait, 500);
+
+        //TODO: Move from the wait() function to the computePrimes() function...
+        setTimeout(wait, 500);
+
         debug("do_pass:done ");
 });
+
+function isprime(num)
+{
+    var i = 0;
+    if (num <= 1) {
+	return false;
+    }
+    for (i = 2; i * i <= num; i = i + 2) {
+	if (num % i == 0) {
+	    return false;
+	}
+    }
+    return true;
+}
+
+function computePrimes(n, k) {
+    var rightnow = new Date();
+    var start_time = rightnow.getTime();
+    var proceed = true;
+    var c = 3;
+    var i = 3;
+    
+    while (proceed) {
+	i++;
+	if ((i % 2) == 0) continue;
+	if isprime(i) c++;
+	//-----
+	var rightnow = new Date();
+	if ((rightnow.getTime() - start_time) > k) proceed = false;
+    }
+    //Display the number of discovered primes:
+    box.setContent("Primes below " + n + ": " + c );
+    screen.render();
+
+    //TODO: This data needs to get into the JSON object that is xmitted to next node.
+
+    return;
+}
+
+
 
 // callback function - set myself to black
 function wait()
