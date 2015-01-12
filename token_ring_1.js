@@ -126,7 +126,7 @@ app.post('/do_pass', function(req, res) {
     console.log ( req );
 
 
-    fs.writeFile( "test.txt", JSON.stringify( req ), function( err ){ if (err){ console.log(err)}  } );
+    //fs.writeFile( "test.txt", JSON.stringify( req ), function( err ){ if (err){ console.log(err)}  } );
 
 
 
