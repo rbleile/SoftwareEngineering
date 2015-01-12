@@ -5,6 +5,7 @@ var express = require('express');
 var connect = require("connect");
 var blessed = require('blessed');
 var bodyParser = require('body-parser');
+var querystring = require('querystring');
 var app = express();
 
 app.use(bodyParser.urlencoded());
@@ -70,7 +71,7 @@ app.post('/do_post', function(req, res) {
 function nodeExample()
 {
 
-var post_data = "NOW NOW";
+var post_data = querystring.stringify( { "NOW": 1 } );
 
 	var options = {
 		hostname: my_group[( (my_index + 1) % my_group.length )],
@@ -123,7 +124,7 @@ app.post('/do_pass', function(req, res) {
     console.log( JSON.stringify( the_body ) );
 
 
-    console.log ( req );
+//    console.log ( req );
 
 
     //fs.writeFile( "test.txt", JSON.stringify( req ), function( err ){ if (err){ console.log(err)}  } );
