@@ -74,7 +74,7 @@ function someFunction()
 		port: '3000',
 		path: '/do_pass',
 		method: 'POST',
-		headers: {"Content-Type" : "text/plain" }
+		headers: {{"Content-Type" : "text/plain"}, {"Content-Length" : post_data.length } }
 	};
 	var post_request = http.request(post_options, function() {});
 	post_request.write(post_data);
