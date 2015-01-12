@@ -69,6 +69,7 @@ app.post('/do_post', function(req, res) {
 function examplePost()
 {
 
+
 var post_data = JSON.stringify({ 'one' : 2, 'two' : 2, 'three' : 3  });
 
 var post_options = {
@@ -82,15 +83,17 @@ var post_options = {
 
 var post_req = http.request( post_options, function(res){ 
 	res.setEncoding('utf-8');
-	res.on( 'data' , function(chunk){  console.log( 'Responce: ' + chunk );  } );
+	//res.on( 'data' , function(chunk){  console.log( 'Responce: ' + chunk );  } );
 });
 
+console.log( "In Example" );
 post_req.write(post_data);
 post_req.end();
 
+console.log( "In Example" );
 }
 
-/*
+
 function someFunction()
 {
 	var post_data = ' empty string ';		
@@ -99,14 +102,24 @@ function someFunction()
 		port: '3000',
 		path: '/do_pass',
 		method: 'POST',
-		headers: {{"Content-Type" : "text/plain"}, {"Content-Length" : post_data.length } }
+		headers: {"Content-Type" : "text/plain", "Content-Length" : post_data.length  }
 	};
 	var post_request = http.request(post_options, function() {});
 	post_request.write(post_data);
 	post_request.end();
 }
-*/
 
+
+app.post('/start_pass', function(req, res) {
+
+        box.setContent("BODY");
+	box.style.bg = 'red';	//red for pass
+	screen.render();
+	res.json({ "id": JSON.stringify(my_group[my_index])});
+	setTimeout(wait, 500);
+console.log( "Done" );
+
+});
 
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
@@ -119,6 +132,8 @@ app.post('/do_pass', function(req, res) {
 	screen.render();
 	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 	setTimeout(wait, 500);
+
+console.log( "In Example" );
 });
 
 // callback function - set myself to black
@@ -126,8 +141,8 @@ function wait()
 {
 	box.style.bg = 'black';	//black after pass
 	screen.render();
-	examplePost();
-//	someFunction();
+//	examplePost();
+	someFunction();
 }
 
 // Quit on Escape, q, or Control-C.
