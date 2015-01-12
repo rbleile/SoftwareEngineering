@@ -94,7 +94,7 @@ function nodeExample()
 	});
 
 	req.write('LOOK AT ME PUNK');
-	req.write('NOW NOW NOW NOW');
+//	req.write('NOW NOW NOW NOW');
 	req.end();
 
 }
