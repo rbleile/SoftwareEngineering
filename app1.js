@@ -41,7 +41,7 @@ app.set('port', process.env.PORT || 3000);
 
 var my_group = ["192.168.1.100", "192.168.1.101"];	// replace with real IPs of group
 
-var my_index = 1;	// replace with index of my IP in my_group
+var my_index = 0;	// replace with index of my IP in my_group
 
 box.setContent('this node (' + my_group[my_index] + ') will attempt to send its token to other nodes on network. ');
 screen.render();
@@ -96,13 +96,13 @@ console.log( "In Example" );
 
 function someFunction()
 {
-	var post_data = ' empty string ';		
+	var post_data = JSON.stringify( { 'one' : 1 } );		
 	var post_options = {
 		host: my_group[(my_index+1) % my_group.length],
 		port: '3000',
 		path: '/do_pass',
 		method: 'POST',
-		headers: {"Content-Type" : "text/plain", "Content-Length" : post_data.length  }
+		headers: {"Content-Type" : "application/json", "Content-Length" : post_data.length  }
 	};
 	var post_request = http.request(post_options, function() {});
 	post_request.write(post_data);
