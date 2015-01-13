@@ -39,9 +39,9 @@ screen.append(box);
 
 app.set('port', process.env.PORT || 3000);
 
-var my_group = ["192.168.1.100", "192.168.1.101", "192.168.1.102"];	// replace with real IPs of group
+var my_group = ["192.168.1.101", "192.168.1.102", "192.168.1.101"];	// replace with real IPs of group
 
-var my_index = 1;	// replace with index of my IP in my_group
+var my_index = 0;	// replace with index of my IP in my_group
 
 box.setContent('this node (' + my_group[my_index] + ') will attempt to send its token to other nodes on network. ');
 screen.render();
