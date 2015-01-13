@@ -127,7 +127,10 @@ app.post('/do_pass', function(req, res) {
 
         var bData = the_body;
 
-        computePrimes(bData.n, bData.c, bData.k);
+        setTimeout( computePrimes(bData.n, bData.c, bData.k), 1000 );
+
+	box.style.bg = 'black';	//black for pass
+	screen.render();
 
         //debug("do_pass:done ");
 });
