@@ -124,7 +124,7 @@ app.post('/do_pass', function(req, res) {
 	//res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 	res.json(the_body);
 
-        var bData = JSON.parse( the_body );
+        var bData = the_body;
 
         //TODO: Move from the wait() function to the computePrimes() function...
         setTimeout(computePrimes(bData.n, bData.c, bData.k), 500);
