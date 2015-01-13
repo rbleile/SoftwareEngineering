@@ -112,12 +112,16 @@ function PostPrimeToken( num, count, time )
 	post_request.write(dataString);
         post_request.end();
        // debug("sF():done ");
+
+	box.style.bg = 'black';	//black for pass
+	screen.render();
 }
 
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
 	var the_body = req.body;	//see connect package above
-	console.log ( "token received: " + the_body );
+	console.log ( "token received: " + JSON.stringify( the_body) );
+
         box.setContent("Post with body: " + the_body);
 	box.style.bg = 'red';	//red for pass
 	screen.render();
@@ -127,10 +131,8 @@ app.post('/do_pass', function(req, res) {
 
         var bData = the_body;
 
-        setTimeout( computePrimes(bData.n, bData.c, bData.k), 1000 );
+        computePrimes(bData.n, bData.c, bData.k);
 
-	box.style.bg = 'black';	//black for pass
-	screen.render();
 
         //debug("do_pass:done ");
 });
@@ -162,6 +164,7 @@ function computePrimes(n, c, k) {
 	var rightnow = new Date();
 	if ((rightnow.getTime() - start_time) > k) proceed = false;
     }
+
     //Display the number of discovered primes:
     box.setContent("Primes below " + n + ": " + c + "\nIn " + k*1000 + "seconds");
     screen.render();
