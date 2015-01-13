@@ -79,7 +79,7 @@ function PostPrimeToken( num, count, time )
 {
 	var post_data = { n: num, c: count, k: time };		
         
-	var dataString = JSON.stringify( data );
+	var dataString = JSON.stringify( post_data );
 
 	var headers = {
 		'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ function PostPrimeToken( num, count, time )
 
 	post_request.write(dataString);
         post_request.end();
-        debug("sF():done ");
+       // debug("sF():done ");
 }
 
 // handle PASS requests
@@ -121,15 +121,15 @@ app.post('/do_pass', function(req, res) {
         box.setContent("Post with body: " + the_body);
 	box.style.bg = 'red';	//red for pass
 	screen.render();
+
 	//res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
 	res.json(the_body);
 
         var bData = the_body;
 
-        //TODO: Move from the wait() function to the computePrimes() function...
-        setTimeout(computePrimes(bData.n, bData.c, bData.k), 500);
+        computePrimes(bData.n, bData.c, bData.k);
 
-        debug("do_pass:done ");
+        //debug("do_pass:done ");
 });
 
 function isprime(num)
@@ -165,7 +165,7 @@ function computePrimes(n, c, k) {
 
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
 
-    PostPrimeToken(i, c, k);
+    PostPrimeToken(n, c, k);
 
     return;
 }
