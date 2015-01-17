@@ -170,12 +170,119 @@ function discover()
    }
 }
 
-function printMyGroup()
+function Delay( handicap ){
+
+	var computeSize = 10000;
+
+	var currentTime = new Date();
+
+	var start = currentTime.getTime();
+
+	var value = 0.0;
+
+	for( var i = 0; i < computeSize; i++ )
+	{
+		value += value + Math.sqrt( i*i(i+100/i*2) );
+	}
+
+	var currentTime2 = new Date();
+
+	var end = currentTime2.getTime();
+
+	var time = end - start;
+
+	return time + handicap;
+	
+}
+
+var myComputeID = Delay( process.agv[2] );
+
+var myLeader = myComputeID;
+
+function electionPOST( )
+{
+    var post_data = { computeID : myLeader };		
+        
+	var dataString = JSON.stringify( post_data );
+
+	var headers = {
+		'Content-Type': 'application/json',
+		'Content-Length': dataString.length
+	};
+
+	var post_options = {
+		host: my_group[ ( my_group.indexOf( my_ip ) + 1 ) % my_group.length ],
+		port: '3000',
+		path: '/do_election',
+		method: 'POST',
+		headers: headers
+	};
+
+	var post_request = http.request(post_options, function(res){
+		res.setEncoding('utf-8');
+		
+		var responceString = '';
+
+        res.on('data', function(data){
+			responceString += data;
+		});
+
+        res.on('end', function(){
+			var resultObject = JSON.parse(responceString);
+		});
+
+	});
+
+	post_request.write(dataString);
+    post_request.end();
+}
+
+function winnerPOST( winningID )
+{
+    var post_data = { listID : winningID };
+        
+	var dataString = JSON.stringify( post_data );
+
+	var headers = {
+		'Content-Type': 'application/json',
+		'Content-Length': dataString.length
+	};
+
+	var post_options = {
+		host: my_group[ ( my_group.indexOf( my_ip ) + 1 ) % my_group.length ],
+		port: '3000',
+		path: '/do_winner',
+		method: 'POST',
+		headers: headers
+	};
+
+	var post_request = http.request(post_options, function(res){
+		res.setEncoding('utf-8');
+		
+		var responceString = '';
+
+        res.on('data', function(data){
+			responceString += data;
+		});
+
+        res.on('end', function(){
+			var resultObject = JSON.parse(responceString);
+		});
+
+	});
+
+	post_request.write(dataString);
+    post_request.end();
+}
+
+function startElection()
 {
 
 console.log( "This is timeout Callback: " + my_group );
 
 console.log( "My ID: " + my_group.indexOf( my_ip ) );
+
+electionPOST();
 
 }
 
@@ -256,6 +363,46 @@ function PostPrimeToken( num, count, time )
 	screen.render();
 }
 
+//Election Passing
+app.post('/do_election', function(req, res) {
+	var the_body = req.body;	//see connect package above
+	console.log ( "token received: " + JSON.stringify( the_body) );
+
+	res.json(the_body);
+
+	var ID = the_body.computeID;
+	
+	if( ID == myLeader )
+	{
+	     /* Pass win Message */
+		 winnerPOST( my_group.indexOf( my_ip ) );
+	}
+	else if( ID < myLeader )
+	{
+	    /* Do Pass this Compute ID */
+		myLeader = ID;
+		electionPOST();
+	}
+	
+	/* Else don't pass along ( drop out of election ) */
+
+});
+
+app.post('/do_winner', function(req, res) {
+	var the_body = req.body;	//see connect package above
+	console.log ( "token received: " + JSON.stringify( the_body) );
+
+	res.json(the_body);
+
+	var ID = the_body.listID;
+
+    if( ID != my_group.indexOf( my_ip ) )
+	{
+	    winnerPOST( ID );
+	}	
+
+});
+
 // handle PASS requests
 app.post('/do_pass', function(req, res) {
 	var the_body = req.body;	//see connect package above
@@ -329,7 +476,7 @@ screen.render();
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
   discover();
-  setTimeout( printMyGroup, 10000  );
+  setTimeout( startElection, 10000  );
 });
 
 
