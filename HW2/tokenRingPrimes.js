@@ -282,7 +282,7 @@ console.log( "This is timeout Callback: " + my_group );
 
 console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
-myComputeID = Delay( parseInt( process.argv[2] ) );
+myComputeID = Delay( Integer.parseInt( process.argv[2] ) );
 myLeader = myComputeID;
 
 setTimeout( electionPOST, 5000 );
