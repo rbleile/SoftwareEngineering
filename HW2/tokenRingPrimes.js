@@ -146,8 +146,8 @@ function PostDiscover(ip_address)
 function discover()
 {
    if(debug) console.log("Starting Discovery");
-   var start_ip = 100;
-   var end_ip   = 110;
+   var start_ip = 2;
+   var end_ip   = 20;
    //we are assuming a subnet mask of 255.255.255.0
 
    //break it up to extract what we need 
