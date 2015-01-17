@@ -71,37 +71,29 @@ Object.keys(ifaces).forEach(function (ifname) {
   my_group[0] = my_ip;
 });
 
-//curl -H "Content-Type: application/json" -d '{"id" : "192.168.1.101"}' http://localhost:3000/do_discover
+//curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // handle discovery requests
 app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
   console.log ( "discovery received: " + JSON.stringify( the_body) );
-  var newIp = true;
-  for(var i = 0; i < my_group.length; i++)
+  var newIp;
+  if(my_group.indexOf(the_body.ip) == -1) 
   {
-    if(my_group[i] == the_body.id) 
-    {
-        newIp = false;
-        break;
-    }
+    my_group[my_group.length] = the_body.ip;
+    console.log("New node at " + the_body.ip);
   }
-  if(newIp)
-  {
-    my_group[my_group.length] = the_body.id;
-    console.log("New node at " + the_body.id);
-  } 
   else
   {
-    console.log("Already discovered "+ the_body.id);
+    console.log("Already discovered "+ the_body.ip);
   }
 
-  res.json({"id": my_ip});
+  res.json({"ip": my_ip});
   console.log("Current group : " + my_group);
 });
 
 function PostDiscover(ip_address)
 {
-  var post_data = { id : my_ip };    
+  var post_data = { ip : my_ip };    
         
   var dataString = JSON.stringify( post_data );
 
@@ -188,7 +180,7 @@ app.get('/do_get', function (req, res){
 	box.setContent("Get with query: " + the_body);
 	box.style.bg = 'green';	//green for get
 	screen.render();
-	res.json({"query": the_body, "id": JSON.stringify(my_group[my_index])});
+	res.json({"query": the_body, "id": my_ip});
 });
 
 // handle POST requests
@@ -198,7 +190,7 @@ app.post('/do_post', function(req, res) {
 	box.setContent("Post with body: " + the_body);
 	box.style.bg = 'blue';	//blue for post
 	screen.render();
-	res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
+	res.json({"body": the_body, "id": my_ip});
 });
 
 var all_debug_txt = "";
@@ -261,7 +253,7 @@ app.post('/do_pass', function(req, res) {
 	box.style.bg = 'red';	//red for pass
 	screen.render();
 
-	//res.json({"body": the_body, "id": JSON.stringify(my_group[my_index])});
+	//res.json({"body": the_body, "id": my_ip});
 	res.json(the_body);
 
         var bData = the_body;
