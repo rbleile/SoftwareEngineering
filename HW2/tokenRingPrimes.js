@@ -96,7 +96,7 @@ app.post('/do_discover', function(req, res) {
 
   addIp(the_body.ip);
 
-  res.json({"ip": my_ip});
+  res.json({"ip": my_ip, "body" : the_body});
 });
 
 function PostDiscover(ip_address)
