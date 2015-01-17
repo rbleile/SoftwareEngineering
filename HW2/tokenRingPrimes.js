@@ -83,6 +83,7 @@ function addIp(ip_address)
   {
     if(debug) console.log("Already discovered "+ ip_address);
   }
+  if(debug) console.log("Current group : " + my_group);
 }
 
 //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
@@ -94,7 +95,6 @@ app.post('/do_discover', function(req, res) {
   addIp(the_body.ip);
 
   res.json({"ip": my_ip});
-  if(debug) console.log("Current group : " + my_group);
 });
 
 function PostDiscover(ip_address)
@@ -155,6 +155,7 @@ function discover()
    if(debug) console.log("Starting Discovery");
    var start_ip = 2;
    var end_ip   = 20;
+   
    //we are assuming a subnet mask of 255.255.255.0
 
    //break it up to extract what we need 
