@@ -167,10 +167,10 @@ function discover()
    {
       
       var ip = base_add + i.toString();
-      if(debug) console.log("i " + i + " ip " + ip + " " + my_group.indexOf(ip));
+      //if(debug) console.log("i " + i + " ip " + ip + " " + my_group.indexOf(ip));
       if(my_group.indexOf(ip) == -1)
       {
-        if(debug) console.log("trying ip " + ip);
+        //if(debug) console.log("trying ip " + ip);
         PostDiscover(ip);
       }
    }
