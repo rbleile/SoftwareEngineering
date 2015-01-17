@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+var debug = true;
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -75,20 +76,20 @@ Object.keys(ifaces).forEach(function (ifname) {
 // handle discovery requests
 app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
-  console.log ( "discovery received: " + JSON.stringify( the_body) );
-  var newIp;
+  if(debug) console.log ( "discovery received: " + JSON.stringify( the_body) );
+
   if(my_group.indexOf(the_body.ip) == -1) 
   {
     my_group[my_group.length] = the_body.ip;
-    console.log("New node at " + the_body.ip);
+    if(debug) console.log("New node at " + the_body.ip);
   }
   else
   {
-    console.log("Already discovered "+ the_body.ip);
+    if(debug) console.log("Already discovered "+ the_body.ip);
   }
 
   res.json({"ip": my_ip});
-  console.log("Current group : " + my_group);
+  if(debug) console.log("Current group : " + my_group);
 });
 
 function PostDiscover(ip_address)
@@ -135,7 +136,7 @@ function PostDiscover(ip_address)
   });
 
   post_request.on('error', function(e) {
-    console.log('problem with request: ' + e.message);
+    if(debug) console.log('no one at this address: ' + e.message);
   });
   post_request.write(dataString);
   post_request.end();
@@ -143,7 +144,7 @@ function PostDiscover(ip_address)
 
 function discover()
 {
-   console.log("Starting Discovery");
+   if(debug) console.log("Starting Discovery");
    var start_ip = 100;
    var end_ip   = 110;
    //we are assuming a subnet mask of 255.255.255.0
@@ -152,16 +153,16 @@ function discover()
    var ip_add = my_ip.split(".");
    //put it back together without the last part
    var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
-   console.log("Base ip address : " +  base_add);
+   if(debug) console.log("Base ip address : " +  base_add);
 
    for(var i = start_ip; i < end_ip; i++)
    {
       
       var ip = base_add + i.toString();
-      console.log("i " + i + " ip " + ip + " " + my_group.indexOf(ip));
+      if(debug) console.log("i " + i + " ip " + ip + " " + my_group.indexOf(ip));
       if(my_group.indexOf(ip) == -1)
       {
-        console.log("trying ip " + ip);
+        if(debug) console.log("trying ip " + ip);
         PostDiscover(ip);
       }
    }
