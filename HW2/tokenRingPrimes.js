@@ -177,8 +177,6 @@ function discover()
         PostDiscover(ip);
       }
    }
-
-   if(debug) console.log("Discovery Ended. Found " + (my_group.length - 1) + " friends.");
 }
 
 /***********End Discovery***********************/
