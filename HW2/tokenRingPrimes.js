@@ -78,11 +78,13 @@ function addIp(ip_address)
   {
     my_group[my_group.length] = ip_address;
     if(debug) console.log("New node at " + ip_address);
+    my_group.sort();
   }
   else
   {
     if(debug) console.log("Already discovered "+ ip_address);
   }
+
   if(debug) console.log("Current group : " + my_group);
 }
 
