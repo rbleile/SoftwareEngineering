@@ -99,11 +99,11 @@ function PostPrimeToken( num, count, time )
 		
 		var responceString = '';
 
-                res.on('data', function(data){
+        res.on('data', function(data){
 			responceString += data;
 		});
-
-                res.on('end', function(){
+		
+        res.on('end', function(){
 			var resultObject = JSON.parse(responceString);
 		});
 
@@ -112,9 +112,6 @@ function PostPrimeToken( num, count, time )
 	post_request.write(dataString);
         post_request.end();
        // debug("sF():done ");
-
-	box.style.bg = 'black';	//black for pass
-	screen.render();
 }
 
 // handle PASS requests
@@ -131,7 +128,7 @@ app.post('/do_pass', function(req, res) {
 
         var bData = the_body;
 
-        computePrimes(bData.n, bData.c, bData.k);
+    computePrimes(bData.n, bData.c, bData.k);
 
 
         //debug("do_pass:done ");
@@ -166,8 +163,7 @@ function computePrimes(n, c, k) {
     }
 
     //Display the number of discovered primes:
-    box.setContent("Primes below " + n + ": " + c + "\nIn " + k*1000 + "seconds");
-    screen.render();
+
 
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
 
