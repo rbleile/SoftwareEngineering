@@ -135,16 +135,6 @@ function PostDiscover(ip_address)
 
   });
 
-  //we don't want to wait forever
-/*
-  post_request.on('socket', function (socket) 
-  {
-    socket.setTimeout(50);  
-    socket.on('timeout', function() {
-        post_request.abort();
-    });
-  });
-*/
   post_request.on('error', function(e) {
     // no one is home, do nothing
     //if(debug) console.log('no one at this address: ' + e.message);
@@ -178,6 +168,15 @@ function discover()
         PostDiscover(ip);
       }
    }
+}
+
+function printMyGroup()
+{
+
+console.log( "This is timeout Callback: " + my_group );
+
+console.log( "My ID: " + my_group.indexOf( my_ip ) );
+
 }
 
 /***********End Discovery***********************/
@@ -330,6 +329,7 @@ screen.render();
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
   discover();
+  setTimeout( 5000, printMyGroup() );
 });
 
 
