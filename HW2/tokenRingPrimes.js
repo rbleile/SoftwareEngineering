@@ -122,6 +122,7 @@ function PostDiscover(ip_address)
 
     res.on('end', function(){
       var resultObject = JSON.parse(responceString);
+      console.log(resultObject);
     });
 
   });
