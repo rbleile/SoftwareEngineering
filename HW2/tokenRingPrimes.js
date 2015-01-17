@@ -170,6 +170,10 @@ function discover()
    }
 }
 
+var myComputeID;
+
+var myLeader;
+
 function Delay( handicap ){
 
 	var computeSize = 10000;
@@ -194,10 +198,6 @@ function Delay( handicap ){
 	return time + handicap;
 	
 }
-
-var myComputeID = Delay( process.agv[2] );
-
-var myLeader = myComputeID;
 
 function electionPOST( )
 {
@@ -282,7 +282,10 @@ console.log( "This is timeout Callback: " + my_group );
 
 console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
-electionPOST();
+myComputeID = Delay( process.argv[2] );
+myLeader = myComputeID;
+
+setTimeout( electionPOST, 5000 );
 
 }
 
