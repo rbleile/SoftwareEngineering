@@ -72,21 +72,26 @@ Object.keys(ifaces).forEach(function (ifname) {
   my_group[0] = my_ip;
 });
 
+function addIp(ip_address)
+{
+  if(my_group.indexOf(ip_address) == -1) 
+  {
+    my_group[my_group.length] = ip_address;
+    if(debug) console.log("New node at " + ip_address);
+  }
+  else
+  {
+    if(debug) console.log("Already discovered "+ ip_address);
+  }
+}
+
 //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // handle discovery requests
 app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
   if(debug) console.log ( "discovery received: " + JSON.stringify( the_body) );
 
-  if(my_group.indexOf(the_body.ip) == -1) 
-  {
-    my_group[my_group.length] = the_body.ip;
-    if(debug) console.log("New node at " + the_body.ip);
-  }
-  else
-  {
-    if(debug) console.log("Already discovered "+ the_body.ip);
-  }
+  addIp(the_body.ip);
 
   res.json({"ip": my_ip});
   if(debug) console.log("Current group : " + my_group);
@@ -123,6 +128,7 @@ function PostDiscover(ip_address)
     res.on('end', function(){
       var resultObject = JSON.parse(responceString);
       console.log(resultObject);
+      addIp(resultObject.ip);
     });
 
   });
@@ -137,7 +143,8 @@ function PostDiscover(ip_address)
   });
 
   post_request.on('error', function(e) {
-    if(debug) console.log('no one at this address: ' + e.message);
+    // no one is home, do nothing
+    //if(debug) console.log('no one at this address: ' + e.message);
   });
   post_request.write(dataString);
   post_request.end();
