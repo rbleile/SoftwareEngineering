@@ -136,6 +136,7 @@ function PostDiscover(ip_address)
   });
 
   //we don't want to wait forever
+/*
   post_request.on('socket', function (socket) 
   {
     socket.setTimeout(50);  
@@ -143,7 +144,7 @@ function PostDiscover(ip_address)
         post_request.abort();
     });
   });
-
+*/
   post_request.on('error', function(e) {
     // no one is home, do nothing
     //if(debug) console.log('no one at this address: ' + e.message);
