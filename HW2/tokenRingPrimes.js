@@ -6,34 +6,9 @@ var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
 
-app.use(bodyParser());
-
-var my_ip;
-
-//find ip address
-var os = require('os');
-var ifaces = os.networkInterfaces();
-
-Object.keys(ifaces).forEach(function (ifname) {
-  var alias = 0
-    ;
-  	ifaces[ifname].forEach(function (iface) {
-    if ('IPv4' !== iface.family || iface.internal !== false) {
-      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
-      return;
-    }
-
-    if (alias >= 1) {
-      // this single interface has multiple ipv4 addresses
-      //console.log(ifname + ':' + alias, iface.address);
-    } else {
-      // this interface has only one ipv4 adress
-      //console.log(ifname, iface.address);
-    }
-
-    my_ip = iface.address;
-  });
-});
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 
 // Create a screen object.
@@ -69,9 +44,139 @@ screen.append(box);
 
 app.set('port', process.env.PORT || 3000);
 
-var my_group = ["192.168.1.100", "192.168.1.101", "192.168.1.102", "192.168.1.100"];	// replace with real IPs of group
+var my_group = [];	// replace with real IPs of group
 
 var my_index = 0;	// replace with index of my IP in my_group
+
+
+/****************Discovery***********************/
+var my_ip;
+
+//find ip address
+var os = require('os');
+var ifaces = os.networkInterfaces();
+
+//scan NICs
+Object.keys(ifaces).forEach(function (ifname) {
+  var alias = 0
+    ;
+    ifaces[ifname].forEach(function (iface) {
+    if ('IPv4' !== iface.family || iface.internal !== false) {
+      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+      return;
+    }
+
+    my_ip = iface.address;
+  });
+  my_group[0] = my_ip;
+});
+
+//curl -H "Content-Type: application/json" -d '{"id" : "192.168.1.101"}' http://localhost:3000/do_discover
+// handle discovery requests
+app.post('/do_discover', function(req, res) {
+  var the_body = req.body;  //see connect package above
+  console.log ( "discovery received: " + JSON.stringify( the_body) );
+  var newIp = true;
+  for(var i = 0; i < my_group.length; i++)
+  {
+    if(my_group[i] == the_body.id) 
+    {
+        newIp = false;
+        break;
+    }
+  }
+  if(newIp)
+  {
+    my_group[my_group.length] = the_body.id;
+    console.log("New node at " + the_body.id);
+  } 
+  else
+  {
+    console.log("Already discovered "+ the_body.id);
+  }
+
+  res.json({"id": my_ip});
+  console.log("Current group : " + my_group);
+});
+
+function PostDiscover(ip_address)
+{
+  var post_data = { id : my_ip };    
+        
+  var dataString = JSON.stringify( post_data );
+
+  var headers = {
+    'Content-Type': 'application/json',
+    'Content-Length': dataString.length
+  };
+
+  var post_options = {
+    host: ip_address,
+    port: '3000',
+    path: '/do_discover',
+    method: 'POST',
+    headers: headers
+  };
+
+  var post_request = http.request(post_options, function(res){
+    res.setEncoding('utf-8');
+    
+    var responceString = '';
+
+    res.on('data', function(data){
+      responceString += data;
+    });
+
+    res.on('end', function(){
+      var resultObject = JSON.parse(responceString);
+    });
+
+  });
+
+  //we don't want to wait forever
+  post_request.on('socket', function (socket) 
+  {
+    socket.setTimeout(50);  
+    socket.on('timeout', function() {
+        post_request.abort();
+    });
+  });
+
+  post_request.on('error', function(e) {
+    console.log('problem with request: ' + e.message);
+  });
+  post_request.write(dataString);
+  post_request.end();
+}
+
+function discover()
+{
+   console.log("Starting Discovery");
+   var start_ip = 100;
+   var end_ip   = 110;
+   //we are assuming a subnet mask of 255.255.255.0
+
+   //break it up to extract what we need 
+   var ip_add = my_ip.split(".");
+   //put it back together without the last part
+   var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
+   console.log("Base ip address : " +  base_add);
+
+   for(var i = start_ip; i < end_ip; i++)
+   {
+      
+      var ip = base_add + i.toString();
+      console.log("i " + i + " ip " + ip + " " + my_group.indexOf(ip));
+      if(my_group.indexOf(ip) == -1)
+      {
+        console.log("trying ip " + ip);
+        PostDiscover(ip);
+      }
+   }
+}
+
+/***********End Discovery***********************/
+
 
 box.setContent('this node (' + my_ip + ') will attempt to send its token to other nodes on network. ');
 screen.render();
@@ -219,6 +324,8 @@ screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
+  discover();
 });
+
 
 
