@@ -380,7 +380,7 @@ app.post('/do_election', function(req, res) {
 
 
 	var the_body = req.body;	//see connect package above
-	console.log ( "Election token received: " + JSON.stringify( the_body) );
+//	console.log ( "Election token received: " + JSON.stringify( the_body) );
 
 	res.json(the_body);
 
