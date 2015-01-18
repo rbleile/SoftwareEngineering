@@ -147,8 +147,8 @@ function discover()
 {
    if(debug) console.log("Starting Discovery");
    //limit the scanning range
-   var start_ip = 100;
-   var end_ip   = 120;
+   var start_ip = 1;
+   var end_ip   = 20;
    
    //we are assuming a subnet mask of 255.255.255.0
 
@@ -253,7 +253,7 @@ function electionPOST( )
 
 function winnerPOST( winningID, winningVal )
 {
-    var post_data = { listID : winningID, computeVal : winningVal };
+  var post_data = { listID : winningID, computeVal : winningVal };
         
 	var dataString = JSON.stringify( post_data );
 
