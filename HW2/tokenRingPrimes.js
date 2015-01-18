@@ -173,6 +173,7 @@ function discover()
 var myComputeID = -1;
 
 var myLeader;
+var winnerComputeValue;
 
 var participated = 0;
 
@@ -204,11 +205,12 @@ function Delay( handicap ){
 
 myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
 myLeader = myComputeID;
+winnerComputeValue = myComputeID;
 
 function electionPOST( )
 {
 
-    var post_data = { computeID : myLeader };		
+    var post_data = { computeID : myLeader, computeValue : winnerComputeValue };		
         
 	var dataString = JSON.stringify( post_data );
 
@@ -285,9 +287,9 @@ function winnerPOST( winningID )
 function startElection()
 {
 
-console.log( "This is timeout Callback: " + my_group );
+console.log( "This is the group at the start of the Election" + my_group );
 
-console.log( "My ID: " + my_group.indexOf( my_ip ) );
+console.log( "My Index in Group: " + my_group.indexOf( my_ip ) );
 
 console.log( "My Compute ID: " + myComputeID );
 
@@ -375,15 +377,14 @@ function PostPrimeToken( num, count, time )
 //Election Passing
 app.post('/do_election', function(req, res) {
 
-    var date = new Date();
-	var timeStamp = date.getTime();
 
 	var the_body = req.body;	//see connect package above
-	console.log ( "Election token received: " + JSON.stringify( the_body) );
+//	console.log ( "Election token received: " + JSON.stringify( the_body) );
 
 	res.json(the_body);
 
 	var ID = the_body.computeID;
+	var Val= the_body.computeValue;
 	
 	if( ID == myComputeID )
 	{
@@ -391,7 +392,7 @@ app.post('/do_election', function(req, res) {
 		 
 		if( participated == 1 ){
 		 
-		 console.log( "I Win!!! " + timeStamp );
+		 console.log( "I Win!!! ");
 		 participated = 0;
 		 winnerPOST( my_group.indexOf( my_ip ) );
 		}
@@ -401,8 +402,9 @@ app.post('/do_election', function(req, res) {
 	{
 	
 	    /* Do Pass this Compute ID */
-		console.log("Passing "+ ID + " " + myLeader + " " + timeStamp );
+//		console.log("Passing "+ ID + " " + myLeader + " " + timeStamp );
 		myLeader = ID;
+		winnerComputeValue = Val;
         if ( participated == 0 )
 		{
 		    participated = 1;
@@ -411,7 +413,7 @@ app.post('/do_election', function(req, res) {
 	}
 	else
 	{
-		console.log("Dropping "+ ID + " " + myLeader + " " + timeStamp);
+//		console.log("Dropping "+ ID + " " + myLeader + " " + timeStamp);
 
 		if( participated == 0 )
 		{
