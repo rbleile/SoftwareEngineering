@@ -174,6 +174,8 @@ var myComputeID = -1;
 
 var myLeader;
 
+var participated = 0;
+
 function Delay( handicap ){
 
 	var computeSize = 1000000;
@@ -205,6 +207,7 @@ myLeader = myComputeID;
 
 function electionPOST( )
 {
+
     var post_data = { computeID : myLeader };		
         
 	var dataString = JSON.stringify( post_data );
@@ -221,7 +224,7 @@ function electionPOST( )
 		method: 'POST',
 		headers: headers
 	};
-
+	
 	var post_request = http.request(post_options, function(res){
 		res.setEncoding('utf-8');
 		
@@ -290,11 +293,7 @@ console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
 console.log( "My Compute ID: " + myComputeID );
 
-if( my_group.indexOf( my_ip ) == 3 ){
-
 setTimeout( electionPOST, 5000 );
-
-}
 
 }
 
@@ -394,13 +393,17 @@ app.post('/do_election', function(req, res) {
 		 console.log( "I Win!!! " + timeStamp );
 		 winnerPOST( my_group.indexOf( my_ip ) );
 	}
-	else if( ID > myLeader )
+	else if( ID < myLeader )
 	{
 	
 	    /* Do Pass this Compute ID */
 		console.log("Passing "+ ID + " " + myLeader + " " + timeStamp );
 		myLeader = ID;
-		electionPOST();
+        if ( participated == 0 )
+		{
+		    participated = 1;
+		    electionPOST();
+		}
 	}
 	else
 	{
@@ -419,6 +422,8 @@ app.post('/do_winner', function(req, res) {
 
 	var ID = the_body.listID;
 
+	participated = 0;
+	
     if( ID != my_group.indexOf( my_ip ) )
 	{
 	    winnerPOST( ID );
