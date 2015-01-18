@@ -285,6 +285,8 @@ console.log( "My ID: " + my_group.indexOf( my_ip ) );
 myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
 myLeader = myComputeID;
 
+console.log( "My Compute ID: " + myComputeID );
+
 setTimeout( electionPOST, 5000 );
 
 }
@@ -369,7 +371,7 @@ function PostPrimeToken( num, count, time )
 //Election Passing
 app.post('/do_election', function(req, res) {
 	var the_body = req.body;	//see connect package above
-	console.log ( "token received: " + JSON.stringify( the_body) );
+	console.log ( "Election token received: " + JSON.stringify( the_body) );
 
 	res.json(the_body);
 
@@ -378,6 +380,7 @@ app.post('/do_election', function(req, res) {
 	if( ID == myLeader )
 	{
 	     /* Pass win Message */
+		 console.log( "I Win!!!" );
 		 winnerPOST( my_group.indexOf( my_ip ) );
 	}
 	else if( ID < myLeader )
@@ -393,7 +396,7 @@ app.post('/do_election', function(req, res) {
 
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;	//see connect package above
-	console.log ( "token received: " + JSON.stringify( the_body) );
+	console.log ( "Winner token received: " + JSON.stringify( the_body) );
 
 	res.json(the_body);
 
