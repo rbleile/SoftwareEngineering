@@ -195,7 +195,8 @@ function Delay( handicap ){
 
 	var time = end - start;
 
-	return time + handicap;
+	return handicap;
+//	return time + handicap;
 	
 }
 
