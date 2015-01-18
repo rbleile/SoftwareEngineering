@@ -379,7 +379,7 @@ app.post('/do_election', function(req, res) {
 
 
 	var the_body = req.body;	//see connect package above
-//	console.log ( "Election token received: " + JSON.stringify( the_body) );
+	console.log ( "Election token received: " + JSON.stringify( the_body) );
 
 	res.json(the_body);
 
@@ -402,7 +402,7 @@ app.post('/do_election', function(req, res) {
 	{
 	
 	    /* Do Pass this Compute ID */
-//		console.log("Passing "+ ID + " " + myLeader + " " + timeStamp );
+		console.log("Passing "+ ID + " " + myLeader );
 		myLeader = ID;
 		winnerComputeValue = Val;
         if ( participated == 0 )
@@ -413,7 +413,7 @@ app.post('/do_election', function(req, res) {
 	}
 	else
 	{
-//		console.log("Dropping "+ ID + " " + myLeader + " " + timeStamp);
+		console.log("Dropping "+ ID + " " + myLeader );
 
 		if( participated == 0 )
 		{
