@@ -251,7 +251,7 @@ function electionPOST( )
   post_request.end();
 
   console.log("Sending Election POST");
-  messaseId++;
+  messageId++;
 }
 
 function winnerPOST( winningID, winningVal )
