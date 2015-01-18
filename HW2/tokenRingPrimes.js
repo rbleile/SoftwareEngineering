@@ -291,9 +291,7 @@ console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
 console.log( "My Compute ID: " + myComputeID );
 
-if( participated == 0 ){
-	electionPOST();
-}
+electionPOST();
 
 }
 
