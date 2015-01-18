@@ -394,7 +394,7 @@ app.post('/do_election', function(req, res) {
 		 console.log( "I Win!!! " + timeStamp );
 		 winnerPOST( my_group.indexOf( my_ip ) );
 	}
-	else if( ID < myLeader )
+	else if( ID > myLeader )
 	{
 	
 	    /* Do Pass this Compute ID */
