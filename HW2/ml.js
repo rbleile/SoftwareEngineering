@@ -211,11 +211,11 @@ console.log("ISHDVBLHKDKL lug EJLSVBDfhjrH");
 
 //myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
 //myLeader = myComputeID;
-
+var messageId = 0;
 function electionPOST( )
 {
 
-  var post_data = { computeID : myLeader };		
+  var post_data = { computeID : myLeader, "messaseId", messaseId };		
         
 	var dataString = JSON.stringify( post_data );
 
@@ -251,6 +251,7 @@ function electionPOST( )
   post_request.end();
 
   console.log("Sending Election POST");
+  messaseId++;
 }
 
 function winnerPOST( winningID, winningVal )
