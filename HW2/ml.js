@@ -254,6 +254,61 @@ function electionPOST( )
   messageId++;
 }
 
+//Election Passing
+app.post('/do_election', function(req, res) {
+
+
+  var the_body = req.body;  //see connect package above
+  console.log ( "Election token received: " + JSON.stringify( the_body) );
+
+  res.json(the_body);
+
+  var ID = the_body.computeID;
+  
+  if( ID == myComputeID )
+  {
+    /* Pass win Message */
+    console.log("received my own token back. participated = " + participated);
+    if( participated == 1 )
+    {
+     console.log( "I Win!!! ");
+     participated = 0;
+     winnerPOST( my_group.indexOf( my_ip ), myLeader );
+    }
+     
+  }
+  else if( ID < myLeader )
+  {
+  
+    /* Do Pass this Compute ID */
+    console.log("Passing "+ ID + " " + myLeader );
+    myLeader = ID;
+    if ( participated == 0 )
+    {
+        participated = 1;
+    }
+    electionPOST();
+  }
+  else
+  {
+    console.log("else xx");
+    if( participated == 0 )
+    {
+        console.log("begin participating in new election");
+        participated = 1;
+        electionPOST();
+    }
+    else
+    {   
+        console.log("Dropping "+ ID + " " + myLeader ); 
+    }
+  }
+  
+  console.log("Leaving do election part = " + participated);
+  /* Else don't pass along ( drop out of election ) */
+
+});
+
 function winnerPOST( winningID, winningVal )
 {
   var post_data = { listID : winningID, computeVal : winningVal };
@@ -323,60 +378,7 @@ function debug(txt) {
     return;
 }
 
-//Election Passing
-app.post('/do_election', function(req, res) {
 
-
-	var the_body = req.body;	//see connect package above
-  console.log ( "Election token received: " + JSON.stringify( the_body) );
-
-	res.json(the_body);
-
-	var ID = the_body.computeID;
-	
-	if( ID == myComputeID )
-	{
-	  /* Pass win Message */
-		console.log("received my own token back. participated = " + participated);
-		if( participated == 1 )
-    {
-		 console.log( "I Win!!! ");
-		 participated = 0;
-		 winnerPOST( my_group.indexOf( my_ip ), myLeader );
-		}
-		 
-	}
-	else if( ID < myLeader )
-	{
-	
-	  /* Do Pass this Compute ID */
-		console.log("Passing "+ ID + " " + myLeader );
-		myLeader = ID;
-    if ( participated == 0 )
-		{
-		    participated = 1;
-		    electionPOST();
-		}
-	}
-	else
-	{
-    console.log("else xx");
-		if( participated == 0 )
-		{
-        console.log("begin participating in new election");
-		    participated = 1;
-		    electionPOST();
-		}
-		else
-		{		
-		    console.log("Dropping "+ ID + " " + myLeader ); 
-		}
-	}
-	
-  console.log("Leaving do election part = " + participated);
-	/* Else don't pass along ( drop out of election ) */
-
-});
 
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;	//see connect package above
