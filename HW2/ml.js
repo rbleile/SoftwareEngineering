@@ -250,7 +250,7 @@ function electionPOST( )
 	post_request.write(dataString);
   post_request.end();
 
-  console.log("Sending Election POST");
+  console.log("Sending Election POST " + messageId);
   messageId++;
 }
 
