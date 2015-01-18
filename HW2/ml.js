@@ -209,13 +209,13 @@ function Delay( handicap ){
 
 console.log("ISHDVBLHKDKL lug EJLSVBDfhjrH");
 
-myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
-myLeader = myComputeID;
+//myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
+//myLeader = myComputeID;
 
 function electionPOST( )
 {
 
-    var post_data = { computeID : myLeader };		
+  var post_data = { computeID : myLeader };		
         
 	var dataString = JSON.stringify( post_data );
 
@@ -237,18 +237,18 @@ function electionPOST( )
 		
 		var responceString = '';
 
-        res.on('data', function(data){
+    res.on('data', function(data){
 			responceString += data;
 		});
 
-        res.on('end', function(){
+    res.on('end', function(){
 			var resultObject = JSON.parse(responceString);
 		});
 
 	});
 
 	post_request.write(dataString);
-    post_request.end();
+  post_request.end();
 }
 
 function winnerPOST( winningID, winningVal )
@@ -292,13 +292,14 @@ function winnerPOST( winningID, winningVal )
 function startElection()
 {
 
-console.log( "This is the group at the start of the Election" + my_group );
+  console.log( "This is the group at the start of the Election " + my_group );
 
-console.log( "My Index in Group: " + my_group.indexOf( my_ip ) );
+  console.log( "My Index in Group: " + my_group.indexOf( my_ip ) );
 
-console.log( "My Compute ID: " + myComputeID );
-
-setTimeout( electionPOST, 1000);
+  console.log( "My Compute ID: " + myComputeID );
+  participated = 1;
+  electionPOST();
+  //setTimeout( electionPOST, 1000);
 
 }
 
@@ -324,7 +325,7 @@ app.post('/do_election', function(req, res) {
 
 
 	var the_body = req.body;	//see connect package above
-//	console.log ( "Election token received: " + JSON.stringify( the_body) );
+  console.log ( "Election token received: " + JSON.stringify( the_body) );
 
 	res.json(the_body);
 
@@ -332,10 +333,10 @@ app.post('/do_election', function(req, res) {
 	
 	if( ID == myComputeID )
 	{
-	     /* Pass win Message */
-		 
-		if( participated == 1 ){
-		 
+	  /* Pass win Message */
+		console.log("received my own token back. participated = " + participated);
+		if( participated == 1 )
+    {
 		 console.log( "I Win!!! ");
 		 participated = 0;
 		 winnerPOST( my_group.indexOf( my_ip ), myLeader );
@@ -348,7 +349,7 @@ app.post('/do_election', function(req, res) {
 	    /* Do Pass this Compute ID */
 		console.log("Passing "+ ID + " " + myLeader );
 		myLeader = ID;
-        if ( participated == 0 )
+    if ( participated == 0 )
 		{
 		    participated = 1;
 		    electionPOST();
@@ -380,7 +381,7 @@ app.post('/do_winner', function(req, res) {
 	var ID = the_body.listID;
 	var Val = the_body.computeVal;
 	
-    if( ID != my_group.indexOf( my_ip ) )
+  if( ID != my_group.indexOf( my_ip ) )
 	{
 	    participated = 0;
 	    winnerPOST( ID, Val);
@@ -401,6 +402,8 @@ screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
+  myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
+  myLeader = myComputeID;
   discover();
   setTimeout( startElection, 4000  );
 });
