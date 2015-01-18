@@ -289,11 +289,11 @@ console.log( "This is timeout Callback: " + my_group );
 
 console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
-
-
 console.log( "My Compute ID: " + myComputeID );
 
-setTimeout( electionPOST, 5000 );
+if( participated == 0 ){
+	electionPOST();
+}
 
 }
 
