@@ -170,7 +170,7 @@ function discover()
    }
 }
 
-var myComputeID;
+var myComputeID = -1;
 
 var myLeader;
 
