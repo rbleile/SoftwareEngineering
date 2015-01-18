@@ -346,7 +346,7 @@ app.post('/do_election', function(req, res) {
 	else if( ID < myLeader )
 	{
 	
-	    /* Do Pass this Compute ID */
+	  /* Do Pass this Compute ID */
 		console.log("Passing "+ ID + " " + myLeader );
 		myLeader = ID;
     if ( participated == 0 )
@@ -357,8 +357,10 @@ app.post('/do_election', function(req, res) {
 	}
 	else
 	{
+    console.log("else xx");
 		if( participated == 0 )
 		{
+        console.log("begin participating in new election");
 		    participated = 1;
 		    electionPOST();
 		}
