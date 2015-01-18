@@ -390,9 +390,14 @@ app.post('/do_election', function(req, res) {
 	if( ID == myComputeID )
 	{
 	     /* Pass win Message */
+		 
+		if( participated == 1 ){
+		 
 		 console.log( "I Win!!! " + timeStamp );
 		 participated = 0;
 		 winnerPOST( my_group.indexOf( my_ip ) );
+		}
+		 
 	}
 	else if( ID < myLeader )
 	{
