@@ -290,7 +290,7 @@ console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
 console.log( "My Compute ID: " + myComputeID );
 
-if( my_group.indexOf( my_ip ) == 0 ){
+if( my_group.indexOf( my_ip ) == 3 ){
 
 setTimeout( electionPOST, 5000 );
 
