@@ -373,6 +373,10 @@ function PostPrimeToken( num, count, time )
 
 //Election Passing
 app.post('/do_election', function(req, res) {
+
+    var date = new Date();
+	var timeStamp = date.getTime();
+
 	var the_body = req.body;	//see connect package above
 	console.log ( "Election token received: " + JSON.stringify( the_body) );
 
@@ -383,14 +387,20 @@ app.post('/do_election', function(req, res) {
 	if( ID == myComputeID )
 	{
 	     /* Pass win Message */
-		 console.log( "I Win!!!" );
+		 console.log( "I Win!!!" + timeStamp );
 		 winnerPOST( my_group.indexOf( my_ip ) );
 	}
 	else if( ID < myLeader )
 	{
+	
 	    /* Do Pass this Compute ID */
+		console.log("Passing "+ ID + " " + myLeader + timeStamp );
 		myLeader = ID;
 		electionPOST();
+	}
+	else
+	{
+		console.log("Dropping "+ ID + " " + myLeader + " " + timeStamp);
 	}
 	
 	/* Else don't pass along ( drop out of election ) */
