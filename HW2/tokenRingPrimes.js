@@ -380,7 +380,7 @@ app.post('/do_election', function(req, res) {
 
 	var ID = the_body.computeID;
 	
-	if( ID == myLeader )
+	if( ID == myComputeID )
 	{
 	     /* Pass win Message */
 		 console.log( "I Win!!!" );
