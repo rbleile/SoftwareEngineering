@@ -294,7 +294,7 @@ console.log( "My Index in Group: " + my_group.indexOf( my_ip ) );
 
 console.log( "My Compute ID: " + myComputeID );
 
-electionPOST();
+setTimeout( electionPOST, 1000);
 
 }
 
