@@ -391,6 +391,7 @@ app.post('/do_election', function(req, res) {
 	{
 	     /* Pass win Message */
 		 console.log( "I Win!!! " + timeStamp );
+		 participated = 0;
 		 winnerPOST( my_group.indexOf( my_ip ) );
 	}
 	else if( ID < myLeader )
@@ -421,11 +422,10 @@ app.post('/do_winner', function(req, res) {
 	res.json(the_body);
 
 	var ID = the_body.listID;
-
-	participated = 0;
 	
     if( ID != my_group.indexOf( my_ip ) )
 	{
+	    participated = 0;
 	    winnerPOST( ID );
 	}	
 
