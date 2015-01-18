@@ -246,9 +246,9 @@ function electionPOST( )
     post_request.end();
 }
 
-function winnerPOST( winningID )
+function winnerPOST( winningID, winningVal )
 {
-    var post_data = { listID : winningID };
+    var post_data = { listID : winningID, computeVal : winningVal };
         
 	var dataString = JSON.stringify( post_data );
 
@@ -394,7 +394,7 @@ app.post('/do_election', function(req, res) {
 		 
 		 console.log( "I Win!!! ");
 		 participated = 0;
-		 winnerPOST( my_group.indexOf( my_ip ) );
+		 winnerPOST( my_group.indexOf( my_ip ), Val );
 		}
 		 
 	}
@@ -433,11 +433,12 @@ app.post('/do_winner', function(req, res) {
 	res.json(the_body);
 
 	var ID = the_body.listID;
+	var Val = the_body.computeVal;
 	
     if( ID != my_group.indexOf( my_ip ) )
 	{
 	    participated = 0;
-	    winnerPOST( ID );
+	    winnerPOST( ID, Val);
 	}	
 
 });
