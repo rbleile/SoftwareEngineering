@@ -203,14 +203,15 @@ function Delay( handicap ){
 	
 }
 
+console.log("ISHDVBLHKDKL lug EJLSVBDfhjrH");
+
 myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
 myLeader = myComputeID;
-winnerComputeValue = myComputeID;
 
 function electionPOST( )
 {
 
-    var post_data = { computeID : myLeader, computeValue : winnerComputeValue };		
+    var post_data = { computeID : myLeader };		
         
 	var dataString = JSON.stringify( post_data );
 
@@ -384,7 +385,6 @@ app.post('/do_election', function(req, res) {
 	res.json(the_body);
 
 	var ID = the_body.computeID;
-	var Val= the_body.computeValue;
 	
 	if( ID == myComputeID )
 	{
@@ -394,7 +394,7 @@ app.post('/do_election', function(req, res) {
 		 
 		 console.log( "I Win!!! ");
 		 participated = 0;
-		 winnerPOST( my_group.indexOf( my_ip ), Val );
+		 winnerPOST( my_group.indexOf( my_ip ), myLeader );
 		}
 		 
 	}
@@ -404,7 +404,6 @@ app.post('/do_election', function(req, res) {
 	    /* Do Pass this Compute ID */
 		console.log("Passing "+ ID + " " + myLeader );
 		myLeader = ID;
-		winnerComputeValue = Val;
         if ( participated == 0 )
 		{
 		    participated = 1;
@@ -413,12 +412,14 @@ app.post('/do_election', function(req, res) {
 	}
 	else
 	{
-		console.log("Dropping "+ ID + " " + myLeader );
-
 		if( participated == 0 )
 		{
-		   participated = 1;
+		    participated = 1;
 		    electionPOST();
+		}
+		else
+		{		
+		    console.log("Dropping "+ ID + " " + myLeader ); 
 		}
 	}
 	
@@ -516,7 +517,7 @@ screen.render();
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
   discover();
-  setTimeout( startElection, 10000  );
+  setTimeout( startElection, 4000  );
 });
 
 
