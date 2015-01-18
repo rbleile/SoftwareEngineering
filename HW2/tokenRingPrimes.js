@@ -176,17 +176,17 @@ var myLeader;
 
 function Delay( handicap ){
 
-	var computeSize = 10000;
+	var computeSize = 1000000;
 
 	var currentTime = new Date();
 
 	var start = currentTime.getTime();
 
-	var value = 0.0;
+	var value1 = 0.0;
 
 	for( var i = 0; i < computeSize; i++ )
 	{
-		value += value + Math.sqrt( i*i(i+100/i*2) );
+		value1 += value1 + Math.sqrt( i*i-(i+100/i*2) );
 	}
 
 	var currentTime2 = new Date();
@@ -282,7 +282,7 @@ console.log( "This is timeout Callback: " + my_group );
 
 console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
-myComputeID = Delay( Integer.parseInt( process.argv[2] ) );
+myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
 myLeader = myComputeID;
 
 setTimeout( electionPOST, 5000 );
