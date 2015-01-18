@@ -409,6 +409,12 @@ app.post('/do_election', function(req, res) {
 	else
 	{
 		console.log("Dropping "+ ID + " " + myLeader + " " + timeStamp);
+
+		if( participated == 0 )
+		{
+		   participated = 1;
+		    electionPOST();
+		}
 	}
 	
 	/* Else don't pass along ( drop out of election ) */
