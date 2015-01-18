@@ -200,6 +200,9 @@ function Delay( handicap ){
 	
 }
 
+myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
+myLeader = myComputeID;
+
 function electionPOST( )
 {
     var post_data = { computeID : myLeader };		
@@ -283,8 +286,7 @@ console.log( "This is timeout Callback: " + my_group );
 
 console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
-myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
-myLeader = myComputeID;
+
 
 console.log( "My Compute ID: " + myComputeID );
 
