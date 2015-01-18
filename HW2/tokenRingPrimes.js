@@ -290,7 +290,11 @@ console.log( "My ID: " + my_group.indexOf( my_ip ) );
 
 console.log( "My Compute ID: " + myComputeID );
 
+if( my_group.indexOf( my_ip ) == 0 ){
+
 setTimeout( electionPOST, 5000 );
+
+}
 
 }
 
@@ -387,14 +391,14 @@ app.post('/do_election', function(req, res) {
 	if( ID == myComputeID )
 	{
 	     /* Pass win Message */
-		 console.log( "I Win!!!" + timeStamp );
+		 console.log( "I Win!!! " + timeStamp );
 		 winnerPOST( my_group.indexOf( my_ip ) );
 	}
 	else if( ID < myLeader )
 	{
 	
 	    /* Do Pass this Compute ID */
-		console.log("Passing "+ ID + " " + myLeader + timeStamp );
+		console.log("Passing "+ ID + " " + myLeader + " " + timeStamp );
 		myLeader = ID;
 		electionPOST();
 	}
