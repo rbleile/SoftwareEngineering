@@ -249,6 +249,8 @@ function electionPOST( )
 
 	post_request.write(dataString);
   post_request.end();
+
+  console.log("Sending Election POST");
 }
 
 function winnerPOST( winningID, winningVal )
