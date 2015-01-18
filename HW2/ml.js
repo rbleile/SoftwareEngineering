@@ -368,6 +368,7 @@ app.post('/do_election', function(req, res) {
 		}
 	}
 	
+  console.log("Leaving do election part = " + participated);
 	/* Else don't pass along ( drop out of election ) */
 
 });
