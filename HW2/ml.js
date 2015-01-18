@@ -215,7 +215,7 @@ var messageId = 0;
 function electionPOST( )
 {
 
-  var post_data = { computeID : myLeader, "messaseId", messaseId };		
+  var post_data = { computeID : myLeader, "messaseId": messaseId };		
         
 	var dataString = JSON.stringify( post_data );
 
