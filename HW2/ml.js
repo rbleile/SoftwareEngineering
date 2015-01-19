@@ -252,9 +252,9 @@ app.post('/do_election', function(req, res) {
   /* Else don't pass along ( drop out of election ) */
 });
 
-function winnerPOST( winningID, winningVal )
+function winnerPOST( winningIP, winningVal )
 {
-  var post_data = { listID : winningID, computeVal : winningVal };
+  var post_data = { listIP : winningIP, computeVal : winningVal };
         
 	var dataString = JSON.stringify( post_data );
 
@@ -297,13 +297,13 @@ app.post('/do_winner', function(req, res) {
 
   res.json(the_body);
 
-  var ID = the_body.listID;
+  var IP = the_body.listIP;
   var Val = the_body.computeVal;
   
-  if( ID != tokenRing.getMyIPIndex() )
+  if( IP != tokenRing.getMyIP() )
   {
     participated = 0;
-    winnerPOST( ID, Val);
+    winnerPOST( IP, Val);
   } 
 
 });
