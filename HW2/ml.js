@@ -227,9 +227,9 @@ app.post('/do_election', function(req, res) {
 		}
 
 		/* Do Pass this Compute ID */
-    	if ( participant == 0 ) 
+    	if ( participated == 0 ) 
     	{
-			participant = 1;
+			participated = 1;
 			electionPOST(currBestComputeID);
 			console.log("Forwarding incomingComputeID: " + incomingComputeID );
 		}
@@ -237,14 +237,14 @@ app.post('/do_election', function(req, res) {
 	else if ( incomingComputeID > myComputeID )
 	//else if ( ID > currBestComputeID) { forward incoming packet }
 	{
-		if ( participant == 0 )
+		if ( participated == 0 )
 		{
-			participant = 1;
+			participated = 1;
 			console.log("Begin participating in new election: " + myComputeID);
 			electionPOST(myComputeID);
 			currBestComputeID = myComputeID;
 		}
-		else if ( participant == 1 ) 
+		else if ( participated == 1 ) 
 		{   
 			console.log("Dropping " + incomingComputeID ); 
 		}
