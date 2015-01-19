@@ -5,6 +5,7 @@ var connect = require("connect");
 var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
+var tokenRing = require('./TokenRingManager');
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
@@ -41,52 +42,7 @@ var box = blessed.box({
 // Append our box to the screen.
 screen.append(box);
 
-
-
 app.set('port', process.env.PORT || 3000);
-
-var my_group = [];	// replace with real IPs of group
-
-var my_index = 0;	// replace with index of my IP in my_group
-
-
-/****************Discovery***********************/
-var my_ip;
-
-//find ip address
-var os = require('os');
-var ifaces = os.networkInterfaces();
-
-//scan NICs
-Object.keys(ifaces).forEach(function (ifname) {
-  var alias = 0
-    ;
-    ifaces[ifname].forEach(function (iface) {
-    if ('IPv4' !== iface.family || iface.internal !== false) {
-      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
-      return;
-    }
-
-    my_ip = iface.address;
-  });
-  my_group[0] = my_ip;
-});
-
-function addIp(ip_address)
-{
-  if(my_group.indexOf(ip_address) == -1) 
-  {
-    my_group[my_group.length] = ip_address;
-    if(debug) console.log("New node at " + ip_address);
-    my_group.sort();
-  }
-  else
-  {
-    if(debug) console.log("Already discovered "+ ip_address);
-  }
-
-  if(debug) console.log("Current group : " + my_group);
-}
 
 //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // handle discovery requests
@@ -94,14 +50,14 @@ app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
   if(debug) console.log ( "discovery received: " + JSON.stringify( the_body) );
 
-  addIp(the_body.ip);
+  tokenRing.addRingMember(the_body.ip);
 
-  res.json({"ip": my_ip, "body" : the_body});
+  res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
 function PostDiscover(ip_address)
 {
-  var post_data = { ip : my_ip };    
+  var post_data = { ip : tokenRing.getMyIP() };    
         
   var dataString = JSON.stringify( post_data );
 
@@ -130,7 +86,7 @@ function PostDiscover(ip_address)
     res.on('end', function(){
       var resultObject = JSON.parse(responceString);
       console.log(resultObject);
-      addIp(resultObject.ip);
+      tokenRing.addRingMember(resultObject.ip);
     });
 
   });
@@ -153,19 +109,17 @@ function discover()
    //we are assuming a subnet mask of 255.255.255.0
 
    //break it up to extract what we need 
-   var ip_add = my_ip.split(".");
+   var ip_add = tokenRing.getMyIP().split(".");
    //put it back together without the last part
    var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
    if(debug) console.log("Base ip address : " +  base_add);
 
    for(var i = start_ip; i < end_ip; i++)
-   {
-      
+   {      
       var ip = base_add + i.toString();
-      //if(debug) console.log("i " + i + " ip " + ip + " " + my_group.indexOf(ip));
-      if(my_group.indexOf(ip) == -1)
+
+      if(!tokenRing.isMember(ip))
       {
-        //if(debug) console.log("trying ip " + ip);
         PostDiscover(ip);
       }
    }
@@ -174,10 +128,7 @@ function discover()
 /***********End Discovery***********************/
 
 var myComputeID = -1;
-
 var myLeader;
-var winnerComputeValue;
-
 var participated = 0;
 
 function Delay( handicap ){
@@ -206,11 +157,6 @@ function Delay( handicap ){
 	
 }
 
-
-console.log("ISHDVBLHKDKL lug EJLSVBDfhjrH");
-
-//myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
-//myLeader = myComputeID;
 var messageId = 0;
 function electionPOST( )
 {
@@ -225,7 +171,7 @@ function electionPOST( )
 	};
 
 	var post_options = {
-		host: my_group[ ( my_group.indexOf( my_ip ) + 1 ) % my_group.length ],
+		host: tokenRing.getNeighborIP(),
 		port: '3000',
 		path: '/do_election',
 		method: 'POST',
@@ -273,7 +219,7 @@ app.post('/do_election', function(req, res) {
     {
      console.log( "I Win!!! ");
      participated = 0;
-     winnerPOST( my_group.indexOf( my_ip ), myLeader );
+     winnerPOST(tokenRing.getMyIPIndex(), myLeader );
     }
      
   }
@@ -321,7 +267,7 @@ function winnerPOST( winningID, winningVal )
 	};
 
 	var post_options = {
-		host: my_group[ ( my_group.indexOf( my_ip ) + 1 ) % my_group.length ],
+		host: tokenRing.getNeighborIP(),
 		port: '3000',
 		path: '/do_winner',
 		method: 'POST',
@@ -344,15 +290,33 @@ function winnerPOST( winningID, winningVal )
 	});
 
 	post_request.write(dataString);
-    post_request.end();
+  post_request.end();
 }
+
+
+app.post('/do_winner', function(req, res) {
+  var the_body = req.body;  //see connect package above
+  console.log ( "Winner token received: " + JSON.stringify( the_body) );
+
+  res.json(the_body);
+
+  var ID = the_body.listID;
+  var Val = the_body.computeVal;
+  
+  if( ID != tokenRing.getMyIPIndex() )
+  {
+    participated = 0;
+    winnerPOST( ID, Val);
+  } 
+
+});
 
 function startElection()
 {
 
-  console.log( "This is the group at the start of the Election " + my_group );
+  console.log( "This is the group at the start of the Election " + tokenRing.getRing() );
 
-  console.log( "My Index in Group: " + my_group.indexOf( my_ip ) );
+  console.log( "My Index in Group: " + tokenRing.getMyIPIndex() );
 
   console.log( "My Compute ID: " + myComputeID );
   participated = 1;
@@ -364,38 +328,22 @@ function startElection()
 
 
 
-box.setContent('this node (' + my_ip + ') will attempt to send its token to other nodes on network. ');
+box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
 
 
 
-var all_debug_txt = "";
+// var all_debug_txt = "";
 
-function debug(txt) {
-    all_debug_txt = all_debug_txt + txt;
-    box.setContent(all_debug_txt);
-    screen.render();
-    return;
-}
+// function debug(txt) {
+//     all_debug_txt = all_debug_txt + txt;
+//     box.setContent(all_debug_txt);
+//     screen.render();
+//     return;
+// }
 
 
 
-app.post('/do_winner', function(req, res) {
-	var the_body = req.body;	//see connect package above
-	console.log ( "Winner token received: " + JSON.stringify( the_body) );
-
-	res.json(the_body);
-
-	var ID = the_body.listID;
-	var Val = the_body.computeVal;
-	
-  if( ID != my_group.indexOf( my_ip ) )
-	{
-	    participated = 0;
-	    winnerPOST( ID, Val);
-	}	
-
-});
 
 // Quit on Escape, q, or Control-C.
 screen.key(['escape', 'q', 'C-c'], function(ch, key) {
