@@ -56,7 +56,7 @@ function getNeighborIndex()
 
 function getNeighborIP()
 {
-  return tokenRing[ getMyIPIndex ];
+  return tokenRing[ getNeighborIndex() ];
 }
 
 function addRingMember(ip_address)
