@@ -310,13 +310,17 @@ app.post('/do_winner', function(req, res) {
 
 function startElection()
 {
-
   console.log( "This is the group at the start of the Election " + tokenRing.getRing() );
 
   console.log( "My Index in Group: " + tokenRing.getMyIPIndex() );
 
   console.log( "My Compute ID: " + myComputeID );
+  if ( tokenRing.getMyIPIndex() != 0 )
+  {
+	  return;
+  }
   participated = 1;
+
   //electionPOST( myComputeID );
   setTimeout( electionPOST( myComputeID ), 3000);
 
