@@ -318,10 +318,6 @@ function startElection()
   console.log( "My Index in Group: " + tokenRing.getMyIPIndex() );
 
   console.log( "My Compute ID: " + myComputeID );
-  if ( tokenRing.getMyIPIndex() != 0 )
-  {
-	  return;
-  }
   participated = 1;
 
   //electionPOST( myComputeID );
