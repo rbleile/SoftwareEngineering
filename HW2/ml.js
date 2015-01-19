@@ -300,7 +300,7 @@ app.post('/do_winner', function(req, res) {
   var IP = the_body.listIP;
   var Val = the_body.computeVal;
   
-  if( IP != tokenRing.getMyIP() )
+  if( myComputeID != Val )
   {
     participated = 0;
     winnerPOST( IP, Val);
