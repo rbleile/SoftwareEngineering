@@ -160,6 +160,9 @@ function Delay( handicap ){
 function electionPOST( IDtoPass )
 {
 
+	if ( !initialElectionParticipation )
+		initialElectionParticipation = true;
+	
   var post_data = { computeID : IDtoPass };		
         
 	var dataString = JSON.stringify( post_data );
@@ -321,12 +324,18 @@ function startElection()
   }
   participated = 1;
 
-  electionPOST( myComputeID );
-  //setTimeout( electionPOST( myComputeID ), 3000);
+  //electionPOST( myComputeID );
+  setTimeout( initialElection(), 3000);
 
 }
 
+var initialElectionParticipation = false;
 
+function initialElection()
+{
+	if (!initialElectionParticipation)
+		electionPOST ( myComputeID );
+}
 
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
