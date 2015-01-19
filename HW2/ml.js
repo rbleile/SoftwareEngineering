@@ -227,7 +227,7 @@ app.post('/do_election', function(req, res) {
   {
   
     /* Do Pass this Compute ID */
-    console.log("Passing "+ ID + " " + myLeader );
+    console.log("Passing "+ ID + " " + ID );
     myLeader = ID;
     if ( participated == 0 )
     {
