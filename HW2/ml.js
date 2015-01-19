@@ -321,8 +321,8 @@ function startElection()
   }
   participated = 1;
 
-  //electionPOST( myComputeID );
-  setTimeout( electionPOST( myComputeID ), 3000);
+  electionPOST( myComputeID );
+  //setTimeout( electionPOST( myComputeID ), 3000);
 
 }
 
