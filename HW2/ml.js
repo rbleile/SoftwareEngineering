@@ -157,11 +157,10 @@ function Delay( handicap ){
 	return time + handicap;
 }
 
-var messageId = 0;
 function electionPOST( IDtoPass )
 {
 
-  var post_data = { computeID : IDtoPass, "messageId": messageId };		
+  var post_data = { computeID : IDtoPass };		
         
 	var dataString = JSON.stringify( post_data );
 
@@ -195,9 +194,6 @@ function electionPOST( IDtoPass )
 
 	post_request.write(dataString);
   post_request.end();
-
-  console.log("Sending Election POST " + post_data);
-  messageId++;
 }
 
 //Election Passing
@@ -205,7 +201,7 @@ app.post('/do_election', function(req, res) {
 
 
   var the_body = req.body;  //see connect package above
-  console.log ( "Election token received: " + JSON.stringify( the_body) );
+  //console.log ( "Election token received: " + JSON.stringify( the_body) );
 
   res.json(the_body);
 
@@ -214,10 +210,12 @@ app.post('/do_election', function(req, res) {
 	if( incomingComputeID == myComputeID )
 	{
 		/* Pass win Message */
-		console.log("Received my own token back. participated = " + participated);
-		console.log( "I Win!!! ");
+		//console.log("Received my own token back. participated = " + participated);
+		console.log( "I win!!! ");
 		participated = 0;
-		winnerPOST(tokenRing.getMyIPIndex(), myComputeID );
+		// Passing IP instead of index because IP will always be unique. 
+		//winnerPOST(tokenRing.getMyIPIndex(), myComputeID );
+		winnerPOST(tokenRing.getMyIP(), myComputeID );
 	}
 	else if( incomingComputeID < myComputeID )
 	{
@@ -232,7 +230,7 @@ app.post('/do_election', function(req, res) {
 			participated = 1;
 		}
 		electionPOST( incomingComputeID );
-		console.log("Forwarding incomingComputeID: " + incomingComputeID );
+		//console.log("Forwarding incomingComputeID: " + incomingComputeID );
 	}
 	else if ( incomingComputeID > myComputeID )
 	//else if ( ID > currBestComputeID) { forward incoming packet }
@@ -240,17 +238,17 @@ app.post('/do_election', function(req, res) {
 		if ( participated == 0 )
 		{
 			participated = 1;
-			console.log("Begin participating in new election: " + myComputeID);
+			//console.log("Begin participating in new election: " + myComputeID);
 			electionPOST(myComputeID);
 			currBestComputeID = myComputeID;
 		}
 		else if ( participated == 1 ) 
 		{   
-			console.log("Dropping " + incomingComputeID ); 
+			//console.log("Dropping " + incomingComputeID ); 
 		}
 	}
   
-  console.log("Leaving do election part = " + participated);
+  //console.log("Leaving do election part = " + participated);
   /* Else don't pass along ( drop out of election ) */
 });
 
@@ -295,7 +293,7 @@ function winnerPOST( winningID, winningVal )
 
 app.post('/do_winner', function(req, res) {
   var the_body = req.body;  //see connect package above
-  console.log ( "Winner token received: " + JSON.stringify( the_body) );
+  console.log ( "Winner token received. Election over.\n" + JSON.stringify(the_body));
 
   res.json(the_body);
 
