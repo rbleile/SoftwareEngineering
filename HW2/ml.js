@@ -230,9 +230,9 @@ app.post('/do_election', function(req, res) {
     	if ( participated == 0 ) 
     	{
 			participated = 1;
-			electionPOST(currBestComputeID);
-			console.log("Forwarding incomingComputeID: " + incomingComputeID );
 		}
+		electionPOST( incomingComputeID );
+		console.log("Forwarding incomingComputeID: " + incomingComputeID );
 	}
 	else if ( incomingComputeID > myComputeID )
 	//else if ( ID > currBestComputeID) { forward incoming packet }
