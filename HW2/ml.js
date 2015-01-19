@@ -103,8 +103,8 @@ function discover()
 {
    if(debug) console.log("Starting Discovery");
    //limit the scanning range
-   var start_ip = 1;
-   var end_ip   = 20;
+   var start_ip = 100;
+   var end_ip   = 120;
    
    //we are assuming a subnet mask of 255.255.255.0
 
