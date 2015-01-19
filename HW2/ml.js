@@ -128,7 +128,7 @@ function discover()
 /***********End Discovery***********************/
 
 var myComputeID = -1;
-var myLeader;
+var currBestComputeID = 1000000000;
 var participated = 0;
 
 function Delay( handicap ){
@@ -152,16 +152,16 @@ function Delay( handicap ){
 
 	var time = end - start;
 
-//	return handicap;
+	currBestComputeID = myComputeID;
+
 	return time + handicap;
-	
 }
 
 var messageId = 0;
-function electionPOST( )
+function electionPOST( IDtoPass )
 {
 
-  var post_data = { computeID : myLeader, "messaseId": messageId };		
+  var post_data = { computeID : IDtoPass, "messageId": messageId };		
         
 	var dataString = JSON.stringify( post_data );
 
@@ -196,7 +196,7 @@ function electionPOST( )
 	post_request.write(dataString);
   post_request.end();
 
-  console.log("Sending Election POST " + messageId);
+  console.log("Sending Election POST " + post_data);
   messageId++;
 }
 
@@ -209,50 +209,49 @@ app.post('/do_election', function(req, res) {
 
   res.json(the_body);
 
-  var ID = the_body.computeID;
+  var incomingComputeID = the_body.computeID;
   
-  if( ID == myComputeID )
-  {
-    /* Pass win Message */
-    console.log("received my own token back. participated = " + participated);
-    if( participated == 1 )
-    {
-     console.log( "I Win!!! ");
-     participated = 0;
-     winnerPOST(tokenRing.getMyIPIndex(), myLeader );
-    }
-     
-  }
-  else if( ID < myLeader )
-  {
-  
-    /* Do Pass this Compute ID */
-    console.log("Passing "+ ID + " " + ID );
-    myLeader = ID;
-    if ( participated == 0 )
-    {
-        participated = 1;
-    }
-    electionPOST();
-  }
-  else
-  {
-    console.log("else xx");
-    if( participated == 0 )
-    {
-        console.log("begin participating in new election");
-        participated = 1;
-        electionPOST();
-    }
-    else
-    {   
-        console.log("Dropping "+ ID + " " + myLeader ); 
-    }
-  }
+	if( incomingComputeID == myComputeID )
+	{
+		/* Pass win Message */
+		console.log("Received my own token back. participated = " + participated);
+		console.log( "I Win!!! ");
+		participated = 0;
+		winnerPOST(tokenRing.getMyIPIndex(), myComputeID );
+	}
+	else if( incomingComputeID < myComputeID )
+	{
+		if ( incomingComputeID < currBestComputeID )
+		{
+			currBestComputeID = incomingComputeID;
+		}
+
+		/* Do Pass this Compute ID */
+    	if ( participant == 0 ) 
+    	{
+			participant = 1;
+			electionPOST(currBestComputeID);
+			console.log("Forwarding incomingComputeID: " + incomingComputeID );
+		}
+	}
+	else if ( incomingComputeID > myComputeID )
+	//else if ( ID > currBestComputeID) { forward incoming packet }
+	{
+		if ( participant == 0 )
+		{
+			participant = 1;
+			console.log("Begin participating in new election: " + myComputeID);
+			electionPOST(myComputeID);
+			currBestComputeID = myComputeID;
+		}
+		else if ( participant == 1 ) 
+		{   
+			console.log("Dropping " + incomingComputeID ); 
+		}
+	}
   
   console.log("Leaving do election part = " + participated);
   /* Else don't pass along ( drop out of election ) */
-
 });
 
 function winnerPOST( winningID, winningVal )
@@ -320,8 +319,8 @@ function startElection()
 
   console.log( "My Compute ID: " + myComputeID );
   participated = 1;
-  electionPOST();
-  //setTimeout( electionPOST, 1000);
+  //electionPOST( myComputeID );
+  setTimeout( electionPOST( myComputeID ), 3000);
 
 }
 
@@ -359,7 +358,7 @@ screen.render();
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
   myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
-  myLeader = myComputeID;
+  currBestComputeID = myComputeID;
   discover();
   setTimeout( startElection, 4000  );
 });
