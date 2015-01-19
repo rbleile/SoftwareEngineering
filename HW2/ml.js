@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
-
+tokenRing.debugMessages(true);
 // Create a screen object.
 var screen = blessed.screen();
 
