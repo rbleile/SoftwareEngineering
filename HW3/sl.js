@@ -191,55 +191,12 @@ function generalPOST ( genHost, genPath, post_data )
 			var resultObject = JSON.parse(responseString);
 		});
 
+
 	});
 
 	post_request.write(dataString);
 	post_request.end();
 }
-
-/*
- * Commenting out and replacing with a generalPOST function
- * 
-function electionPOST( IDtoPass )
-{
-	if ( !initialElectionParticipation )
-		initialElectionParticipation = true;
-	
-	var post_data = { computeID : IDtoPass };		
-        
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: tokenRing.getNeighborIP(),
-		port: '3000',
-		path: '/do_election',
-		method: 'POST',
-		headers: headers
-	};
-	
-	var post_request = http.request(post_options, function(res) {
-		res.setEncoding('utf-8');
-		
-		var responceString = '';
-
-		res.on('data', function(data){
-				responceString += data;
-		});
-
-		res.on('end', function(){
-			var resultObject = JSON.parse(responceString);
-		});
-	});
-
-	post_request.write(dataString);
-	post_request.end();
-}
-*/
 
 //Election Passing
 app.post('/do_election', function(req, res) {
@@ -261,9 +218,10 @@ app.post('/do_election', function(req, res) {
 		participated = 0;
 
 		// Passing IP instead of index because IP will always be unique. 
-		//winnerPOST(tokenRing.getMyIPIndex(), myComputeID );
-		//winnerPOST(tokenRing.getMyIP(), myComputeID );
-		var post_data = { listIP : tokenRing.getMyIP(), computeVal : myComputeID };
+
+		var post_data = { listIP : tokenRing.getMyIP(),
+						  computeVal : myComputeID 
+		                };
 		generalPOST( tokenRing.getNeighborIP(), '/do_winner', post_data );
 	}
 	else if ( incomingComputeID > myComputeID )
@@ -280,22 +238,20 @@ app.post('/do_election', function(req, res) {
 		}
 
 		//electionPOST( incomingComputeID );
-		var post_data = { computeID : incomingComputeID };		
-		generalPOST (tokenRing.getNeighborIP(), 'do_election', post_data );
+		var post_data = { computeID : incomingComputeID };
+		generalPOST (tokenRing.getNeighborIP(), '/do_election', post_data );
 
 		//console.log("Forwarding incomingComputeID: " + incomingComputeID );
 	}
-	else if ( incomingComputeID < myComputeID )
-	//else if ( ID > currBestComputeID) { forward incoming packet }
+	else if ( incomingComputeID < myComputeID ) //forward incoming packet 
 	{
 		if ( participated == 0 )
 		{
 			participated = 1;
 			//console.log("Begin participating in new election: " + myComputeID);
 			
-			//electionPOST( myComputeID );
 			var post_data = { computeID : myComputeID };		
-			generalPOST( tokenRing.getNeighborIP(), 'do_election', post_data );
+			generalPOST( tokenRing.getNeighborIP(), '/do_election', post_data );
 			
 			currBestComputeID = myComputeID;
 		}
@@ -309,56 +265,11 @@ app.post('/do_election', function(req, res) {
 	/* Else don't pass along ( drop out of election ) */
 });
 
-/*
- * Commenting out and replacing with a generalPOST function
- * 
-function winnerPOST( winningIP, winningVal )
-{
-	var post_data = { listIP : winningIP, computeVal : winningVal };
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: tokenRing.getNeighborIP(),
-		port: '3000',
-		path: '/do_winner',
-		method: 'POST',
-		headers: headers
-	};
-
-	var post_request = http.request(post_options, function(res){
-		res.setEncoding('utf-8');
-		
-		var responceString = '';
-
-        res.on('data', function(data){
-			responceString += data;
-		});
-
-        res.on('end', function(){
-			var resultObject = JSON.parse(responceString);
-		});
-
-	});
-
-	post_request.write(dataString);
-	post_request.end();
-}
-*/
-
-
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;  //see connect package above
 	console.log ( "Winner token received. Election over.\n" + JSON.stringify(the_body));
 
 	res.json(the_body);
-
-	box.style.bg = 'blue';
-	screen.render();
 
 	var IP = the_body.listIP;
 	var Val = the_body.computeVal;
@@ -366,25 +277,22 @@ app.post('/do_winner', function(req, res) {
 	if( myComputeID != Val )
 	{
 		participated = 0;
-		//initialElectionParticipation = false;
-
-		//winnerPOST( IP, Val);
+		
+		box.style.bg = 'blue';
+		screen.render();
+		
 		var post_data = { listIP : IP, computeVal : Val };
 		generalPOST( tokenRing.getNeighborIP(), '/do_winner', post_data );
 	} 
 	else
 	{
-		//initialElectionParticipation = false;
 		box.style.bg = 'green';
 		screen.render(); 
-	  }
+	}
 });
 
 function startElection()
 {
-	box.style.bg = 'orange';
-	screen.render();
-
 	console.log( "This is the group at the start of the Election " + tokenRing.getRing() );
 
 	console.log( "My Index in Group: " + tokenRing.getMyIPIndex() );
@@ -404,22 +312,12 @@ function initialElection()
 	if (!initialElectionParticipation)
 	{
 		//electionPOST ( myComputeID );
-		generalPOST (tokenRing.getNeighborIP(), 'do_election', post_data );
+		generalPOST (tokenRing.getNeighborIP(), '/do_election', post_data );
 	}
 }
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
-
-
-// var all_debug_txt = "";
-
-// function debug(txt) {
-//     all_debug_txt = all_debug_txt + txt;
-//     box.setContent(all_debug_txt);
-//     screen.render();
-//     return;
-// }
 
 
 // Quit on Escape, q, or Control-C.
