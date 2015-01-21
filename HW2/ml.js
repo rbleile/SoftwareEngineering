@@ -101,6 +101,10 @@ function PostDiscover(ip_address)
 
 function discover()
 {
+
+   box.style.bg = 'red';
+   screen.render();
+
    if(debug) console.log("Starting Discovery");
    //limit the scanning range
    var start_ip = 100;
@@ -208,6 +212,9 @@ app.post('/do_election', function(req, res) {
 
   res.json(the_body);
 
+  box.style.bg = 'yellow';
+  screen.render();
+
   var incomingComputeID = the_body.computeID;
   
 	if( incomingComputeID == myComputeID )
@@ -300,6 +307,9 @@ app.post('/do_winner', function(req, res) {
 
   res.json(the_body);
 
+  box.style.bg = 'blue';
+  screen.render();
+
   var IP = the_body.listIP;
   var Val = the_body.computeVal;
   
@@ -308,11 +318,20 @@ app.post('/do_winner', function(req, res) {
     participated = 0;
     winnerPOST( IP, Val);
   } 
+  else
+  {
+    box.style.bg = 'green';
+    screen.render(); 
+  }
 
 });
 
 function startElection()
 {
+
+  box.style.bg = 'orange';
+  screen.render();
+
   console.log( "This is the group at the start of the Election " + tokenRing.getRing() );
 
   console.log( "My Index in Group: " + tokenRing.getMyIPIndex() );
