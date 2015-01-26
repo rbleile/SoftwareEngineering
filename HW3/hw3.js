@@ -217,7 +217,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 			responseString += data;
 		});
 
-		res.on('error', err);
+		//res.on('error', err);
 
 		//res.on('response', res);
 
