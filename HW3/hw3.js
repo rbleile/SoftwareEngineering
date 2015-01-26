@@ -137,7 +137,7 @@ function discover()
 function keepAlive()
 {
 	var listIPs = tokenRing.getRing();
-	for( var i = 0; i < listIPs.length(); i++) 
+	for( var i = 0; i < listIPs.length; i++) 
 	{
 		var post_data = { myIP : listIPs.getMyIP() };
 		generalPOST ( listIPs.getNeighborIP(), '/do_keepalive', post_data );
