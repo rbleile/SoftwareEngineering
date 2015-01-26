@@ -134,8 +134,6 @@ app.post('/do_pass', function(req, res) {
         //debug("do_pass:done ");
 });
 
-
-
 function isprime(num)
 {
     var i = 0;
