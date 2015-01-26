@@ -89,7 +89,6 @@ function PostDiscover(ip_address)
 			console.log(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
 		});
-
 	});
 
 	post_request.on('error', function(e) {
@@ -102,6 +101,7 @@ function PostDiscover(ip_address)
 }
 
 var keepAliveTimeout = 1000;
+
 function discover() 
 {
 	box.style.bg = 'red';
@@ -184,13 +184,13 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	// check if arg param err does not exist
 	if (typeof(err) != "function")
 	{
-		err = function() {} ;
+		err = function(e) {} ;
 	}
 
 	// check if arg param res does not exist
 	if (typeof(res) != "function")
 	{
-		res = function() {} ;
+		res = function(r) {} ;
 	}
 
 	var dataString = JSON.stringify( post_data );
@@ -219,7 +219,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 		res.on('error', err);
 
-		res.on('response', res);
+		//res.on('response', res);
 
         res.on('end', function(){
 			var resultObject = JSON.parse(responseString);
