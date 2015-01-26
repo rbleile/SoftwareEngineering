@@ -147,6 +147,8 @@ function keepAlive()
 		}
 	}
 	
+	setTimeout( keepAlive, keepAliveTimeout );
+	
 }
 
 function updateTopology() 
