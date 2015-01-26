@@ -78,14 +78,14 @@ function PostDiscover(ip_address)
 	var post_request = http.request(post_options, function(res){
 		res.setEncoding('utf-8');
     
-		var responceString = '';
+		var responseString = '';
 
 		res.on('data', function(data){
-			responceString += data;
+			responseString += data;
 		});
 
 		res.on('end', function(){
-			var resultObject = JSON.parse(responceString);
+			var resultObject = JSON.parse(responseString);
 			console.log(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
 		});
@@ -94,13 +94,14 @@ function PostDiscover(ip_address)
 
 	post_request.on('error', function(e) {
 		// no one is home, do nothing
-		//if(debug) console.log('no one at this address: ' + e.message);
+		if(debug) console.log('no one at this address: ' + e.message);
 	});
 
 	post_request.write(dataString);
 	post_request.end();
 }
 
+var keepAliveTimeout = 1000;
 function discover() 
 {
 	box.style.bg = 'red';
@@ -128,8 +129,25 @@ function discover()
 			PostDiscover(ip);
 		}
 	}
+
+	setTimeout( keepAlive, keepAliveTimeout);
 }
 /***********End Discovery***********************/
+
+function keepAlive()
+{
+	var listIPs = tokenRing.getRing();
+	for( var i = 0; i < listIPs.length(); i++) 
+	{
+		var post_data = { myIP : listIPs.getMyIP() };
+		generalPOST ( listIPs.getNeighborIP(), '/do_keepalive', post_data );
+	}
+}
+
+function updateTopology() 
+{
+	
+}
 
 var myComputeID = -1;
 var currBestComputeID = 1000000000;
@@ -161,8 +179,20 @@ function Delay( handicap )
  * General function to replace separate functions for all different types of
  * posts, e.g. winner, election
  */
-function generalPOST ( genHost, genPath, post_data )
+function generalPOST ( genHost, genPath, post_data, err, res )
 {
+	// check if arg param err does not exist
+	if (typeof(err) != "function")
+	{
+		err = function() {} ;
+	}
+
+	// check if arg param res does not exist
+	if (typeof(res) != "function")
+	{
+		res = function() {} ;
+	}
+
 	var dataString = JSON.stringify( post_data );
 
 	var headers = {
@@ -187,11 +217,13 @@ function generalPOST ( genHost, genPath, post_data )
 			responseString += data;
 		});
 
+		res.on('error', err);
+
+		res.on('response', res);
+
         res.on('end', function(){
 			var resultObject = JSON.parse(responseString);
 		});
-
-
 	});
 
 	post_request.write(dataString);
@@ -251,8 +283,7 @@ app.post('/do_election', function(req, res) {
 			//console.log("Begin participating in new election: " + myComputeID);
 			
 			var post_data = { computeID : myComputeID };		
-			generalPOST( tokenRing.getNeighborIP(), '/do_election', post_data );
-			
+			generalPOST( tokenRing.getNeighborIP(), '/do_election', post_data ); 
 			currBestComputeID = myComputeID;
 		}
 		else if ( participated == 1 ) 
@@ -301,7 +332,8 @@ function startElection()
 	participated = 1;
 
 	//electionPOST( myComputeID );
-	setTimeout( initialElection(), 3000);
+	setTimeout( initialElection, 3000);
+	//maybe initialElection();
 }
 
 var initialElectionParticipation = false;

@@ -75,6 +75,24 @@ function addRingMember(ip_address)
   if(debug) console.log("Current group : " + tokenRing);
 }
 
+/* general remove IP addresses for non-token ring case */
+function removeRingMember(ip_address) 
+{
+  if(tokenRing.indexOf(ip_address) != -1) 
+  {
+	tokenRing.splice(tokenRing.indexOf(ip_address), 1);
+    if(debug) console.log("Removing node at " + ip_address);
+    tokenRing.sort();
+  }
+  else
+  {
+    if(debug) console.log("DNE: "+ ip_address);
+  }
+
+  if(debug) console.log("Current group : " + tokenRing);
+}
+
+/* remove neighbor IP addresses in token ring */
 function removeRingNeigbor()
 {
 
