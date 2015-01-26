@@ -136,6 +136,7 @@ function discover()
 
 function keepAlive()
 {
+	console.log("Calling keepalive " );
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
