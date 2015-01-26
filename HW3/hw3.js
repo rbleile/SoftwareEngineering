@@ -146,6 +146,7 @@ function keepAlive()
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
 		}
 	}
+	
 }
 
 function updateTopology() 
@@ -238,7 +239,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 }
 
 app.post('/do_keepalive', function(req, res) {
-
+res.json(req.body);
 });
 
 //Election Passing
