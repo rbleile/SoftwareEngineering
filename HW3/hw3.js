@@ -140,7 +140,7 @@ function keepAlive()
 	for( var i = 0; i < listIPs.length; i++) 
 	{
 		var post_data = { myIP : i };
-		generalPOST ( listIPs.getNeighborIP(), '/do_keepalive', post_data );
+		generalPOST ( listIPs[i], '/do_keepalive', post_data );
 	}
 }
 
