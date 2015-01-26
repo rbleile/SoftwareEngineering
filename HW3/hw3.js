@@ -93,7 +93,7 @@ function PostDiscover(ip_address)
 
 	post_request.on('error', function(e) {
 		// no one is home, do nothing
-		if(debug) console.log('no one at this address: ' + e.message);
+		//if(debug) console.log('no one at this address: ' + e.message);
 	});
 
 	post_request.write(dataString);
@@ -140,7 +140,10 @@ function keepAlive()
 	for( var i = 0; i < listIPs.length; i++) 
 	{
 		var post_data = { myIP : i };
-		generalPOST ( listIPs[i], '/do_keepalive', post_data );
+		if (listIPs[i] != tokenRing.getMyIP())
+		{
+			generalPOST ( listIPs[i], '/do_keepalive', post_data );
+		}
 	}
 }
 
@@ -181,6 +184,7 @@ function Delay( handicap )
  */
 function generalPOST ( genHost, genPath, post_data, err, res )
 {
+	/*
 	// check if arg param err does not exist
 	if (typeof(err) != "function")
 	{
@@ -192,6 +196,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	{
 		res = function(r) {} ;
 	}
+	*/
 
 	var dataString = JSON.stringify( post_data );
 
@@ -217,18 +222,18 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 			responseString += data;
 		});
 
-		//res.on('error', err);
-
-		//res.on('response', res);
-
         res.on('end', function(){
-			var resultObject = JSON.parse(responseString);
+			//var resultObject = JSON.parse(responseString);
 		});
 	});
 
 	post_request.write(dataString);
 	post_request.end();
 }
+
+app.post('/do_keepalive', function(req, res) {
+
+});
 
 //Election Passing
 app.post('/do_election', function(req, res) {
@@ -347,6 +352,48 @@ function initialElection()
 		generalPOST (tokenRing.getNeighborIP(), '/do_election', post_data );
 	}
 }
+
+/*
+function isprime(num)
+{
+    var i = 0;
+    if (num <= 1) {
+		return false;
+    }
+    for (i = 2; i * i <= num; i = i + 2) {
+		if (num % i == 0) {
+			return false;
+		}
+	}
+    return true;
+}
+
+function computePrimes(n, c, k) 
+{
+    var rightnow = new Date();
+    var start_time = rightnow.getTime();
+    var proceed = true;
+    
+    while (proceed) {
+		n++;
+		if ((n % 2) == 0) continue;
+		if ( isprime(n) ) c++;
+		//-----
+		var rightnow = new Date();
+		if ((rightnow.getTime() - start_time) > k) proceed = false;
+    }
+
+    //Display the number of discovered primes:
+    box.setContent("Primes below " + n + ": " + c + "\nIn " + k*1000 + "seconds");
+    screen.render();
+
+    //TODO: This data needs to get into the JSON object that is xmitted to next node.
+
+    PostPrimeToken(n, c, k);
+
+    return;
+}
+*/
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
