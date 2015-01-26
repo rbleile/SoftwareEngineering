@@ -184,11 +184,16 @@ function Delay( handicap )
  */
 function generalPOST ( genHost, genPath, post_data, err, res )
 {
-	/*
+	
 	// check if arg param err does not exist
 	if (typeof(err) != "function")
 	{
-		err = function(e) {} ;
+		err = function(e) 
+		{
+			console.log("Lost connection to " + genHost + "reomiving from ring");
+			tokenRing.removeRingMember(genHost);
+			
+		} ;
 	}
 
 	// check if arg param res does not exist
@@ -196,7 +201,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	{
 		res = function(r) {} ;
 	}
-	*/
+	
 
 	var dataString = JSON.stringify( post_data );
 
