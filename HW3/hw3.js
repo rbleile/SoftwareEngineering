@@ -235,6 +235,8 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 			//var resultObject = JSON.parse(responseString);
 		});
 	});
+	
+	post_request.on( 'error', err );
 
 	post_request.write(dataString);
 	post_request.end();
