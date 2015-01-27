@@ -103,7 +103,7 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
-var keepAliveTimeout = 1000;
+var keepAliveTimeout = 10000;
 
 function discover() 
 {
@@ -470,7 +470,7 @@ app.post('/do_election', function(req, res) {
 	/* Else don't pass along ( drop out of election ) */
 });
 
-var primesData = { n:3, k:2, t:5000, leadIP:'' };
+var primesData = { n:3, k:2, t:1000, leadIP:'' };
 
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;  //see connect package above
