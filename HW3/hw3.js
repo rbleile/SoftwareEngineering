@@ -308,10 +308,6 @@ app.post('/do_work', function(req, res) {
 });
 
 
-process.on('SIGINT', function (err) { 
-	console.log('Caught exception'); 
-});
-
 
 /*
  * General function to replace separate functions for all different types of
