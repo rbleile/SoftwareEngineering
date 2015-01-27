@@ -223,9 +223,10 @@ function PostPrimeToken()
 
 function SetPrimesData( pd )
 {
-
-	primesData.n = pd.n;
-	primesData.k = pd.k;
+	if ( pd.n > primesData.n){
+		primesData.n = pd.n;
+		primesData.k = pd.k;
+	}
 
 }
 
