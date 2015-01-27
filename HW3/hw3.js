@@ -374,6 +374,8 @@ app.post('/do_election', function(req, res) {
 	/* Else don't pass along ( drop out of election ) */
 });
 
+var bData = { n:3, k:2, t:2000, leadIP:'' };
+
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;  //see connect package above
 	console.log ( "Winner token received. Election over.\n" + JSON.stringify(the_body));
@@ -397,6 +399,11 @@ app.post('/do_winner', function(req, res) {
 	{
 		box.style.bg = 'green';
 		screen.render(); 
+
+		//leader sends prime calculation to first node
+		//CHANGE
+		bData.leadIP = leaderIP;
+		generalPOST( tokenRing.getNeighborIP(), '/do_work', bData );
 	}
 });
 
