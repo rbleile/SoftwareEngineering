@@ -339,7 +339,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		};
 	}
 	
-	try{
 		// check if arg param res does not exist
 		if (typeof(res) != "function")
 		{
@@ -377,14 +376,10 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		
 		post_request.on( 'error', err );
 
+		post_request.on('uncaughtException', function (err) {} );
 		post_request.write(dataString);
 		post_request.end();
-	}
-	catch( er )
-	{
-		err(er);
-	}
-	
+		
 	
 }
 
