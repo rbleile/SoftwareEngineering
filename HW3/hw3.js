@@ -227,7 +227,10 @@ function PostPrimeToken()
 // handle PASS requests
 app.post('/do_work', function(req, res) {
 	var the_body = req.body;	//see connect package above
-	console.log ( "token received: " + JSON.stringify( the_body) );
+	if ( leaderIP == tokenRing.getMyIP() )
+	{
+		console.log ( "token received: " + JSON.stringify( the_body) );
+	}
 
 	box.setContent("Post with body: " + the_body);
 	box.style.bg = 'red';	//red for pass
@@ -237,9 +240,11 @@ app.post('/do_work', function(req, res) {
 	res.json(the_body);
 
 	//var bData = the_body;
-	bData.n = the_body.n;
-	bData.k = the_body.k;
-	bData.t = the_body.t;
+	if (the_body.n > bData.n)
+	{
+		bData.n = the_body.n;
+		bData.k = the_body.k;
+	}
 
 	computePrimes(bData.n, bData.k, bData.t);
 	//debug("do_pass:done ");
