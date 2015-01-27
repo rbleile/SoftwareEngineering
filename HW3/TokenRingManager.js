@@ -121,6 +121,7 @@ module.exports = {
   getNeighborIP : getNeighborIP,
   addRingMember : addRingMember,
   removeRingNeigbor : removeRingNeigbor,
+  removeRingMember : removeRingMember,
   isMember : isMember,
   getRingSize : function() { return tokenRing.length ; },
   getRing : function() { return tokenRing; }
