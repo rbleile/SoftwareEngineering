@@ -308,8 +308,9 @@ app.post('/do_work', function(req, res) {
 });
 
 
-app.on('uncaughtException', function (err) { 
-	console.log('Caught exception'); } );
+process.on('SIGINT', function (err) { 
+	console.log('Caught exception'); 
+});
 
 
 /*
