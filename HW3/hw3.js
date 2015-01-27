@@ -310,7 +310,14 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 }
 
 app.post('/do_keepalive', function(req, res) {
-res.json(req.body);
+	res.json(req.body);
+	var the_body = req.body;  //see connect package above
+
+	if (the_body.n > bData.n)
+	{
+		bData.n = the_body.n;
+		bData.k = the_body.k;
+	}	
 });
 
 //Election Passing
