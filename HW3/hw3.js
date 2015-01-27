@@ -248,57 +248,61 @@ var workIncrementor = 0;
 // handle PASS requests
 app.post('/do_work', function(req, res) {
 
-	console.log( "DO_WORK: " + workIncrementor );
-
-	workIncrementor++;
-
 	var the_body = req.body;	//see connect package above
-
-	//res.json({"body": the_body, "id": my_ip});
 	res.json(the_body);
-
-	if ( leaderIP == tokenRing.getMyIP() )
-	{
-		console.log ( "token received-leader: " + JSON.stringify( the_body) );
-
-		SetPrimesData( the_body );
-		
-		var listIPs = tokenRing.getRing();
-		
-		for( var i = 0; i < listIPs.length; i++ )
-		{		
-			if( listIPs[i] != tokenRing.getMyIP() ){
-				generalPOST( listIPs[i], '/update_primes', primesData );
-			}
-		}
-		
-		ipSend = (ipSend+1)%(listIPs.length);
-		
-		if( ipSend == tokenRing.getMyIPIndex() )
-		{
-			ipSend = (ipSend+1)%(listIPs.length);
-		}
-		
-		console.log ("ipSend Value: " + ipSend);
-		
-		generalPOST( listIPs[ ipSend ], '/do_work', primesData );
-		
-	}
-	else{
-
-		console.log ( "token received-worker: " + JSON.stringify( the_body) );
-		box.setContent("Post with body: " + the_body);
-		box.style.bg = 'white';	//white for pass
-		screen.render();
-
-		if (the_body.n > primesData.n)
-		{
-			primesData.n = the_body.n;
-			primesData.k = the_body.k;
-		}
-
-		computePrimes(primesData.n, primesData.k, primesData.t);
 	
+	if( participated == 0){
+		
+		console.log( "DO_WORK: " + workIncrementor );
+
+		workIncrementor++;
+
+		//res.json({"body": the_body, "id": my_ip});
+
+
+		if ( leaderIP == tokenRing.getMyIP() )
+		{
+			console.log ( "token received-leader: " + JSON.stringify( the_body) );
+
+			SetPrimesData( the_body );
+			
+			var listIPs = tokenRing.getRing();
+			
+			for( var i = 0; i < listIPs.length; i++ )
+			{		
+				if( listIPs[i] != tokenRing.getMyIP() ){
+					generalPOST( listIPs[i], '/update_primes', primesData );
+				}
+			}
+			
+			ipSend = (ipSend+1)%(listIPs.length);
+			
+			if( ipSend == tokenRing.getMyIPIndex() )
+			{
+				ipSend = (ipSend+1)%(listIPs.length);
+			}
+			
+			console.log ("ipSend Value: " + ipSend);
+			
+			generalPOST( listIPs[ ipSend ], '/do_work', primesData );
+			
+		}
+		else{
+
+			console.log ( "token received-worker: " + JSON.stringify( the_body) );
+			box.setContent("Post with body: " + the_body);
+			box.style.bg = 'white';	//white for pass
+			screen.render();
+
+			if (the_body.n > primesData.n)
+			{
+				primesData.n = the_body.n;
+				primesData.k = the_body.k;
+			}
+
+			computePrimes(primesData.n, primesData.k, primesData.t);
+		
+		}
 	}
 	//debug("do_pass:done ");
 });
@@ -514,6 +518,7 @@ function initialElection()
 	if (!initialElectionParticipation)
 	{
 		//electionPOST ( myComputeID );
+		initialElectionParticipation = true;
 		generalPOST (tokenRing.getNeighborIP(), '/do_election', post_data );
 	}
 }
