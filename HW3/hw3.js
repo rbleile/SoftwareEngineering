@@ -376,7 +376,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		
 		post_request.on( 'error', err );
 
-		post_request.on('uncaughtException', function (err) {} );
+		process.on('uncaughtException', function (err) {} );
 		post_request.write(dataString);
 		post_request.end();
 		
