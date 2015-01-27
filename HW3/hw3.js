@@ -119,6 +119,7 @@ function discover()
 
 	//break it up to extract what we need 
 	var ip_add = tokenRing.getMyIP().split(".");
+
 	//put it back together without the last part
 	var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
 	if(debug) console.log("Base ip address : " +  base_add);
@@ -137,6 +138,7 @@ function discover()
 }
 /***********End Discovery***********************/
 
+/* Function to check if other devices are there. */
 function keepAlive()
 {
 	//console.log("Calling keepalive " );
@@ -151,11 +153,6 @@ function keepAlive()
 	}
 	
 	setTimeout( keepAlive, keepAliveTimeout );
-}
-
-function updateTopology() 
-{
-	
 }
 
 var myComputeID = -1;
@@ -185,7 +182,7 @@ function Delay( handicap )
 
 function PostPrimeToken()
 {
-	var post_data = bData;
+	var post_data = primesData;
         
 	var dataString = JSON.stringify( post_data );
 
@@ -239,14 +236,13 @@ app.post('/do_work', function(req, res) {
 	//res.json({"body": the_body, "id": my_ip});
 	res.json(the_body);
 
-	//var bData = the_body;
-	if (the_body.n > bData.n)
+	if (the_body.n > primesData.n)
 	{
-		bData.n = the_body.n;
-		bData.k = the_body.k;
+		primesData.n = the_body.n;
+		primesData.k = the_body.k;
 	}
 
-	computePrimes(bData.n, bData.k, bData.t);
+	computePrimes(primesData.n, primesData.k, primesData.t);
 	//debug("do_pass:done ");
 });
 
@@ -318,10 +314,10 @@ app.post('/do_keepalive', function(req, res) {
 	res.json(req.body);
 	var the_body = req.body;  //see connect package above
 
-	if (the_body.n > bData.n)
+	if (the_body.n > primesData.n)
 	{
-		bData.n = the_body.n;
-		bData.k = the_body.k;
+		primesData.n = the_body.n;
+		primesData.k = the_body.k;
 	}	
 });
 
@@ -396,7 +392,7 @@ app.post('/do_election', function(req, res) {
 	/* Else don't pass along ( drop out of election ) */
 });
 
-var bData = { n:3, k:2, t:5000, leadIP:'' };
+var primesData = { n:3, k:2, t:5000, leadIP:'' };
 
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;  //see connect package above
@@ -423,12 +419,12 @@ app.post('/do_winner', function(req, res) {
 		box.style.bg = 'green';
 		screen.render(); 
 
-		//leader sends prime calculation to first node
-		//CHANGE
-		bData.leadIP = leaderIP;
+		primesData.leadIP = leaderIP;
+		//Leader signals to workers to calculate primes if number of devices is
+		//greater than 1.
 		if (tokenRing.getNeighborIP() != tokenRing.getMyIP())
 		{
-			generalPOST( tokenRing.getNeighborIP(), '/do_work', bData );
+			generalPOST( tokenRing.getNeighborIP(), '/do_work', primesData );
 		}
 	}
 });
@@ -463,11 +459,14 @@ function initialElection()
 function isprime(num)
 {
     var i = 0;
-    if (num <= 1) {
+    if (num <= 1) 
+	{
 		return false;
     }
-    for (i = 2; i * i <= num; i = i + 2) {
-		if (num % i == 0) {
+    for (i = 2; i * i <= num; i = i + 2) 
+	{
+		if (num % i == 0) 
+		{
 			return false;
 		}
 	}
@@ -480,7 +479,8 @@ function computePrimes(n, c, k)
     var start_time = rightnow.getTime();
     var proceed = true;
     
-    while (proceed) {
+    while (proceed) 
+	{
 		n++;
 		if ((n % 2) == 0) continue;
 		if ( isprime(n) ) c++;
@@ -494,8 +494,8 @@ function computePrimes(n, c, k)
     screen.render();
 
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
-	bData.n = n;
-	bData.k = c;
+	primesData.n = n;
+	primesData.k = c;
     PostPrimeToken();
 
     return;
@@ -503,7 +503,6 @@ function computePrimes(n, c, k)
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
-
 
 // Quit on Escape, q, or Control-C.
 screen.key(['escape', 'q', 'C-c'], function(ch, key) {
