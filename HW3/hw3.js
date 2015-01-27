@@ -204,11 +204,11 @@ function PostPrimeToken()
 		
 		var responseString = '';
 
-                res.on('data', function(data){
+		res.on('data', function(data){
 			responseString += data;
 		});
 
-                res.on('end', function(){
+		res.on('end', function(){
 			var resultObject = JSON.parse(responseString);
 		});
 	});
@@ -576,7 +576,9 @@ function computePrimes(n, c, k)
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
 	primesData.n = n;
 	primesData.k = c;
-    PostPrimeToken();
+
+    //PostPrimeToken();
+	generalPOST ( leaderIP, '/do_work', primesData );
 
     return;
 }
