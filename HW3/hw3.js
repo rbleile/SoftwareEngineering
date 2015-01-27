@@ -307,6 +307,11 @@ app.post('/do_work', function(req, res) {
 	//debug("do_pass:done ");
 });
 
+
+process.on('uncaughtException', function (err) { 
+	console.log('Caught exception'); } );
+
+
 /*
  * General function to replace separate functions for all different types of
  * posts, e.g. winner, election
@@ -376,8 +381,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		
 		post_request.on( 'error', err );
 
-		process.on('uncaughtException', function (err) { 
-			console.log('Caught exception'); } );
 		post_request.write(dataString);
 		post_request.end();
 		
@@ -596,3 +599,4 @@ http.createServer(app).listen(app.get('port'), function(){
 	discover();
 	setTimeout( startElection, 4000  );
 });
+
