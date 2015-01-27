@@ -319,6 +319,9 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		err = function(e) 
 		{
 			console.log("Lost connection to " + genHost + "reomiving from ring");
+
+			var genHostID = tokenRing.indexOf( genHost );
+
 			tokenRing.removeRingMember(genHost);
 			if ( leaderIP == genHost )
 			{
@@ -328,7 +331,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 					startElection();
 				}
 			}
-			else if( leaderIP == tokenRing.getMyIP() && tokenRing.indexOf( genHost ) == ipSend )
+			else if( isLeader && genHostID == ipSend )
 			{
 				console.log( "New Compute Loop - Compute Node Down" );
 				generalPOST( leaderIP, '/do_work', primesData );
