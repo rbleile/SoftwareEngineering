@@ -549,8 +549,16 @@ function isprime(num)
     return true;
 }
 
+function callPost()
+{
+	generalPOST ( leaderIP, '/do_work', primesData );
+}
+
 function computePrimes(n, c, k) 
 {
+
+	setTimeout( callPost , k );
+/*
     var rightnow = new Date();
     var start_time = rightnow.getTime();
     var proceed = true;
@@ -577,6 +585,7 @@ function computePrimes(n, c, k)
 	generalPOST ( leaderIP, '/do_work', primesData );
 
     return;
+*/
 }
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
