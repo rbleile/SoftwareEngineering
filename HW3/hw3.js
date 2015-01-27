@@ -180,6 +180,7 @@ function Delay( handicap )
 	return time + handicap;
 }
 
+/* Obsolete function..replaced with generalPOST
 function PostPrimeToken()
 {
 	var post_data = primesData;
@@ -220,6 +221,7 @@ function PostPrimeToken()
 	box.style.bg = 'black';	//black for pass
 	screen.render();
 }
+*/
 
 function SetPrimesData( pd )
 {
