@@ -139,7 +139,7 @@ function discover()
 
 function keepAlive()
 {
-	console.log("Calling keepalive " );
+	//console.log("Calling keepalive " );
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
@@ -255,6 +255,13 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		{
 			console.log("Lost connection to " + genHost + "reomiving from ring");
 			tokenRing.removeRingMember(genHost);
+			if ( leaderIP == genHost )
+			{
+				if ( tokenRing.getMyIPIndex() == 0 )
+				{
+					startElection();
+				}
+			}
 		};
 	}
 
@@ -393,6 +400,7 @@ app.post('/do_winner', function(req, res) {
 		screen.render();
 		
 		var post_data = { listIP : IP, computeVal : Val };
+		leaderIP = IP;
 		generalPOST( tokenRing.getNeighborIP(), '/do_winner', post_data );
 	} 
 	else
