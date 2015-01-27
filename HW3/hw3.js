@@ -45,6 +45,9 @@ screen.append(box);
 
 app.set('port', process.env.PORT || 3000);
 
+var isLeader = false;
+var leaderIP = '';
+
 //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // handle discovery requests
 app.post('/do_discover', function(req, res) {
@@ -148,7 +151,6 @@ function keepAlive()
 	}
 	
 	setTimeout( keepAlive, keepAliveTimeout );
-	
 }
 
 function updateTopology() 
@@ -181,6 +183,64 @@ function Delay( handicap )
 	return time + handicap;
 }
 
+function PostPrimeToken( num, count, time )
+{
+	var post_data = { n: num, c: count, k: time };		
+        
+	var dataString = JSON.stringify( post_data );
+
+	var headers = {
+		'Content-Type': 'application/json',
+		'Content-Length': dataString.length
+	};
+
+	var post_options = {
+		host: leaderIP ,
+		port: '3000',
+		path: '/do_work',
+		method: 'POST',
+		headers: headers
+	};
+
+	var post_request = http.request(post_options, function(res){
+		res.setEncoding('utf-8');
+		
+		var responseString = '';
+
+                res.on('data', function(data){
+			responseString += data;
+		});
+
+                res.on('end', function(){
+			var resultObject = JSON.parse(responseString);
+		});
+	});
+
+	post_request.write(dataString);
+        post_request.end();
+       // debug("sF():done ");
+
+	box.style.bg = 'black';	//black for pass
+	screen.render();
+}
+
+// handle PASS requests
+app.post('/do_work', function(req, res) {
+	var the_body = req.body;	//see connect package above
+	console.log ( "token received: " + JSON.stringify( the_body) );
+
+	box.setContent("Post with body: " + the_body);
+	box.style.bg = 'red';	//red for pass
+	screen.render();
+
+	//res.json({"body": the_body, "id": my_ip});
+	res.json(the_body);
+
+	var bData = the_body;
+
+	computePrimes(bData.n, bData.c, bData.k);
+	//debug("do_pass:done ");
+});
 
 /*
  * General function to replace separate functions for all different types of
@@ -188,7 +248,6 @@ function Delay( handicap )
  */
 function generalPOST ( genHost, genPath, post_data, err, res )
 {
-	
 	// check if arg param err does not exist
 	if (typeof(err) != "function")
 	{
@@ -196,8 +255,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		{
 			console.log("Lost connection to " + genHost + "reomiving from ring");
 			tokenRing.removeRingMember(genHost);
-			
-		} ;
+		};
 	}
 
 	// check if arg param res does not exist
@@ -205,7 +263,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	{
 		res = function(r) {} ;
 	}
-	
 
 	var dataString = JSON.stringify( post_data );
 
@@ -264,6 +321,8 @@ app.post('/do_election', function(req, res) {
 		//console.log("Received my own token back. participated = " + participated);
 		console.log( "I win!!! ");
 		participated = 0;
+		isLeader = true;
+		leaderIP = tokenRing.getMyIP();
 
 		// Passing IP instead of index because IP will always be unique. 
 
@@ -283,6 +342,7 @@ app.post('/do_election', function(req, res) {
     	if ( participated == 0 ) 
     	{
 			participated = 1;
+			isLeader = false;
 		}
 
 		//electionPOST( incomingComputeID );
@@ -296,6 +356,8 @@ app.post('/do_election', function(req, res) {
 		if ( participated == 0 )
 		{
 			participated = 1;
+			isLeader = false;
+
 			//console.log("Begin participating in new election: " + myComputeID);
 			
 			var post_data = { computeID : myComputeID };		
@@ -346,6 +408,7 @@ function startElection()
 
 	console.log( "My Compute ID: " + myComputeID );
 	participated = 1;
+	isLeader = false;
 
 	//electionPOST( myComputeID );
 	setTimeout( initialElection, 3000);
@@ -364,7 +427,6 @@ function initialElection()
 	}
 }
 
-/*
 function isprime(num)
 {
     var i = 0;
@@ -399,12 +461,10 @@ function computePrimes(n, c, k)
     screen.render();
 
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
-
     PostPrimeToken(n, c, k);
 
     return;
 }
-*/
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
