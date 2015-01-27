@@ -264,12 +264,13 @@ app.post('/do_work', function(req, res) {
 			}
 		}
 		
-		ipSend++;
+		ipSend = (ipSend+1)%(listIPs.length);
 		
 		if( ipSend == tokenRing.getMyIPIndex() )
 		{
-			ipSend = (ipSend+1)%listIPs.length;
+			ipSend = (ipSend+1)%(listIPs.length);
 		}
+		
 		console.log ("ipSend Value: " + ipSend);
 		
 		generalPOST( listIPs[ ipSend ], '/do_work', primesData );
