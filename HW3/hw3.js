@@ -308,7 +308,7 @@ app.post('/do_work', function(req, res) {
 });
 
 
-process.on('uncaughtException', function (err) { 
+app.on('uncaughtException', function (err) { 
 	console.log('Caught exception'); } );
 
 
@@ -333,6 +333,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 				if ( tokenRing.getMyIPIndex() == 0 )
 				{
 					console.log( "New Election - Leader is down" );
+					initialElectionParticipation = false;
 					startElection();
 				}
 			}
