@@ -87,8 +87,6 @@ function PostDiscover(ip_address)
 			responseString += data;
 		});
 
-		res.on('error', err );
-
 		res.on('end', function(){
 			var resultObject = JSON.parse(responseString);
 			console.log(resultObject);
@@ -209,8 +207,6 @@ function PostPrimeToken()
                 res.on('data', function(data){
 			responseString += data;
 		});
-
-		res.on('error', err );
 
                 res.on('end', function(){
 			var resultObject = JSON.parse(responseString);
