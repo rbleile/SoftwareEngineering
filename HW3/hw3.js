@@ -421,7 +421,10 @@ app.post('/do_winner', function(req, res) {
 		//leader sends prime calculation to first node
 		//CHANGE
 		bData.leadIP = leaderIP;
-		generalPOST( tokenRing.getNeighborIP(), '/do_work', bData );
+		if (tokenRing.getNeighborIP() != tokenRing.getMyIP())
+		{
+			generalPOST( tokenRing.getNeighborIP(), '/do_work', bData );
+		}
 	}
 });
 
