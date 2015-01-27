@@ -338,46 +338,54 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 			}
 		};
 	}
-
-	// check if arg param res does not exist
-	if (typeof(res) != "function")
-	{
-		res = function(r) {} ;
-	}
-
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: genHost,
-		port: '3000',
-		path: genPath,
-		method: 'POST',
-		headers: headers
-	};
-
-	var post_request = http.request(post_options, function(res){
-		res.setEncoding('utf-8');
-		
-		var responseString = '';
-
-        res.on('data', function(data){
-			responseString += data;
-		});
-
-        res.on('end', function(){
-			//var resultObject = JSON.parse(responseString);
-		});
-	});
 	
-	post_request.on( 'error', err );
+	try{
+		// check if arg param res does not exist
+		if (typeof(res) != "function")
+		{
+			res = function(r) {} ;
+		}
 
-	post_request.write(dataString);
-	post_request.end();
+		var dataString = JSON.stringify( post_data );
+
+		var headers = {
+			'Content-Type': 'application/json',
+			'Content-Length': dataString.length
+		};
+
+		var post_options = {
+			host: genHost,
+			port: '3000',
+			path: genPath,
+			method: 'POST',
+			headers: headers
+		};
+
+		var post_request = http.request(post_options, function(res){
+			res.setEncoding('utf-8');
+			
+			var responseString = '';
+
+			res.on('data', function(data){
+				responseString += data;
+			});
+
+			res.on('end', function(){
+				//var resultObject = JSON.parse(responseString);
+			});
+		});
+		
+		post_request.on( 'error', err );
+
+		post_request.write(dataString);
+		post_request.end();
+	}
+	catch( er )
+	{
+		err(er);
+	}
+	
+	
 }
 
 app.post('/do_keepalive', function(req, res) {
