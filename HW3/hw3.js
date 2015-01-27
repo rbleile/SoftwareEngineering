@@ -221,28 +221,74 @@ function PostPrimeToken()
 	screen.render();
 }
 
+function SetPrimesData( pd )
+{
+
+	primesData.n = pd.n;
+	primesData.k = pd.k;
+
+}
+
+app.post( '/update_primes', function(req, res){
+
+	var the_body = req.body;
+
+	res.json(the_body);
+
+	SetPrimesData( the_body );
+
+});
+
+var ipSend = 0;
+
 // handle PASS requests
 app.post('/do_work', function(req, res) {
 	var the_body = req.body;	//see connect package above
-	if ( leaderIP == tokenRing.getMyIP() )
-	{
-		console.log ( "token received: " + JSON.stringify( the_body) );
-	}
-
-	box.setContent("Post with body: " + the_body);
-	box.style.bg = 'red';	//red for pass
-	screen.render();
 
 	//res.json({"body": the_body, "id": my_ip});
 	res.json(the_body);
 
-	if (the_body.n > primesData.n)
+	if ( leaderIP == tokenRing.getMyIP() )
 	{
-		primesData.n = the_body.n;
-		primesData.k = the_body.k;
-	}
+		console.log ( "token received-leader: " + JSON.stringify( the_body) );
 
-	computePrimes(primesData.n, primesData.k, primesData.t);
+		SetPrimesData( the_body );
+		
+		var listIPs = tokenRing.getRing();
+		
+		for( var i = 0; i < listIPs.length; i++ )
+		{		
+			if( listIPs[i] != tokenRing.getMyIP() ){
+				generalPOST( listIPs[i], '/update_primes', primesData );
+			}
+		}
+		
+		ipSend++;
+		
+		if( ipSend == tokenRing.getMyIPIndex() )
+		{
+			ipSend = (ipSend+1)%listIPs.length;
+		}
+		
+		generalPOST( listIPs[ ipSend ], '/do_work', primesData );
+		
+	}
+	else{
+
+		console.log ( "token received-worker: " + JSON.stringify( the_body) );
+		box.setContent("Post with body: " + the_body);
+		box.style.bg = 'white';	//white for pass
+		screen.render();
+
+		if (the_body.n > primesData.n)
+		{
+			primesData.n = the_body.n;
+			primesData.k = the_body.k;
+		}
+
+		computePrimes(primesData.n, primesData.k, primesData.t);
+	
+	}
 	//debug("do_pass:done ");
 });
 
@@ -422,10 +468,9 @@ app.post('/do_winner', function(req, res) {
 		primesData.leadIP = leaderIP;
 		//Leader signals to workers to calculate primes if number of devices is
 		//greater than 1.
-		if (tokenRing.getNeighborIP() != tokenRing.getMyIP())
-		{
-			generalPOST( tokenRing.getNeighborIP(), '/do_work', primesData );
-		}
+		
+		generalPOST( tokenRing.getNeighborIP(), '/do_work', primesData );
+
 	}
 });
 
