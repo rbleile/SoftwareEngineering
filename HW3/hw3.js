@@ -183,9 +183,9 @@ function Delay( handicap )
 	return time + handicap;
 }
 
-function PostPrimeToken( num, count, time )
+function PostPrimeToken()
 {
-	var post_data = { n: num, c: count, k: time };		
+	var post_data = bData;
         
 	var dataString = JSON.stringify( post_data );
 
@@ -238,7 +238,7 @@ app.post('/do_work', function(req, res) {
 
 	var bData = the_body;
 
-	computePrimes(bData.n, bData.c, bData.k);
+	computePrimes(bData.n, bData.k, bData.t);
 	//debug("do_pass:done ");
 });
 
@@ -468,7 +468,9 @@ function computePrimes(n, c, k)
     screen.render();
 
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
-    PostPrimeToken(n, c, k);
+	bData.n = n;
+	bData.k = c;
+    PostPrimeToken();
 
     return;
 }
