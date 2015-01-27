@@ -232,6 +232,8 @@ function SetPrimesData( pd )
 
 app.post( '/update_primes', function(req, res){
 
+	console.log( " Updating Prime Value " );
+
 	var the_body = req.body;
 
 	res.json(the_body);
@@ -241,9 +243,15 @@ app.post( '/update_primes', function(req, res){
 });
 
 var ipSend = 0;
+var workIncrementor = 0;
 
 // handle PASS requests
 app.post('/do_work', function(req, res) {
+
+	console.log( "DO_WORK: " + workIncrementor );
+
+	workIncrementor++;
+
 	var the_body = req.body;	//see connect package above
 
 	//res.json({"body": the_body, "id": my_ip});
