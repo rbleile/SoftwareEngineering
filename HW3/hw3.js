@@ -145,10 +145,10 @@ function keepAlive()
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
-		var post_data = { myIP : i };
+	//	var post_data = { myIP : i };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
-			generalPOST ( listIPs[i], '/do_keepalive', post_data );
+			generalPOST ( listIPs[i], '/do_keepalive', primesData );
 		}
 	}
 	
@@ -309,8 +309,14 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 			{
 				if ( tokenRing.getMyIPIndex() == 0 )
 				{
+					console.log( "New Election - Leader is down" );
 					startElection();
 				}
+			}
+			else if( leaderIP == tokenRing.getMyIP() && tokenRing.indexOf( genHost ) == ipSend )
+			{
+				console.log( "New Compute Loop - Compute Node Down" );
+				generalPOST( leaderIP, '/do_work', primesData );
 			}
 		};
 	}
