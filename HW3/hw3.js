@@ -236,7 +236,10 @@ app.post('/do_work', function(req, res) {
 	//res.json({"body": the_body, "id": my_ip});
 	res.json(the_body);
 
-	var bData = the_body;
+	//var bData = the_body;
+	bData.n = the_body.n;
+	bData.k = the_body.k;
+	bData.t = the_body.t;
 
 	computePrimes(bData.n, bData.k, bData.t);
 	//debug("do_pass:done ");
@@ -381,7 +384,7 @@ app.post('/do_election', function(req, res) {
 	/* Else don't pass along ( drop out of election ) */
 });
 
-var bData = { n:3, k:2, t:2000, leadIP:'' };
+var bData = { n:3, k:2, t:5000, leadIP:'' };
 
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;  //see connect package above
