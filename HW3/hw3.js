@@ -372,14 +372,12 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 				responseString += data;
 			});
 
-			res.on('error', err );
-
 			res.on('end', function(){
 				//var resultObject = JSON.parse(responseString);
 			});
 		});
 		
-
+		post_request.on('error', err );
 		post_request.write(dataString);
 		post_request.end();
 		
