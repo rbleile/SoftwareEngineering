@@ -365,7 +365,7 @@ function initializeStates()
 	West_IP = ring[2];	
 	Var_IP  = ring[3];
 	
-	var id = tokenRing.getMyIP();
+	var id = tokenRing.indexOf( tokenRing.getMyIP());
 	
 	debugLog( id + " " + Lock_IP + " " + East_IP );
 
