@@ -225,6 +225,8 @@ function PostPrimeToken()
 
 function SetPrimesData( pd )
 {
+	box.style.bg = 'grey';	//white for pass
+
 	if ( pd.n > primesData.n){
 		primesData.n = pd.n;
 		primesData.k = pd.k;
@@ -468,7 +470,7 @@ app.post('/do_election', function(req, res) {
 	/* Else don't pass along ( drop out of election ) */
 });
 
-var primesData = { n:3, k:2, t:1000, leadIP:'' };
+var primesData = { n:3, k:2, t:500, leadIP:'' };
 
 app.post('/do_winner', function(req, res) {
 	var the_body = req.body;  //see connect package above
@@ -549,16 +551,9 @@ function isprime(num)
     return true;
 }
 
-function callPost()
-{
-	generalPOST ( leaderIP, '/do_work', primesData );
-}
-
 function computePrimes(n, c, k) 
 {
 
-	setTimeout( callPost , k );
-/*
     var rightnow = new Date();
     var start_time = rightnow.getTime();
     var proceed = true;
@@ -585,7 +580,6 @@ function computePrimes(n, c, k)
 	generalPOST ( leaderIP, '/do_work', primesData );
 
     return;
-*/
 }
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
