@@ -88,6 +88,8 @@ function admitVisitor() {
     visitor.style.bg = '#222288';
     visitor.style.fg = '#ffffff';
     screen.render();
+	
+	turnStileAquireLock();
 
     //TODO: When the lock is acquired, set the colors back to bg='#228822'
 }
@@ -416,6 +418,8 @@ function initializeStates()
         {
 	    box.setContent('{center}LOCK - LOCK - LOCK{/center}');
 	    box.style.bg = '#222288';
+		visitor.setContent("");
+		visitor.style.bg = 'black';
 	    screen.render();
 	    startLock();
 	}
@@ -435,6 +439,8 @@ function initializeStates()
     {
 	box.setContent('{center}!!! VAR !!! VAR !!!{/center}');
 	box.style.bg = 'magenta';
+	visitor.setContent("");
+	visitor.style.bg = 'black';
 	screen.render();
 	startVar();
 	}
