@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
-tokenRing.debugMessages(false);
+tokenRing.debugMessages(true);
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -83,6 +83,9 @@ app.post('/do_discover', function(req, res) {
 
 function PostDiscover(ip_address)
 {
+
+	debugLog( "POST Discover" );
+
 	var post_data = { ip : tokenRing.getMyIP() };    
         
 	var dataString = JSON.stringify( post_data );
@@ -356,6 +359,8 @@ function startTurnstile()
 function initializeStates()
 {
 
+	debugLog( "Init" );
+
 	var ring = tokenRing.getRing();
 
 	Lock_IP = ring[0];
@@ -397,6 +402,7 @@ screen.render();
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
+	debugLog( "Discovery Complete" );
 	setTimeout( initializeStates, 4000  );
 });
 
