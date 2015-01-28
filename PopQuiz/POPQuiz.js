@@ -279,7 +279,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	
 }
 
-function turnStyleAquireLock()
+function turnStileAquireLock()
 {
 	debugLog( "Aquire Lock" );
 	
@@ -306,7 +306,7 @@ app.post('/lock_denied', function(req, res) {
 	
 	res.json( the_body );
 	
-	setTimeout( turnStyleAquireLock, 100 );	
+	setTimeout( turnStileAquireLock, 1000 );	
 });
 
 app.post('/read_val', function(req, res) {
@@ -332,6 +332,8 @@ app.post('/return_val', function(req, res) {
 	debugLog( "Return Val " + the_body.val + " -> write " + value );
 	
 	generalPOST( Var_IP, "/write_val", {val: value} );
+	
+	generalPOST( Lock_IP, "/release_lock", {ip: tokenRing.getMyIP() } );
 	
 });
 
@@ -390,7 +392,7 @@ function startTurnstile()
 	debugLog( "Turnstile Started" );
 	/* chads code */
 	
-	setTimeout( turnStyleAquireLock, 2000 );
+	setTimeout( turnStileAquireLock, 2000 );
 
 }
 
@@ -406,7 +408,9 @@ function initializeStates()
 	West_IP = ring[2];	
 	Var_IP  = ring[3];
 	
-	var id = tokenRing.getMyIP();
+	var id = tokenRing.indexOf( tokenRing.getMyIP());
+	
+	debugLog( id + " " + Lock_IP + " " + East_IP );
 
 	if( id == 0 )
         {
