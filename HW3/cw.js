@@ -260,15 +260,16 @@ function SetPrimesData( pd )
 
 app.post( '/update_primes', function(req, res){
 
-	debugLog( " Updating Prime Value " );
-	
-	box.style.bg = 'blue';	//white for pass//
-	box.style.fg = 'white';
-	screen.render();
-
 	var the_body = req.body;
 
 	res.json(the_body);
+
+	debugLog( " Updating Prime Value " );
+	
+	box.setContent("Primes below " + the_body.n + ": " + the_body.k + "\nIn " + the_body.t*1000 + "seconds");
+	box.style.bg = 'blue';	//white for pass//
+	box.style.fg = 'white';
+	screen.render();
 
 	SetPrimesData( the_body );
 
@@ -599,8 +600,8 @@ function computePrimes(n, c, k)
     }
 
     //Display the number of discovered primes:
-    box.setContent("Primes below " + n + ": " + c + "\nIn " + k*1000 + "seconds");
-    screen.render();
+//    box.setContent("Primes below " + n + ": " + c + "\nIn " + k*1000 + "seconds");
+//    screen.render();
 
     //TODO: This data needs to get into the JSON object that is xmitted to next node.
 	primesData.n = n;
