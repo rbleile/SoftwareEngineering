@@ -261,6 +261,10 @@ function SetPrimesData( pd )
 app.post( '/update_primes', function(req, res){
 
 	debugLog( " Updating Prime Value " );
+	
+	box.style.bg = 'blue';	//white for pass//
+	box.style.fg = 'white';
+	screen.render();
 
 	var the_body = req.body;
 
@@ -319,7 +323,7 @@ app.post('/do_work', function(req, res) {
 
 			debugLog ( "token received-worker: " + JSON.stringify( the_body) );
 			box.setContent("Post with body: " + the_body);
-		        box.style.bg = 'white';	//white for pass
+		        box.style.bg = 'white';	//white for pass//
 		        box.style.fg = 'black';
 			screen.render();
 
@@ -330,8 +334,8 @@ app.post('/do_work', function(req, res) {
 			}
 
 			computePrimes(primesData.n, primesData.k, primesData.t);
-		    box.style.bg = 'blue';
-		    screen.render();
+//		    box.style.bg = 'blue';
+//		    screen.render();
 		}
 	}
 	//debug("do_pass:done ");
