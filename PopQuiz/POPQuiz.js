@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var debug = true;
 tokenRing.debugMessages(false);
 
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -31,7 +32,7 @@ var log = blessed.scrollabletext({
 	ch: '|'
     },
     width: '100%',
-    height: '80%',
+    height: '60%',
     top: '20%',
     left: 'left',
     align: 'left',
@@ -55,12 +56,52 @@ var box = blessed.box({
 	bg: 'black',
 	border: {
 	    fg: '#f0f0f0'
-	},
-	hover: {
-	    bg: 'black'
 	}
     }
 });
+
+//TODO: Only the EAST and WEST TURNSTILES should display this box.
+var visitor = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+	type: 'line',
+	fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}V = Admit Visitor{/center}',
+    tags: true,
+    hoverEffects: {
+	bg: 'green'
+    }
+});
+
+function admitVisitor() {
+    //TODO: This function is where you start...
+    //      i.e. attempt to acquire.
+
+    visitor.setContent('{center}VISITOR!!{/center}');
+    visitor.style.bg = '#222288';
+    visitor.style.fg = '#ffffff';
+    screen.render();
+
+    //TODO: When the lock is acquired, set the colors back to bg='#228822'
+}
+
+screen.key(['v', 'V'], function(ch, key) {
+    admitVisitor();
+});
+
+screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
+    return process.exit(0);
+});
+
+visitor.focus();
+screen.render();
 
 function debugLog( msg ) {
 	log.insertLine(1, msg);
@@ -368,16 +409,30 @@ function initializeStates()
 	var id = tokenRing.getMyIP();
 
 	if( id == 0 )
-	{
-		startLock();
+        {
+	    box.setContent('{center}LOCK - LOCK - LOCK{/center}');
+	    box.style.bg = '#222288';
+	    screen.render();
+	    startLock();
 	}
 	else if( id == 1 || id == 2)
 	{
+	    if (id == 1) {
+		box.setContent('{center}** >> EAST ** >> EAST ** >>{/center}');
+		box.style.bg = '#FF0000';
+	    } else {
+		box.setContent('{center}<< ## WEST << ## WEST << ##{/center}');
+		box.style.bg = '#FF0000';
+	    }
+	    screen.render();
 		startTurnstile();
 	}
 	else if( id == 3 )
-	{
-		startVar();
+    {
+	box.setContent('{center}!!! VAR !!! VAR !!!{/center}');
+	box.style.bg = 'magenta';
+	screen.render();
+	startVar();
 	}
 	
 }
