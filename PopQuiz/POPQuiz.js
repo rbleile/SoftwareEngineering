@@ -367,7 +367,7 @@ function initializeStates()
 	
 	var id = tokenRing.getMyIP();
 	
-	debugLog( id + " " + Lock_IP + " " + EAST_IP );
+	debugLog( id + " " + Lock_IP + " " + East_IP );
 
 
 	if( id == 0 )
