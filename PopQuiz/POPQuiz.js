@@ -292,6 +292,8 @@ app.post('/return_val', function(req, res) {
 	
 	generalPOST( Var_IP, "/write_val", {val: value} );
 	
+	generalPOST( Lock_IP, "/release_lock", {ip: tokenRing.getMyIP() } );
+	
 });
 
 app.post('/write_val', function(req, res) {
