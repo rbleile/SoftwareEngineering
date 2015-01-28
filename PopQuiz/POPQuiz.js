@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
-tokenRing.debugMessages(true);
+tokenRing.debugMessages(false);
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -83,9 +83,6 @@ app.post('/do_discover', function(req, res) {
 
 function PostDiscover(ip_address)
 {
-
-	debugLog( "POST Discover" );
-
 	var post_data = { ip : tokenRing.getMyIP() };    
         
 	var dataString = JSON.stringify( post_data );
