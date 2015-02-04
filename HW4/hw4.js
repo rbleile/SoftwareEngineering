@@ -1,4 +1,4 @@
-var os = require('os');
+
 var http = require('http');
 var express = require('express');
 var connect = require("connect");
@@ -277,41 +277,87 @@ box.focus();
 var GAP_STATE = 0;
 var REQUEST_STATE = 1;
 var WORK_STATE = 2;
+
 var STATE = GAP_STATE;
 
 var highestTS = 0;
 var myTS = 0;
 var ReqDeferred = [];
-var PendReply = []
+var NumPendingReplies = 0;
 
 function processReq(ID, timestamp)
 {
 	switch(STATE) {
 		case GAP_STATE:
+			inGapState(ID,timestamp);
 			break;
 		case REQUEST_STATE:
+			inRequestState(ID, timestamp);
 			break;
 		case WORK_STATE:
+			inWorkState(ID,timestamp);
 			break;
 		default:
 			console.log("Not valid state");
 	}
 }
 
-function gapState(ID,timestamp)
+function inGapState(ID,timestamp)
 {
+	if (timestamp > highestTS)
+	{
+		highestTS = timestamp;
+	}
 
+	var post_data = { myIP : tokenRing.getMyIP() }; 
+	generalPOST(ID, '/shotgun_approved', post_data); 
 }
 
-function requestState(ID,timestamp)
+function inRequestState(ID,timestamp)
 {
-
+	if (timestamp > highestTS)
+	{
+		highestTS = timestamp;
+		ReqDeferred.push(ID);
+	}
+	else if (timestamp == highestTS)
+	{
+		console.log("Tiebreaker");
+	}	
+	else
+	{
+		var post_data = { myIP : tokenRing.getMyIP() }; 
+		generalPOST(ID, '/shotgun_approved', post_data); 
+	}
 }
 
-function workState(ID,timestamp)
+function inWorkState(ID,timestamp)
 {
-
+	if (timestamp > highestTS)
+	{
+		highestTS = timestamp;
+		ReqDeferred.push(ID);
+	}
+	else if (timestamp == highestTS)
+	{
+		console.log("BAD inWorkState: timestamp == highestTS");
+	}
+	else
+	{
+		console.log("BAD inWorkState: timestamp < highestTS");
+	}
 }
+
+app.post('/shotgun_approved', function(req, res) {
+	var the_body = req.body;  
+
+	NumPendingReplies = tokenRing.getRingSize()-1;
+
+	if(debug) debugLog ( "" + JSON.stringify( the_body) );
+
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
+
 // Render the screen.
 screen.render();
 
