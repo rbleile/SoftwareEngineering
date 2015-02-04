@@ -1,0 +1,12 @@
+
+
+//STATE = INIT / DISCOVERY
+
+HighestTS = 0;
+my.TS = 0;
+
+R0[];
+
+PARTICIPANTS = { 0:'Dan', 1:'Matt', 2:'Robert' };
+
+

@@ -80,6 +80,12 @@ var visitor = blessed.box({
     }
 });
 
+visitor.on('click', function(data) {
+
+    //do something
+
+});
+
 function admitVisitor() {
     //TODO: This function is where you start...
     //      i.e. attempt to acquire.
