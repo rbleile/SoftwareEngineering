@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var debug = true;
 tokenRing.debugMessages(false);
 
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -31,7 +32,7 @@ var log = blessed.scrollabletext({
 	ch: '|'
     },
     width: '100%',
-    height: '80%',
+    height: '60%',
     top: '20%',
     left: 'left',
     align: 'left',
@@ -55,23 +56,49 @@ var box = blessed.box({
 	bg: 'black',
 	border: {
 	    fg: '#f0f0f0'
-	},
-	hover: {
-	    bg: 'black'
 	}
     }
 });
 
-function debugLog( msg ) {
-	log.insertLine(1, msg);
-	screen.render();
-	return;
-}
+/* Button Code */
+var visitor = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+	type: 'line',
+	fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}V = Admit Visitor{/center}',
+    tags: true,
+    hoverEffects: {
+	bg: 'green'
+    }
+});
+
+visitor.on('click', function(data) {
+
+    //do something
+
+});
+
+screen.key(['v', 'V'], function(ch, key) {
+    admitVisitor();
+});
+
+screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
+    return process.exit(0);
+});
+
+visitor.focus();
+screen.render();
+/********* END BUTTON ***********/
 
 app.set('port', process.env.PORT || 3000);
-
-var isLeader = false;
-var leaderIP = '';
 
 //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // handle discovery requests
@@ -128,8 +155,6 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
-var keepAliveTimeout = 10000;
-
 function discover() 
 {
 	box.style.bg = 'red';
@@ -160,189 +185,8 @@ function discover()
 		}
 	}
 
-	setTimeout( keepAlive, keepAliveTimeout);
 }
 /***********End Discovery***********************/
-
-/* Function to check if other devices are there. */
-function keepAlive()
-{
-	//debugLog("Calling keepalive " );
-	var listIPs = tokenRing.getRing();
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-	//	var post_data = { myIP : i };
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			generalPOST ( listIPs[i], '/do_keepalive', primesData );
-		}
-	}
-	
-	setTimeout( keepAlive, keepAliveTimeout );
-}
-
-var myComputeID = -1;
-var currBestComputeID = 1000000000;
-var participated = 0;
-
-function Delay( handicap )
-{
-	var computeSize = 1000000;
-	var currentTime = new Date();
-	var start = currentTime.getTime();
-	var value1 = 0.0;
-
-	for( var i = 0; i < computeSize; i++ )
-	{
-		value1 += value1 + Math.sqrt( i*i-(i+100/i*2) );
-	}
-
-	var currentTime2 = new Date();
-	var end = currentTime2.getTime();
-	var time = end - start;
-
-	currBestComputeID = myComputeID;
-
-	return time + handicap;
-}
-
-/* Obsolete function..replaced with generalPOST
-function PostPrimeToken()
-{
-	var post_data = primesData;
-        
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: leaderIP ,
-		port: '3000',
-		path: '/do_work',
-		method: 'POST',
-		headers: headers
-	};
-
-	var post_request = http.request(post_options, function(res){
-		res.setEncoding('utf-8');
-		
-		var responseString = '';
-
-		res.on('data', function(data){
-			responseString += data;
-		});
-
-		res.on('end', function(){
-			var resultObject = JSON.parse(responseString);
-		});
-	});
-
-	post_request.write(dataString);
-        post_request.end();
-       // debug("sF():done ");
-
-	box.style.bg = 'black';	//black for pass
-	screen.render();
-}
-*/
-
-function SetPrimesData( pd )
-{
-	if ( pd.n > primesData.n){
-		primesData.n = pd.n;
-		primesData.k = pd.k;
-	}
-
-}
-
-app.post( '/update_primes', function(req, res){
-
-	var the_body = req.body;
-
-	res.json(the_body);
-
-	debugLog( " Updating Prime Value " );
-	
-	box.setContent("Primes below " + the_body.n + ": " + the_body.k + "\nIn " + the_body.t*1000 + "seconds");
-	box.style.bg = 'blue';	//white for pass//
-	box.style.fg = 'white';
-	screen.render();
-
-	SetPrimesData( the_body );
-
-});
-
-var ipSend = 0;
-var workIncrementor = 0;
-
-// handle PASS requests
-app.post('/do_work', function(req, res) {
-
-	var the_body = req.body;	//see connect package above
-	res.json(the_body);
-	
-	if( participated == 0){
-		
-		debugLog( "DO_WORK: " + workIncrementor );
-
-		workIncrementor++;
-
-		//res.json({"body": the_body, "id": my_ip});
-
-
-		if ( leaderIP == tokenRing.getMyIP() )
-		{
-			debugLog ( "token received-leader: " + JSON.stringify( the_body) );
-
-			SetPrimesData( the_body );
-			
-			var listIPs = tokenRing.getRing();
-			
-			for( var i = 0; i < listIPs.length; i++ )
-			{		
-				if( listIPs[i] != tokenRing.getMyIP() ){
-					generalPOST( listIPs[i], '/update_primes', primesData );
-				}
-			}
-			
-			ipSend = (ipSend+1)%(listIPs.length);
-			
-			if( ipSend == tokenRing.getMyIPIndex() )
-			{
-				ipSend = (ipSend+1)%(listIPs.length);
-			}
-			
-			debugLog ("ipSend Value: " + ipSend);
-			
-			generalPOST( listIPs[ ipSend ], '/do_work', primesData );
-			
-		}
-		else{
-
-			debugLog ( "token received-worker: " + JSON.stringify( the_body) );
-			box.setContent("Post with body: " + the_body);
-		        box.style.bg = 'white';	//white for pass//
-		        box.style.fg = 'black';
-			screen.render();
-
-			if (the_body.n > primesData.n)
-			{
-				primesData.n = the_body.n;
-				primesData.k = the_body.k;
-			}
-
-			computePrimes(primesData.n, primesData.k, primesData.t);
-//		    box.style.bg = 'blue';
-//		    screen.render();
-		}
-	}
-	//debug("do_pass:done ");
-});
-
-
 
 /*
  * General function to replace separate functions for all different types of
@@ -419,200 +263,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	
 }
 
-app.post('/do_keepalive', function(req, res) {
-	res.json(req.body);
-	var the_body = req.body;  //see connect package above
-
-	if (the_body.n > primesData.n)
-	{
-		primesData.n = the_body.n;
-		primesData.k = the_body.k;
-	}	
-});
-
-//Election Passing
-app.post('/do_election', function(req, res) {
-	var the_body = req.body;  //see connect package above
-	//debugLog ( "Election token received: " + JSON.stringify( the_body) );
-
-	res.json(the_body);
-
-	box.style.bg = 'yellow';
-	screen.render();
-
-	var incomingComputeID = the_body.computeID;
-  
-	if ( incomingComputeID == myComputeID )
-	{
-		/* Pass win message */
-		//debugLog("Received my own token back. participated = " + participated);
-		debugLog( "I win!!! ");
-		participated = 0;
-		isLeader = true;
-		leaderIP = tokenRing.getMyIP();
-
-		// Passing IP instead of index because IP will always be unique. 
-
-		var post_data = { listIP : tokenRing.getMyIP(),
-						  computeVal : myComputeID 
-		                };
-		generalPOST( tokenRing.getNeighborIP(), '/do_winner', post_data );
-	}
-	else if ( incomingComputeID > myComputeID )
-	{
-		if ( incomingComputeID < currBestComputeID )
-		{
-			currBestComputeID = incomingComputeID;
-		}
-
-		/* Do Pass this Compute ID */
-    	if ( participated == 0 ) 
-    	{
-			participated = 1;
-			isLeader = false;
-		}
-
-		//electionPOST( incomingComputeID );
-		var post_data = { computeID : incomingComputeID };
-		generalPOST (tokenRing.getNeighborIP(), '/do_election', post_data );
-
-		//debugLog("Forwarding incomingComputeID: " + incomingComputeID );
-	}
-	else if ( incomingComputeID < myComputeID ) //forward incoming packet 
-	{
-		if ( participated == 0 )
-		{
-			participated = 1;
-			isLeader = false;
-
-			//debugLog("Begin participating in new election: " + myComputeID);
-			
-			var post_data = { computeID : myComputeID };		
-			generalPOST( tokenRing.getNeighborIP(), '/do_election', post_data ); 
-			currBestComputeID = myComputeID;
-		}
-		else if ( participated == 1 ) 
-		{   
-			//debugLog("Dropping " + incomingComputeID ); 
-		}
-	}
-  
-	//debugLog("Leaving do election part = " + participated);
-	/* Else don't pass along ( drop out of election ) */
-});
-
-var primesData = { n:3, k:2, t:500, leadIP:'' };
-
-app.post('/do_winner', function(req, res) {
-	var the_body = req.body;  //see connect package above
-	debugLog ( "Winner token received. Election over.\n" + JSON.stringify(the_body));
-
-	res.json(the_body);
-
-	var IP = the_body.listIP;
-	var Val = the_body.computeVal;
-  
-	if( myComputeID != Val )
-	{
-		participated = 0;
-		
-		box.style.bg = 'blue';
-		screen.render();
-		
-		var post_data = { listIP : IP, computeVal : Val };
-		leaderIP = IP;
-		generalPOST( tokenRing.getNeighborIP(), '/do_winner', post_data );
-	} 
-	else
-	{
-		box.style.bg = 'green';
-		screen.render(); 
-
-		primesData.leadIP = leaderIP;
-		//Leader signals to workers to calculate primes if number of devices is
-		//greater than 1.
-		
-		generalPOST( tokenRing.getNeighborIP(), '/do_work', primesData );
-
-	}
-});
-
-function startElection()
-{
-	debugLog( "This is the group at the start of the Election " + tokenRing.getRing() );
-
-	debugLog( "My Index in Group: " + tokenRing.getMyIPIndex() );
-
-	debugLog( "My Compute ID: " + myComputeID );
-	participated = 1;
-	isLeader = false;
-
-	//electionPOST( myComputeID );
-	setTimeout( initialElection, 3000);
-	//maybe initialElection();
-}
-
-var initialElectionParticipation = false;
-
-function initialElection()
-{
-	var post_data = { computeID : myComputeID };		
-	if (!initialElectionParticipation)
-	{
-		//electionPOST ( myComputeID );
-		initialElectionParticipation = true;
-		generalPOST (tokenRing.getNeighborIP(), '/do_election', post_data );
-	}
-}
-
-function isprime(num)
-{
-    var i = 0;
-    if (num <= 1) 
-	{
-		return false;
-    }
-    for (i = 2; i * i <= num; i = i + 2) 
-	{
-		if (num % i == 0) 
-		{
-			return false;
-		}
-	}
-    return true;
-}
-
-function computePrimes(n, c, k) 
-{
-
-    var rightnow = new Date();
-    var start_time = rightnow.getTime();
-    var proceed = true;
-    
-    while (proceed) 
-	{
-		n++;
-		if ((n % 2) == 0) continue;
-		if ( isprime(n) ) c++;
-		//-----
-		var rightnow = new Date();
-		if ((rightnow.getTime() - start_time) > k) proceed = false;
-    }
-
-    //Display the number of discovered primes:
-//    box.setContent("Primes below " + n + ": " + c + "\nIn " + k*1000 + "seconds");
-//    screen.render();
-
-    //TODO: This data needs to get into the JSON object that is xmitted to next node.
-	primesData.n = n;
-	primesData.k = c;
-
-    //PostPrimeToken();
-	generalPOST ( leaderIP, '/do_work', primesData );
-
-    return;
-}
-
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
 
@@ -624,14 +274,51 @@ screen.key(['escape', 'q', 'C-c'], function(ch, key) {
 // Focus our element.
 box.focus();
 
+var GAP_STATE = 0;
+var REQUEST_STATE = 1;
+var WORK_STATE = 2;
+var STATE = GAP_STATE;
+
+var highestTS = 0;
+var myTS = 0;
+var ReqDeferred = [];
+var PendReply = []
+
+function processReq(ID, timestamp)
+{
+	switch(STATE) {
+		case GAP_STATE:
+			break;
+		case REQUEST_STATE:
+			break;
+		case WORK_STATE:
+			break;
+		default:
+			console.log("Not valid state");
+	}
+}
+
+function gapState(ID,timestamp)
+{
+
+}
+
+function requestState(ID,timestamp)
+{
+
+}
+
+function workState(ID,timestamp)
+{
+
+}
 // Render the screen.
 screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	myComputeID = Delay( parseInt( process.argv[2] ) || 0 );
-	currBestComputeID = myComputeID;
 	discover();
-	setTimeout( startElection, 4000  );
+	debugLog( "Discovery Complete" );
+	setTimeout( XXX, 4000  );
 });
 
