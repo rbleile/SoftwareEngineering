@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var debug = true;
 tokenRing.debugMessages(false);
 
-
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -60,8 +59,8 @@ var box = blessed.box({
     }
 });
 
-/* Button Code */
-var visitor = blessed.box({
+/********* BUTTON CODE *********/
+var reqResourceButton = blessed.box({
     parent: screen,
     top: '80%',
     height: '20%',
@@ -73,30 +72,63 @@ var visitor = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}V = Admit Visitor{/center}',
+    content: '{center}Z = Request Resource{/center}',
     tags: true,
     hoverEffects: {
 	bg: 'green'
     }
 });
 
-visitor.on('click', function(data) {
-
-    //do something
-
+var relResourceButton = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+	type: 'line',
+	fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}X = Release Resource{/center}',
+    tags: true,
+    hoverEffects: {
+	bg: 'blue'
+    }
 });
 
-screen.key(['v', 'V'], function(ch, key) {
-    admitVisitor();
+reqResourceButton.on('click', function(data) {
+    //do something
+});
+
+relResourceButton.on('click', function(data) {
+    //do something
+});
+
+screen.key(['z', 'Z'], function(ch, key) {
+    reqResource();
+});
+
+screen.key(['x', 'X'], function(ch, key) {
+    relResource();
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-visitor.focus();
+reqResourceButton.focus();
+relResourceButton.focus();
 screen.render();
 /********* END BUTTON ***********/
+
+function debugLog( msg ) 
+{
+	log.insertLine(1, msg);
+	screen.render();
+	return;
+}
 
 app.set('port', process.env.PORT || 3000);
 
@@ -221,58 +253,67 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 		};
 	}
 	
-		// check if arg param res does not exist
-		if (typeof(res) != "function")
-		{
-			res = function(r) {} ;
-		}
+	// check if arg param res does not exist
+	if (typeof(res) != "function")
+	{
+		res = function(r) {} ;
+	}
 
-		var dataString = JSON.stringify( post_data );
+	var dataString = JSON.stringify( post_data );
 
-		var headers = {
-			'Content-Type': 'application/json',
-			'Content-Length': dataString.length
-		};
+	var headers = {
+		'Content-Type': 'application/json',
+		'Content-Length': dataString.length
+	};
 
-		var post_options = {
-			host: genHost,
-			port: '3000',
-			path: genPath,
-			method: 'POST',
-			headers: headers
-		};
+	var post_options = {
+		host: genHost,
+		port: '3000',
+		path: genPath,
+		method: 'POST',
+		headers: headers
+	};
 
-		var post_request = http.request(post_options, function(res){
-			res.setEncoding('utf-8');
-			
-			var responseString = '';
+	var post_request = http.request(post_options, function(res){
+		res.setEncoding('utf-8');
+		
+		var responseString = '';
 
-			res.on('data', function(data){
-				responseString += data;
-			});
-
-			res.on('end', function(){
-				//var resultObject = JSON.parse(responseString);
-			});
+		res.on('data', function(data){
+			responseString += data;
 		});
-		
-		post_request.on('error', err );
-		post_request.write(dataString);
-		post_request.end();
-		
+
+		res.on('end', function(){
+			//var resultObject = JSON.parse(responseString);
+		});
+	});
 	
+	post_request.on('error', err );
+	post_request.write(dataString);
+	post_request.end();
 }
 
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
 
-// Quit on Escape, q, or Control-C.
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-	return process.exit(0);
-});
-
 // Focus our element.
 box.focus();
+
+function reqResource()
+{
+	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
+	reqResourceButton.style.bg = '#222288';
+	reqResourceButton.style.fg = '#ffffff';
+	screen.render();
+	
+	requesting();
+}
+
+function requesting()
+{
+	debugLog ("Requesting Resource");
+	STATE = REQUEST_STATE;
+}
 
 var GAP_STATE = 0;
 var REQUEST_STATE = 1;
@@ -310,7 +351,7 @@ function inGapState(ID,timestamp)
 	}
 
 	var post_data = { myIP : tokenRing.getMyIP() }; 
-	generalPOST(ID, '/shotgun_approved', post_data); 
+	generalPOST(ID, '/resource_approved', post_data); 
 }
 
 function inRequestState(ID,timestamp)
@@ -322,12 +363,12 @@ function inRequestState(ID,timestamp)
 	}
 	else if (timestamp == highestTS)
 	{
-		console.log("Tiebreaker");
+		debugLog("Tiebreaker");
 	}	
 	else
 	{
 		var post_data = { myIP : tokenRing.getMyIP() }; 
-		generalPOST(ID, '/shotgun_approved', post_data); 
+		generalPOST(ID, '/resource_approved', post_data); 
 	}
 }
 
@@ -340,15 +381,15 @@ function inWorkState(ID,timestamp)
 	}
 	else if (timestamp == highestTS)
 	{
-		console.log("BAD inWorkState: timestamp == highestTS");
+		debugLog("BAD inWorkState: timestamp == highestTS");
 	}
 	else
 	{
-		console.log("BAD inWorkState: timestamp < highestTS");
+		debugLog("BAD inWorkState: timestamp < highestTS");
 	}
 }
 
-app.post('/shotgun_approved', function(req, res) {
+app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
 
 	NumPendingReplies = tokenRing.getRingSize()-1;
@@ -367,4 +408,3 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog( "Discovery Complete" );
 	setTimeout( XXX, 4000  );
 });
-
