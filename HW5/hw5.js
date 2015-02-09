@@ -339,14 +339,14 @@ function reqResource()
 
 	highestTS++;
 	myTS = highestTS;
-	var everyoneElse = tokenRing.getEveryoneElse();
+	var everyoneElse = tokenRing.getEveryoneElse(); // returns index
 	debugLog ("Requesting Resource"+everyoneElse);
 
 	for (var i = 0; i < everyoneElse.length; i++)
 	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
 		debugLog ("to: " + everyoneElse[i] + post_data);
-		generalPOST(everyoneElse[i], '/process_resource_request', post_data); 
+		generalPOST(tokenRing.getIPofIndex(everyoneElse[i]), '/process_resource_request', post_data); 
 		NumPendingReplies++;
 	}
 }
