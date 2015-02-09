@@ -328,15 +328,17 @@ var NumPendingReplies = 0;
 
 function reqResource()
 {
+	STATE = REQUEST_STATE;
+
 	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
 	reqResourceButton.style.bg = '#222288';
 	reqResourceButton.style.fg = '#ffffff';
+	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
+	box.style.bg = 'yellow';
 	screen.render();
-	
-	STATE = REQUEST_STATE;
-	myTS = highestTS++;
+
 	highestTS++;
-	app.post
+	myTS = highestTS;
 	debugLog ("Requesting Resource");
 
 	var everyoneElse = tokenRing.getEveryoneElse();
