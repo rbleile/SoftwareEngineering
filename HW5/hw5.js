@@ -242,7 +242,8 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	{
 		err = function(e) 
 		{
-			debugLog("Lost connection to " + genHost + "reomiving from ring");
+			/*
+			debugLog("Lost connection to " + genHost + "removing from ring");
 
 			var genHostID = tokenRing.indexOf( genHost );
 
@@ -261,9 +262,12 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 				debugLog( "New Compute Loop - Compute Node Down" );
 				generalPOST( leaderIP, '/do_work', primesData );
 			}
+			*/
+			debug.log("generalPOST err called "+ e);
 		};
 	}
 	
+
 	// check if arg param res does not exist
 	if (typeof(res) != "function")
 	{
