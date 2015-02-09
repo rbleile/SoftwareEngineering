@@ -344,6 +344,12 @@ function reqResource()
 	var everyoneElse = tokenRing.getEveryoneElse();
 	for (var i = 0; i < everyoneElse.length; i++)
 	{
+		debugLog("RRRRRRin for loop");
+		debugLog("RRRRRReveryoneElse: " + everyoneElse[i] + " ");
+	}
+		
+	for (var i = 0; i < everyoneElse.length; i++)
+	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
 		debugLog ("to: " + everyoneElse[i] + post_data);
 		generalPOST(everyoneElse[i], '/process_resource_request', post_data); 
