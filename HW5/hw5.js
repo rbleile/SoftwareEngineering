@@ -331,7 +331,7 @@ function reqResource()
 	STATE = REQUEST_STATE;
 
 	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
-	reqResourceButton.style.bg = '#222288';
+	reqResourceButton.style.bg = 'yello';
 	reqResourceButton.style.fg = '#ffffff';
 	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
 	box.style.bg = 'yellow';
@@ -482,6 +482,7 @@ function releaseShotgun()
 screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
+	debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex(0));
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
