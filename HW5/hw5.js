@@ -263,7 +263,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 				generalPOST( leaderIP, '/do_work', primesData );
 			}
 			*/
-			debug.log("generalPOST err called "+ e);
+			debugLog("generalPOST err called "+ e);
 		};
 	}
 	
@@ -441,9 +441,11 @@ app.post('/resource_approved', function(req, res) {
 		if (NumPendingReplies == 0)
 		{
 			STATE = WORK_STATE;
-			reqResourceButton.setContent('{center}SHOTGUN!!{/center}');	
+			reqResourceButton.setContent('{center}RELEASE RESOURCE!!{/center}');	
 			reqResourceButton.style.bg = '#222288';
 			reqResourceButton.style.fg = '#ffffff';
+			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN {/center}');
+			box.style.bg = 'red';
 			screen.render();
 		}
 		if(debug) debugLog ( "resource_approved...working" + JSON.stringify( the_body) );
