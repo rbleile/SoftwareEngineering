@@ -345,7 +345,8 @@ function reqResource()
 	for (var i = 0; i < everyoneElse.length; i++)
 	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
-		generalPOST(everyoneElse[i], '/process_resource_requested', post_data); 
+		debugLog ("to: " + everyoneElse[i] + post_data);
+		generalPOST(everyoneElse[i], '/process_resource_request', post_data); 
 		NumPendingReplies++;
 	}
 }
