@@ -76,7 +76,8 @@ var reqResourceButton = blessed.box({
     tags: true,
     hoverEffects: {
 	bg: 'green'
-    }
+    },
+	hidden: true
 });
 
 var relResourceButton = blessed.box({
@@ -95,7 +96,8 @@ var relResourceButton = blessed.box({
     tags: true,
     hoverEffects: {
 	bg: 'blue'
-    }
+    },
+	hidden: true
 });
 
 reqResourceButton.on('click', function(data) {
@@ -399,6 +401,14 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
+function initializeStates()
+{
+	box.setContent('{center}Idle State{/center}');
+	box.style.bg = 'green';
+	reqResourceButton.hidden = false;
+	screen.render();
+}
+
 // Render the screen.
 screen.render();
 
@@ -406,5 +416,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( XXX, 4000  );
+	setTimeout( initializeStates, 4000  );
 });
