@@ -339,15 +339,9 @@ function reqResource()
 
 	highestTS++;
 	myTS = highestTS;
-	debugLog ("Requesting Resource");
-
 	var everyoneElse = tokenRing.getEveryoneElse();
-	for (var i = 0; i < everyoneElse.length; i++)
-	{
-		debugLog("RRRRRRin for loop");
-		debugLog("RRRRRReveryoneElse: " + everyoneElse[i] + " ");
-	}
-		
+	debugLog ("Requesting Resource"+everyoneElse);
+
 	for (var i = 0; i < everyoneElse.length; i++)
 	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
