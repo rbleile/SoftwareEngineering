@@ -340,7 +340,7 @@ function reqResource()
 	highestTS++;
 	myTS = highestTS;
 	var everyoneElse = tokenRing.getEveryoneElse(); // returns index
-	debugLog ("Requesting Resource"+everyoneElse);
+	debugLog ("Requesting Resource, " + everyoneElse);
 
 	for (var i = 0; i < everyoneElse.length; i++)
 	{
@@ -372,7 +372,7 @@ function processReq(ID, timestamp)
 			inWorkState(ID,timestamp);
 			break;
 		default:
-			console.log("Not valid state");
+			debugLog("Not valid state");
 	}
 }
 
