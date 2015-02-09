@@ -347,8 +347,8 @@ function reqResource()
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
 		debugLog ("to: " + everyoneElse[i] + post_data);
 		var convertedIndex = tokenRing.getIPofIndex(everyoneElse[i]);
-		generalPOST(convertedIndex, '/process_resource_request', post_data); 
-	//debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
+		debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
+		//generalPOST(convertedIndex, '/process_resource_request', post_data); 
 		NumPendingReplies++;
 	}
 }
