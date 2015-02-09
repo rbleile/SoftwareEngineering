@@ -80,6 +80,7 @@ var reqResourceButton = blessed.box({
 	hidden: true
 });
 
+/*
 var relResourceButton = blessed.box({
     parent: screen,
     top: '80%',
@@ -99,35 +100,43 @@ var relResourceButton = blessed.box({
     },
 	hidden: true
 });
+*/
 
 reqResourceButton.on('click', function(data) {
-    reqResource();
+	if (STATE == GAP_STATE)
+		reqResource();
+	else if (STATE == WORK_STATE)
+		releaseShotgun();
 });
 
+/*
 relResourceButton.on('click', function(data) {
     //do something
 });
+*/
 
 screen.key(['z', 'Z'], function(ch, key) {
     reqResource();
 });
 
+/*
 screen.key(['x', 'X'], function(ch, key) {
     relResource();
 });
+*/
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
 reqResourceButton.focus();
-relResourceButton.focus();
+//relResourceButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, msg);
+	log.insertLine(1, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
 	screen.render();
 	return;
 }
@@ -301,16 +310,6 @@ screen.render();
 // Focus our element.
 box.focus();
 
-function reqResource()
-{
-	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
-	reqResourceButton.style.bg = '#222288';
-	reqResourceButton.style.fg = '#ffffff';
-	screen.render();
-	
-	debugLog ("Requesting Resource");
-	STATE = REQUEST_STATE;
-}
 
 var GAP_STATE = 0;
 var REQUEST_STATE = 1;
@@ -322,6 +321,36 @@ var highestTS = 0;
 var myTS = 0;
 var ReqDeferred = [];
 var NumPendingReplies = 0;
+
+function reqResource()
+{
+	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
+	reqResourceButton.style.bg = '#222288';
+	reqResourceButton.style.fg = '#ffffff';
+	screen.render();
+	
+	STATE = REQUEST_STATE;
+	myTS = highestTS++;
+	highestTS++;
+	app.post
+	debugLog ("Requesting Resource");
+
+	var everyoneElse = tokenRing.getEveryoneElse();
+	for (var i = 0; i < everyoneElse.length; i++)
+	{
+		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
+		generalPOST(everyoneElse[i], '/process_resource_requested', post_data); 
+		NumPendingReplies++;
+	}
+}
+
+function getNextRequestDeferred()
+{
+	if (ReqDeferred.length < 1)
+		return -1;
+	else
+		return ReqDeferred.splice(0, 1);
+}
 
 function processReq(ID, timestamp)
 {
@@ -348,6 +377,7 @@ function inGapState(ID,timestamp)
 	}
 
 	var post_data = { myIP : tokenRing.getMyIP() }; 
+
 	generalPOST(ID, '/resource_approved', post_data); 
 }
 
@@ -386,12 +416,36 @@ function inWorkState(ID,timestamp)
 	}
 }
 
+app.post('/process_resource_request', function(req, res) {
+	var the_body = req.body;  
+
+	if(debug) debugLog ( "process_resource_request " + JSON.stringify( the_body) );
+
+	processReq(tokenRing.indexOf(the_body.myIP), the_body.myTS);
+
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
+
 app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
 
-	NumPendingReplies = tokenRing.getRingSize()-1;
-
-	if(debug) debugLog ( "" + JSON.stringify( the_body) );
+	if (STATE == REQUEST_STATE)
+	{
+		NumPendingReplies--;
+		if (NumPendingReplies == 0)
+		{
+			STATE = WORK_STATE;
+			reqResourceButton.setContent('{center}SHOTGUN!!{/center}');	
+			reqResourceButton.style.bg = '#222288';
+			reqResourceButton.style.fg = '#ffffff';
+			screen.render();
+		}
+		if(debug) debugLog ( "resource_approved...working" + JSON.stringify( the_body) );
+	}
+	else 
+	{ 
+		if(debug) debugLog ( "I never requested, shouldn't be approving." + JSON.stringify( the_body) );
+	}
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
@@ -402,6 +456,17 @@ function initializeStates()
 	box.style.bg = 'green';
 	reqResourceButton.hidden = false;
 	screen.render();
+}
+
+function releaseShotgun()
+{
+	STATE = GAP_STATE;
+	for (var i = 0; i < ReqDeferred.length; i++)
+	{
+		var nextPendingRequest = getNextRequestDeferred();
+		var post_data = { myIP : tokenRing.getMyIP() }; 
+		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
+	}
 }
 
 // Render the screen.

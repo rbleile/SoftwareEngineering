@@ -108,6 +108,17 @@ function removeRingNeigbor()
   if(debug) console.log("Current group : " + tokenRing);
 }
 
+function getEveryoneElse()
+{
+	var every = [];
+	for (var i = 0; i < tokenRing.length; i++)
+	{
+		if (i != getMyIPIndex())
+			every.push(i);
+	}
+	return every;
+}
+
 function isMember(ip_address)
 {
   if(tokenRing.indexOf(ip_address) == -1) return false;
@@ -125,7 +136,8 @@ module.exports = {
   isMember : isMember,
   getRingSize : function() { return tokenRing.length ; },
   getRing : function() { return tokenRing; },
-  indexOf : function(IP) { return tokenRing.indexOf(IP); }
+  indexOf : function(IP) { return tokenRing.indexOf(IP); },
+  getEveryoneElse : getEveryoneElse 
 };
 
 
