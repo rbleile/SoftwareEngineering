@@ -101,7 +101,7 @@ var relResourceButton = blessed.box({
 });
 
 reqResourceButton.on('click', function(data) {
-    //do something
+    reqResource();
 });
 
 relResourceButton.on('click', function(data) {
@@ -308,11 +308,6 @@ function reqResource()
 	reqResourceButton.style.fg = '#ffffff';
 	screen.render();
 	
-	requesting();
-}
-
-function requesting()
-{
 	debugLog ("Requesting Resource");
 	STATE = REQUEST_STATE;
 }
