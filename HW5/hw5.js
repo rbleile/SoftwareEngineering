@@ -166,7 +166,7 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
-var keepAliveTimeout = 10000;
+var keepAliveTimeout = 1000;
 
 function discover() 
 {
@@ -215,7 +215,6 @@ function keepAlive()
 		var post_data = { myIP : i };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
-			//debugLog("Sending keepalive " + count + " to " +listIPs[i]);
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
 		}
 	}
