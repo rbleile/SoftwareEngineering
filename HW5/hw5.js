@@ -80,40 +80,12 @@ var reqResourceButton = blessed.box({
 	hidden: true
 });
 
-/*
-var relResourceButton = blessed.box({
-    parent: screen,
-    top: '80%',
-    height: '20%',
-    width: '50%',
-    left: '0%',
-    border: {
-	type: 'line',
-	fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}X = Release Resource{/center}',
-    tags: true,
-    hoverEffects: {
-	bg: 'blue'
-    },
-	hidden: true
-});
-*/
-
 reqResourceButton.on('click', function(data) {
 	if (STATE == GAP_STATE)
 		reqResource();
 	else if (STATE == WORK_STATE)
 		releaseShotgun();
 });
-
-/*
-relResourceButton.on('click', function(data) {
-    //do something
-});
-*/
 
 screen.key(['z', 'Z'], function(ch, key) {
 	if (STATE == GAP_STATE)
@@ -122,18 +94,11 @@ screen.key(['z', 'Z'], function(ch, key) {
 		releaseShotgun();
 });
 
-/*
-screen.key(['x', 'X'], function(ch, key) {
-    relResource();
-});
-*/
-
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
 reqResourceButton.focus();
-//relResourceButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
@@ -333,8 +298,8 @@ function reqResource()
 {
 	STATE = REQUEST_STATE;
 
-	reqResourceButton.style.bg = 'yellow';
-	reqResourceButton.style.fg = '#ffffff';
+	reqResourceButton.style.bg = 'black';
+	reqResourceButton.style.fg = '#000000';
 	reqResourceButton.hidden = true;
 	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
 	box.style.bg = 'yellow';
