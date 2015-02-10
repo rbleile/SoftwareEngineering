@@ -116,7 +116,10 @@ relResourceButton.on('click', function(data) {
 */
 
 screen.key(['z', 'Z'], function(ch, key) {
-    reqResource();
+	if (STATE == GAP_STATE)
+		reqResource();
+	else if (STATE == WORK_STATE)
+		releaseShotgun();
 });
 
 /*
@@ -330,8 +333,8 @@ function reqResource()
 {
 	STATE = REQUEST_STATE;
 
-	reqResourceButton.style.bg = 'yellow';
-	reqResourceButton.style.fg = '#ffffff';
+	//reqResourceButton.style.bg = 'yellow';
+	//reqResourceButton.style.fg = '#ffffff';
 	reqResourceButton.hidden = true;
 	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
 	box.style.bg = 'yellow';
@@ -460,6 +463,7 @@ app.post('/resource_approved', function(req, res) {
 			reqResourceButton.setContent('{center}RELEASE RESOURCE!!{/center}');	
 			reqResourceButton.style.bg = 'red';
 			reqResourceButton.style.fg = '#ffffff';
+			reqResourceButton.hidden = false;
 			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN {/center}');
 			box.style.bg = 'red';
 			screen.render();
