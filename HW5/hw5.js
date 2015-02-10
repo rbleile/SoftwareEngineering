@@ -330,9 +330,9 @@ function reqResource()
 {
 	STATE = REQUEST_STATE;
 
-	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
 	reqResourceButton.style.bg = 'yellow';
 	reqResourceButton.style.fg = '#ffffff';
+	reqResourceButton.hidden = true;
 	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
 	box.style.bg = 'yellow';
 	screen.render();
@@ -474,8 +474,9 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
-function initializeStates()
+function gapState()
 {
+	STATE = GAP_STATE;
 	box.setContent('{center}Idle State{/center}');
 	box.style.bg = 'green';
 	reqResourceButton.hidden = false;
@@ -484,7 +485,7 @@ function initializeStates()
 
 function releaseShotgun()
 {
-	STATE = GAP_STATE;
+	gapState();
 	for (var i = 0; i < ReqDeferred.length; i++)
 	{
 		var nextPendingRequest = getNextRequestDeferred();
@@ -497,9 +498,8 @@ function releaseShotgun()
 screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
-	//debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( initializeStates, 4000  );
+	setTimeout( gapState, 4000  );
 });
