@@ -166,6 +166,8 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
+var keepAliveTimeout = 1000;
+
 function discover() 
 {
 	box.style.bg = 'red';
@@ -196,8 +198,26 @@ function discover()
 		}
 	}
 
+	setTimeout( keepAlive, keepAliveTimeout);
 }
 /***********End Discovery***********************/
+
+/* Function to check if other devices are there. */
+function keepAlive()
+{
+	//console.log("Calling keepalive " );
+	var listIPs = tokenRing.getRing();
+	for( var i = 0; i < listIPs.length; i++) 
+	{
+		var post_data = { myIP : i };
+		if (listIPs[i] != tokenRing.getMyIP())
+		{
+			generalPOST ( listIPs[i], '/do_keepalive', post_data );
+		}
+	}
+	
+	setTimeout( keepAlive, keepAliveTimeout );
+}
 
 /*
  * General function to replace separate functions for all different types of
@@ -210,31 +230,15 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	{
 		err = function(e) 
 		{
-			/*
 			debugLog("Lost connection to " + genHost + "removing from ring");
 
-			var genHostID = tokenRing.indexOf( genHost );
-
 			tokenRing.removeRingMember(genHost);
-			if ( leaderIP == genHost )
-			{
-				if ( tokenRing.getMyIPIndex() == 0 )
-				{
-					debugLog( "New Election - Leader is down" );
-					initialElectionParticipation = false;
-					startElection();
-				}
-			}
-			else if( isLeader && genHostID == ipSend )
-			{
-				debugLog( "New Compute Loop - Compute Node Down" );
-				generalPOST( leaderIP, '/do_work', primesData );
-			}
-			*/
+
+			processApproval(genHost);
+
 			debugLog("generalPOST err called "+ e);
 		};
 	}
-	
 
 	// check if arg param res does not exist
 	if (typeof(res) != "function")
@@ -276,12 +280,16 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	post_request.end();
 }
 
+app.post('/do_keepalive', function(req, res) {
+	res.json(req.body);
+	var the_body = req.body;  //see connect package above
+});
+
 box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
 
 // Focus our element.
 box.focus();
-
 
 var GAP_STATE = 0;
 var REQUEST_STATE = 1;
@@ -292,7 +300,7 @@ var STATE = GAP_STATE;
 var highestTS = 0;
 var myTS = 0;
 var ReqDeferred = [];
-var NumPendingReplies = 0;
+var PendingReplies = [];
 
 function reqResource()
 {
@@ -318,7 +326,7 @@ function reqResource()
 		if (theRing[i] != tokenRing.getMyIP())
 		{
 			generalPOST(theRing[i], '/process_resource_request', post_data); 
-			NumPendingReplies++;
+			PendingReplies.push(theRing[i]);
 		}  
 	}
 
@@ -330,7 +338,7 @@ function reqResource()
 		//var convertedIndex = tokenRing.getIPofIndex(everyoneElse[i]);
 		debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
 		//generalPOST(convertedIndex, '/process_resource_request', post_data); 
-		NumPendingReplies++;
+		PendingReplies++;
 	}
 	*/
 }
@@ -428,14 +436,13 @@ app.post('/process_resource_request', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
-app.post('/resource_approved', function(req, res) {
-	var the_body = req.body;  
-	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " +NumPendingReplies);
+function processApproval(IP)
+{
 	if (STATE == REQUEST_STATE)
 	{
-		NumPendingReplies--;
-		debugLog("remaining replies: " + NumPendingReplies);
-		if (NumPendingReplies == 0)
+		PendingReplies.splice(PendingReplies.indexOf(IP),1);
+		debugLog("remaining replies: " + PendingReplies);
+		if (PendingReplies.length == 0)
 		{
 			STATE = WORK_STATE;
 			reqResourceButton.setContent('{center}RELEASE RESOURCE!!{/center}');	
@@ -445,13 +452,20 @@ app.post('/resource_approved', function(req, res) {
 			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN{/center}');
 			box.style.bg = 'red';
 			screen.render();
-			if(debug) debugLog ( "resource_approved...working" + JSON.stringify( the_body) );
+			if(debug) debugLog ( "resource_approved...working");
 		}
 	}
 	else 
 	{ 
-		if(debug) debugLog ( "I never requested, shouldn't be approving." + JSON.stringify( the_body) );
+		if(debug) debugLog ( "I never requested, shouldn't be approving. Node down.");
 	}
+}
+
+app.post('/resource_approved', function(req, res) {
+	var the_body = req.body;  
+	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
+	
+	processApproval(the_body.myIP);
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
