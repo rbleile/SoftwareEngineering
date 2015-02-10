@@ -166,7 +166,7 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
-var keepAliveTimeout = 1000;
+var keepAliveTimeout = 2000;
 
 function discover() 
 {
@@ -202,17 +202,20 @@ function discover()
 }
 /***********End Discovery***********************/
 
+var count = 0;
+
 /* Function to check if other devices are there. */
 function keepAlive()
 {
 	//debugLog("Calling keepalive " );
 	var listIPs = tokenRing.getRing();
+	count++;
 	for( var i = 0; i < listIPs.length; i++) 
 	{
 		var post_data = { myIP : i };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
-			debugLog("Sending keepalive to " +listIPs[i]);
+			debugLog("Sending keepalive " + count + " to " +listIPs[i]);
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
 		}
 	}
