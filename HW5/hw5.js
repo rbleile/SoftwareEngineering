@@ -166,7 +166,7 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
-var keepAliveTimeout = 2000;
+var keepAliveTimeout = 10000;
 
 function discover() 
 {
