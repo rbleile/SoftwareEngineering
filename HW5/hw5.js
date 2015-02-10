@@ -331,7 +331,7 @@ function reqResource()
 	STATE = REQUEST_STATE;
 
 	reqResourceButton.setContent('{center}RESOURCE REQUESTED!!{/center}');	
-	reqResourceButton.style.bg = 'yello';
+	reqResourceButton.style.bg = 'yellow';
 	reqResourceButton.style.fg = '#ffffff';
 	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
 	box.style.bg = 'yellow';
@@ -339,18 +339,31 @@ function reqResource()
 
 	highestTS++;
 	myTS = highestTS;
-	var everyoneElse = tokenRing.getEveryoneElse(); // returns index
-	debugLog ("Requesting Resource, " + everyoneElse);
+	//var everyoneElse = tokenRing.getEveryoneElse(); // returns index
+	//debugLog ("Requesting Resource, " + everyoneElse);
 
+	var theRing = tokenRing.getRing(); 
+	for (var i = 0; i < theRing.length; i++)
+	{
+		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
+		if (theRing[i] != tokenRing.getMyIP())
+		{
+			generalPOST(theRing[i], '/process_resource_request', post_data); 
+			NumPendingReplies++;
+		}
+	}
+
+	/*
 	for (var i = 0; i < everyoneElse.length; i++)
 	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
 		debugLog ("to: " + everyoneElse[i] + post_data);
-		var convertedIndex = tokenRing.getIPofIndex(everyoneElse[i]);
+		//var convertedIndex = tokenRing.getIPofIndex(everyoneElse[i]);
 		debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
 		//generalPOST(convertedIndex, '/process_resource_request', post_data); 
 		NumPendingReplies++;
 	}
+	*/
 }
 
 function getNextRequestDeferred()
@@ -445,7 +458,7 @@ app.post('/resource_approved', function(req, res) {
 		{
 			STATE = WORK_STATE;
 			reqResourceButton.setContent('{center}RELEASE RESOURCE!!{/center}');	
-			reqResourceButton.style.bg = '#222288';
+			reqResourceButton.style.bg = 'red';
 			reqResourceButton.style.fg = '#ffffff';
 			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN {/center}');
 			box.style.bg = 'red';
