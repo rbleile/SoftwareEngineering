@@ -333,8 +333,8 @@ function reqResource()
 {
 	STATE = REQUEST_STATE;
 
-	//reqResourceButton.style.bg = 'yellow';
-	//reqResourceButton.style.fg = '#ffffff';
+	reqResourceButton.style.bg = 'yellow';
+	reqResourceButton.style.fg = '#ffffff';
 	reqResourceButton.hidden = true;
 	box.setContent('{center}REQUEST - REQUEST- REQUEST{/center}');
 	box.style.bg = 'yellow';
@@ -426,10 +426,10 @@ function inRequestState(ID,timestamp)
 
 function inWorkState(ID,timestamp)
 {
+	ReqDeferred.push(ID);
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
-		ReqDeferred.push(ID);
 	}
 	else if (timestamp == highestTS)
 	{
