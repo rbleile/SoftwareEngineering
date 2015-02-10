@@ -365,10 +365,10 @@ function inGapState(ID,timestamp)
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
+    	debugLog("request in gap state new timestamp");
 	}
 
 	var post_data = { myIP : tokenRing.getMyIP() }; 
-
 	generalPOST(ID, '/resource_approved', post_data); 
 }
 
@@ -378,6 +378,7 @@ function inRequestState(ID,timestamp)
 	{
 		highestTS = timestamp;
 		ReqDeferred.push(ID);
+		debugLog("request in request state new timestamp");
 	}
 	else if (timestamp == highestTS)
 	{
@@ -469,6 +470,7 @@ function gapState()
 function releaseShotgun()
 {
 	gapState();
+	debugLog("release shotgun. Current RD : " + ReqDeferred);
 	for (var i = 0; i < ReqDeferred.length; i++)
 	{
 		var nextPendingRequest = getNextRequestDeferred();
