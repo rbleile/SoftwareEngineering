@@ -319,7 +319,7 @@ function reqResource()
 		{
 			generalPOST(theRing[i], '/process_resource_request', post_data); 
 			NumPendingReplies++;
-		}
+		}  
 	}
 
 	/*
