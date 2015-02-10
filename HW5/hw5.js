@@ -247,7 +247,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	// check if arg param res does not exist
 	if (typeof(res) != "function")
 	{
-		res = function(r) {} ;
+		res = function(r) {debugLog("revieved repsonse " + r);} ;
 	}
 
 	var dataString = JSON.stringify( post_data );
