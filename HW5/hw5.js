@@ -416,6 +416,15 @@ function inRequestState(ID,timestamp)
 	else if (timestamp == highestTS)
 	{
 		debugLog("Tiebreaker");
+		if (ID > tokenRing.getMyIP())
+		{
+			ReqDeferred.push(ID);
+		}
+		else
+		{
+			var post_data = { myIP : tokenRing.getMyIP() }; 
+			generalPOST(ID, '/resource_approved', post_data); 
+		}
 	}	
 	else
 	{
