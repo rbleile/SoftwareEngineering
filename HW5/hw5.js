@@ -371,7 +371,7 @@ function getNextRequestDeferred()
 	if (ReqDeferred.length < 1)
 		return -1;
 	else
-		return ReqDeferred.splice(0, 1);
+		return ReqDeferred.splice(0,1);
 }
 
 function processReq(ID, timestamp)
@@ -443,7 +443,7 @@ app.post('/process_resource_request', function(req, res) {
 
 	if(debug) debugLog ( "process_resource_request " + JSON.stringify( the_body) );
 
-	processReq(tokenRing.indexOf(the_body.myIP), the_body.myTS);
+	processReq(the_body.myIP, the_body.myTS);
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
