@@ -205,13 +205,14 @@ function discover()
 /* Function to check if other devices are there. */
 function keepAlive()
 {
-	debugLog("Calling keepalive " );
+	//debugLog("Calling keepalive " );
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
 		var post_data = { myIP : i };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
+			debugLog("Sending keepalive to " +listIPs[i]);
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
 		}
 	}
