@@ -205,7 +205,7 @@ function discover()
 /* Function to check if other devices are there. */
 function keepAlive()
 {
-	//console.log("Calling keepalive " );
+	debugLog("Calling keepalive " );
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
@@ -503,5 +503,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	discover();
 	debugLog( "Discovery Complete" );
 	setTimeout( gapState, 4000  );
-	keepAlive();
+	
 });
