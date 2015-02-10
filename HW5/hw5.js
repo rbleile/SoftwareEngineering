@@ -215,7 +215,7 @@ function keepAlive()
 		var post_data = { myIP : i };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
-			debugLog("Sending keepalive " + count + " to " +listIPs[i]);
+			//debugLog("Sending keepalive " + count + " to " +listIPs[i]);
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
 		}
 	}
@@ -247,7 +247,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	// check if arg param res does not exist
 	if (typeof(res) != "function")
 	{
-		res = function(r) {debugLog("revieved repsonse " + r);} ;
+		res = function(r) {} ;
 	}
 
 	var dataString = JSON.stringify( post_data );
