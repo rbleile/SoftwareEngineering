@@ -233,13 +233,13 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	{
 		err = function(e) 
 		{
-			debugLog("Lost connection to " + genHost + "removing from ring");
+			if(debug) debugLog("Lost connection to " + genHost + "removing from ring");
 
 			tokenRing.removeRingMember(genHost);
 
 			processApproval(genHost);
 
-			debugLog("generalPOST err called "+ e);
+			if(debug) debugLog("generalPOST err called "+ e);
 		};
 	}
 
@@ -367,7 +367,7 @@ function processReq(ID, timestamp)
 			inWorkState(ID,timestamp);
 			break;
 		default:
-			debugLog("Not valid state");
+			if(debug) debugLog("Not valid state");
 	}
 }
 
@@ -376,7 +376,7 @@ function inGapState(ID,timestamp)
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
-    	debugLog("request in gap state new timestamp");
+    	if(debug) debugLog("request in gap state new timestamp");
 	}
 
 	var post_data = { myIP : tokenRing.getMyIP() }; 
@@ -389,11 +389,11 @@ function inRequestState(ID,timestamp)
 	{
 		highestTS = timestamp;
 		ReqDeferred.push(ID);
-		debugLog("request in request state new timestamp");
+		if(debug) debugLog("request in request state new timestamp");
 	}
 	else if (timestamp == highestTS)
 	{
-		debugLog("Tiebreaker");
+		if(debug) debugLog("Tiebreaker");
 		if (ID > tokenRing.getMyIP())
 		{
 			ReqDeferred.push(ID);
@@ -421,11 +421,11 @@ function inWorkState(ID,timestamp)
 	}
 	else if (timestamp == highestTS)
 	{
-		debugLog("BAD inWorkState: timestamp == highestTS");
+		if(debug) debugLog("BAD inWorkState: timestamp == highestTS");
 	}
 	else
 	{
-		debugLog("BAD inWorkState: timestamp < highestTS");
+		if(debug) debugLog("BAD inWorkState: timestamp < highestTS");
 	}
 }
 
@@ -444,7 +444,7 @@ function processApproval(IP)
 	if (STATE == REQUEST_STATE)
 	{
 		PendingReplies.splice(PendingReplies.indexOf(IP),1);
-		debugLog("remaining replies: " + PendingReplies);
+		if(debug) debugLog("remaining replies: " + PendingReplies);
 		if (PendingReplies.length == 0)
 		{
 			STATE = WORK_STATE;
@@ -466,7 +466,7 @@ function processApproval(IP)
 
 app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
-	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
+	if(debug) debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
 	
 	processApproval(the_body.myIP);
 
@@ -487,13 +487,13 @@ function gapState()
 function releaseShotgun()
 {
 	gapState();
-	debugLog("release shotgun. Current RD : " + ReqDeferred);
+	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
 	var numRequests = ReqDeferred.length;
 	for (var i = 0; i < numRequests; i++)
 	{
 		var nextPendingRequest = getNextRequestDeferred();
 		var post_data = { myIP : tokenRing.getMyIP() };
-	    debugLog("Sending approval to : " + nextPendingRequest); 	
+	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
 		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
 }
