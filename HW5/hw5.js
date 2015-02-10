@@ -503,4 +503,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	discover();
 	debugLog( "Discovery Complete" );
 	setTimeout( gapState, 4000  );
+	keepAlive();
 });
