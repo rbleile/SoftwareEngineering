@@ -396,7 +396,7 @@ function inRequestState(ID,timestamp)
 	else
 	{
 		var post_data = { myIP : tokenRing.getMyIP() }; 
-		generalPOST(ID, '/resource_approved', post_data); 
+		generalPOST(ID, '/resource_approved', post_data);	
 	}
 }
 
@@ -430,7 +430,7 @@ app.post('/process_resource_request', function(req, res) {
 
 app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
-
+	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " +NumPendingReplies);
 	if (STATE == REQUEST_STATE)
 	{
 		NumPendingReplies--;
