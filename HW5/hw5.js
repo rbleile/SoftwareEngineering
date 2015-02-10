@@ -298,6 +298,7 @@ function reqResource()
 {
 	STATE = REQUEST_STATE;
 
+	reqResourceButton.setContent('');	
 	reqResourceButton.style.bg = 'black';
 	reqResourceButton.style.fg = '#000000';
 	reqResourceButton.hidden = true;
@@ -401,6 +402,7 @@ function inRequestState(ID,timestamp)
 function inWorkState(ID,timestamp)
 {
 	ReqDeferred.push(ID);
+
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
@@ -439,7 +441,7 @@ app.post('/resource_approved', function(req, res) {
 			reqResourceButton.style.bg = 'red';
 			reqResourceButton.style.fg = '#ffffff';
 			reqResourceButton.hidden = false;
-			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN {/center}');
+			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN{/center}');
 			box.style.bg = 'red';
 			screen.render();
 			if(debug) debugLog ( "resource_approved...working" + JSON.stringify( the_body) );
@@ -456,7 +458,7 @@ app.post('/resource_approved', function(req, res) {
 function gapState()
 {
 	STATE = GAP_STATE;
-	box.setContent('{center}Idle State{/center}');
+	box.setContent('{center}IDLE - IDLE - IDLE{/center}');
 	box.style.bg = 'green';
 	reqResourceButton.hidden = false;
 	reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
