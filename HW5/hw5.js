@@ -471,10 +471,12 @@ function releaseShotgun()
 {
 	gapState();
 	debugLog("release shotgun. Current RD : " + ReqDeferred);
-	for (var i = 0; i < ReqDeferred.length; i++)
+	var numRequests = ReqDeferred.length;
+	for (var i = 0; i < numRequests; i++)
 	{
 		var nextPendingRequest = getNextRequestDeferred();
-		var post_data = { myIP : tokenRing.getMyIP() }; 
+		var post_data = { myIP : tokenRing.getMyIP() };
+	    debugLog("Sending approval to : " + nextPendingRequest); 	
 		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
 }
