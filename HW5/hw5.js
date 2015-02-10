@@ -457,6 +457,7 @@ app.post('/resource_approved', function(req, res) {
 	if (STATE == REQUEST_STATE)
 	{
 		NumPendingReplies--;
+		debugLog("remaining replies: " + NumPendingReplies);
 		if (NumPendingReplies == 0)
 		{
 			STATE = WORK_STATE;
@@ -467,8 +468,8 @@ app.post('/resource_approved', function(req, res) {
 			box.setContent('{center}SHOTGUN - SHOTGUN - SHOTGUN {/center}');
 			box.style.bg = 'red';
 			screen.render();
+			if(debug) debugLog ( "resource_approved...working" + JSON.stringify( the_body) );
 		}
-		if(debug) debugLog ( "resource_approved...working" + JSON.stringify( the_body) );
 	}
 	else 
 	{ 
@@ -484,6 +485,8 @@ function gapState()
 	box.setContent('{center}Idle State{/center}');
 	box.style.bg = 'green';
 	reqResourceButton.hidden = false;
+	reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+	reqResourceButton.style.bg = 'green';
 	screen.render();
 }
 

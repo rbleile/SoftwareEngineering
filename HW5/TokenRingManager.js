@@ -119,11 +119,6 @@ function getEveryoneElse()
 	return every;
 }
 
-function getIPofIndex(index)
-{
-	return tokenRing[index];
-}
-
 function isMember(ip_address)
 {
   if(tokenRing.indexOf(ip_address) == -1) return false;
@@ -142,8 +137,7 @@ module.exports = {
   getRingSize : function() { return tokenRing.length ; },
   getRing : function() { return tokenRing; },
   indexOf : function(IP) { return tokenRing.indexOf(IP); },
-  getIPofIndex : getIPofIndex,
-  //getIPofIndex : function(index) { return tokenRing[index]; },
+  getIPofIndex : function(index) { return tokenRing[index]; },
   getEveryoneElse : getEveryoneElse 
 };
 
