@@ -441,7 +441,7 @@ app.post('/process_resource_request', function(req, res) {
 
 function processApproval(IP)
 {
-	if (STATE == REQUEST_STATE)
+	if (STATE == REQUEST_STATE && PendingReplies.indexof(IP) != -1)
 	{
 		PendingReplies.splice(PendingReplies.indexOf(IP),1);
 		if(debug) debugLog("remaining replies: " + PendingReplies);
