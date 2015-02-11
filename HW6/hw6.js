@@ -1,4 +1,3 @@
-
 var http = require('http');
 var express = require('express');
 var connect = require("connect");
@@ -174,7 +173,7 @@ function discover()
     log.focus();
     screen.render();
 
-    if(debug) log.insertLine(1, "Starting Discovery");
+    if(debug) debugLog("Starting Discovery");
 	//limit the scanning range
 	var start_ip = 100;
 	var end_ip   = 120;
@@ -456,6 +455,8 @@ function processApproval(IP)
 			box.style.bg = 'red';
 			screen.render();
 			if(debug) debugLog ( "resource_approved...working");
+			var post_data = { reqIP : tokenRing.getMyIP() };
+			generalPOST(tokenRing.getIPofIndex(0), '/request_token', post_data);
 		}
 	}
 	else 
@@ -463,6 +464,29 @@ function processApproval(IP)
 		if(debug) debugLog ( "I never requested, shouldn't be approving. Node down.");
 	}
 }
+
+app.post('/request_token', function(req, res) {
+	var the_body = req.body;  
+	if(debug) debugLog("getting token from CA: "+ the_body.reqIP);
+	
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+
+	var post_data = { token : 1 };
+	generalPOST(the_body.reqIP, '/token_received_from_CA', post_data); 
+});
+
+app.post('/token_received_from_CA', function(req, res) {
+	var the_body = req.body;
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+
+	var post_data = { myIP : tokenRing.getMyIP() , token : the_body.token };
+	generalPOST(tokenRing.getIPofIndex(0), '/request_CS', post_data);
+});
+
+app.post('/request_CS', function(req, res) {
+	var the_body = req.body;
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
 
 app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
@@ -473,20 +497,35 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
-function gapState()
+function initializePICA()
 {
-	STATE = GAP_STATE;
-	box.setContent('{center}IDLE - IDLE - IDLE{/center}');
-	box.style.bg = 'green';
-	reqResourceButton.hidden = false;
-	reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-	reqResourceButton.style.bg = 'green';
-	screen.render();
+	var ring = tokenRing.getRing();
+	var id = tokenRing.indexOf(token.Ring.getMyIP());
+
+	if (id == 0)
+	{
+		box.setContent('{center}PICA - PICA - PICA{/center}');
+		box.style.bg = 'blue';
+		reqResourceButton.hidden = true;
+		reqResourceButton.setContent('{center}center}');	
+		reqResourceButton.style.bg = 'blue';
+		screen.render();
+	}
+	else
+	{
+		STATE = GAP_STATE;
+		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
+		box.style.bg = 'green';
+		reqResourceButton.hidden = false;
+		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+		reqResourceButton.style.bg = 'green';
+		screen.render();
+	}
 }
 
 function releaseShotgun()
 {
-	gapState();
+	initializePICA();
 	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
 	var numRequests = ReqDeferred.length;
 	for (var i = 0; i < numRequests; i++)
@@ -505,6 +544,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( gapState, 4000  );
-	
+	setTimeout( initializePICA, 4000  );
 });
