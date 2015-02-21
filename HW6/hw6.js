@@ -13,6 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var debug = true;
 tokenRing.debugMessages(false);
 
+var myArgs = process.argv.slice(2);
+
+var node_functionality = myArgs[0];
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -540,7 +544,7 @@ function initializePICA()
 	var ring = tokenRing.getRing();
 	var id = tokenRing.indexOf(tokenRing.getMyIP());
 
-	if (id == 0)
+	if ( node_functionality == 0)
 	{
 		box.setContent('{center}PICA - PICS - PICA{/center}');
 		box.style.bg = 'blue';
@@ -549,7 +553,7 @@ function initializePICA()
 		reqResourceButton.style.bg = 'blue';
 		screen.render();
 	}
-	else
+	else if( node_functionality == 1 )
 	{
 		STATE = GAP_STATE;
 		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
@@ -557,6 +561,16 @@ function initializePICA()
 		reqResourceButton.hidden = false;
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
 		reqResourceButton.style.bg = 'green';
+		screen.render();
+	}
+	else
+	{
+		STATE = GAP_STATE;
+		box.setContent('{center} - Malicious Node - {/center}');
+		box.style.bg = 'orange';
+		reqResourceButton.hidden = true;
+//		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+//		reqResourceButton.style.bg = 'green';
 		screen.render();
 	}
 }
