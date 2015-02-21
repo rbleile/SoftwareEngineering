@@ -15,6 +15,8 @@ tokenRing.debugMessages(false);
 
 var myArgs = process.argv.slice(2);
 
+if( !myArgs[0] ) myArgs[0] = -1;
+
 var node_functionality = myArgs[0];
 
 var PICA_IP;
