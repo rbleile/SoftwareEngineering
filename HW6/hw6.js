@@ -17,6 +17,8 @@ var myArgs = process.argv.slice(2);
 
 var node_functionality = myArgs[0];
 
+var PICA_IP;
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -450,7 +452,7 @@ function processApproval(IP)
 			screen.render();
 			if(debug) debugLog ( "resource_approved...working");
 			var post_data = { reqIP : tokenRing.getMyIP() };
-			generalPOST(tokenRing.getIPofIndex(0), '/request_token', post_data);
+			generalPOST( PICA_IP, '/request_token', post_data);
 		}
 	}
 	else 
@@ -476,7 +478,7 @@ app.post('/token_received_from_CA', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
 	var post_data = { reqIP : tokenRing.getMyIP() , token : the_body.token };
-	generalPOST(tokenRing.getIPofIndex(0), '/request_CS', post_data);
+	generalPOST(PICA_IP, '/request_CS', post_data);
 });
 
 function checkToken( token )
@@ -539,6 +541,34 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
+app.post( '/init_PA', function( req, res){
+
+	var the_body = req.body;  
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+
+	if(debug) debugLog("recieved PA IP: " + the_body.pica_ip );
+
+	PICA_IP = the_body.pica_ip;
+	
+	reqResourceButton.hidden = false;
+	reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+	reqResourceButton.style.bg = 'green';
+	screen.render();
+
+});
+
+function Broadcast_IP()
+{
+	var list = tokenRing.getRing();
+	
+	var post_data = { "pica_ip" : PICA_IP };
+	
+	for (var i in list)
+	{
+		generalPOST( i, "/init_PA", post_data );
+	}
+}
+
 function initializePICA()
 {
 	var ring = tokenRing.getRing();
@@ -552,25 +582,22 @@ function initializePICA()
 		reqResourceButton.setContent('{center}center}');	
 		reqResourceButton.style.bg = 'blue';
 		screen.render();
+		PICA_IP = tokenRing.getMyIP();
+		Broadcast_IP();
+		
 	}
 	else if( node_functionality == 1 )
 	{
 		STATE = GAP_STATE;
 		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
 		box.style.bg = 'green';
-		reqResourceButton.hidden = false;
-		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-		reqResourceButton.style.bg = 'green';
 		screen.render();
 	}
 	else
 	{
 		STATE = GAP_STATE;
 		box.setContent('{center} - Malicious Node - {/center}');
-		box.style.bg = 'orange';
-		reqResourceButton.hidden = true;
-//		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-//		reqResourceButton.style.bg = 'green';
+		box.style.bg = 'DarkOrange';
 		screen.render();
 	}
 }
