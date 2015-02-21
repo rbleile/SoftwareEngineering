@@ -494,7 +494,7 @@ function ReleaseCriticalSection()
 	generalPOST( releaseIP, '/release_CS', post_data );
 }
 
-app.post('release_CS', function( req, res) {
+app.post('/release_CS', function( req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 	
@@ -513,7 +513,9 @@ app.post('/request_CS', function(req, res) {
 	
 	if( accept )
 	{ 
+
 		critical_counter++;
+		if(debug) debugLog(" Critical Counter: " + critical_counter); 	
 		setTimeout( ReleaseCriticalSection, 100 );
 	}
 	else
@@ -538,7 +540,7 @@ function initializePICA()
 
 	if (id == 0)
 	{
-		box.setContent('{center}PICA - PICA - PICA{/center}');
+		box.setContent('{center}PICA - PICS - PICA{/center}');
 		box.style.bg = 'blue';
 		reqResourceButton.hidden = true;
 		reqResourceButton.setContent('{center}center}');	
