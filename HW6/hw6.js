@@ -550,10 +550,12 @@ app.post( '/init_PA', function( req, res){
 
 	PICA_IP = the_body.pica_ip;
 	
-	reqResourceButton.hidden = false;
-	reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-	reqResourceButton.style.bg = 'green';
-	screen.render();
+	if( PICA_IP != tokenRing.getMyIP() ){
+		reqResourceButton.hidden = false;
+		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+		reqResourceButton.style.bg = 'green';
+		screen.render();
+	}
 
 });
 
@@ -583,7 +585,7 @@ function initializePICA()
 		reqResourceButton.style.bg = 'blue';
 		screen.render();
 		PICA_IP = tokenRing.getMyIP();
-		Broadcast_IP();
+		setTimeout( Broadcast_IP, 3000 );
 		
 	}
 	else if( node_functionality == 1 )
