@@ -473,7 +473,7 @@ app.post('/token_received_from_CA', function(req, res) {
 	generalPOST(tokenRing.getIPofIndex(0), '/request_CS', post_data);
 });
 
-function checkToken( var token )
+function checkToken( token )
 {
 	if( token == 1 )
 	{
@@ -532,7 +532,7 @@ app.post('/resource_approved', function(req, res) {
 function initializePICA()
 {
 	var ring = tokenRing.getRing();
-	var id = tokenRing.indexOf(token.Ring.getMyIP());
+	var id = tokenRing.indexOf(tokenRing.getMyIP());
 
 	if (id == 0)
 	{
