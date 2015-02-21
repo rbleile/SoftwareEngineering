@@ -501,6 +501,8 @@ app.post('release_CS', function( req, res) {
 	releaseShotgun();
 });
 
+var critical_counter = 0;
+
 app.post('/request_CS', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
