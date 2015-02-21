@@ -516,7 +516,7 @@ app.post('/request_CS', function(req, res) {
 
 		critical_counter++;
 		if(debug) debugLog(" Critical Counter: " + critical_counter); 	
-		setTimeout( ReleaseCriticalSection, 100 );
+		setTimeout( ReleaseCriticalSection, 1000 );
 	}
 	else
 	{
