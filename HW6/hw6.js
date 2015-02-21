@@ -597,7 +597,12 @@ function initializePICA()
 		STATE = GAP_STATE;
 		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
 		box.style.bg = 'green';
-		reqResourceButton.hidden = true;
+		if( PICA_IP ){
+			reqResourceButton.hidden = false;
+		}
+		else{
+			reqResourceButton.hidden = true;
+		}
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
 		reqResourceButton.style.bg = 'green';
 
