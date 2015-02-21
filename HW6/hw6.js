@@ -567,6 +567,7 @@ function Broadcast_IP()
 	
 	for (var i in list)
 	{
+		if( debug ) debugLog( "Sending to ip: " + i );
 		generalPOST( i, "/init_PA", post_data );
 	}
 }
@@ -593,6 +594,10 @@ function initializePICA()
 		STATE = GAP_STATE;
 		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
 		box.style.bg = 'green';
+		reqResourceButton.hidden = true;
+		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+		reqResourceButton.style.bg = 'green';
+
 		screen.render();
 	}
 	else
@@ -600,6 +605,9 @@ function initializePICA()
 		STATE = GAP_STATE;
 		box.setContent('{center} - Malicious Node - {/center}');
 		box.style.bg = 'DarkOrange';
+		reqResourceButton.hidden = true;
+		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+		reqResourceButton.style.bg = 'green';
 		screen.render();
 	}
 }
