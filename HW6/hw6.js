@@ -536,6 +536,8 @@ app.post('/request_CS', function(req, res) {
 	
 	var accept = checkToken( the_body.token );
 	
+	if( debug ) debugLog( "Validation: " + accept + " " + validToken );
+	
 	releaseIP = the_body.reqIP;
 	
 	if( accept && validToken )
