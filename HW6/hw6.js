@@ -453,7 +453,7 @@ function processApproval(IP)
 			box.style.bg = 'red';
 			screen.render();
 			if(debug) debugLog ( "resource_approved...working");
-			var post_data = { reqIP : tokenRing.getMyIP(), worker : 1 };
+			var post_data = { reqIP : tokenRing.getMyIP(), worker : node_functionality};
 			generalPOST( PICA_IP, '/request_token', post_data);
 		}
 	}
