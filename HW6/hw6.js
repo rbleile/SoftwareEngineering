@@ -561,15 +561,18 @@ app.post( '/init_PA', function( req, res){
 
 function Broadcast_IP()
 {
-	var list = tokenRing.getRing();
+	var listIPs = tokenRing.getRing();
 	
 	var post_data = { "pica_ip" : PICA_IP };
 	
-	for (var i in list)
+	for( var i = 0; i < listIPs.length; i++) 
 	{
-		if( debug ) debugLog( "Sending to ip: " + i );
-		generalPOST( i, "/init_PA", post_data );
-	}
+		if (listIPs[i] != tokenRing.getMyIP())
+		{
+			if( debug ) debugLog( "Sending to ip: " + listIPs[i] );
+			generalPOST( listIPs[i], "/init_PA", post_data );
+		}
+	}	
 }
 
 function initializePICA()
