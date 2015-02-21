@@ -83,14 +83,16 @@ reqResourceButton.on('click', function(data) {
 	if (STATE == GAP_STATE)
 		reqResource();
 	else if (STATE == WORK_STATE)
-		releaseShotgun();
+		if(debug) debugLog( "Pending CS Return" );
+		//releaseShotgun();
 });
 
 screen.key(['z', 'Z'], function(ch, key) {
 	if (STATE == GAP_STATE)
 		reqResource();
 	else if (STATE == WORK_STATE)
-		releaseShotgun();
+		if(debug) debugLog( "Pending CS Return" );
+		//releaseShotgun();
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
