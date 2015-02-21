@@ -327,22 +327,10 @@ function reqResource()
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
 		if (theRing[i] != tokenRing.getMyIP())
 		{
-			generalPOST(theRing[i], '/process_resource_request', post_data); 
 			PendingReplies.push(theRing[i]);
-		}  
+			generalPOST(theRing[i], '/process_resource_request', post_data);
+		}
 	}
-
-	/*
-	for (var i = 0; i < everyoneElse.length; i++)
-	{
-		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
-		debugLog ("to: " + everyoneElse[i] + post_data);
-		//var convertedIndex = tokenRing.getIPofIndex(everyoneElse[i]);
-		debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
-		//generalPOST(convertedIndex, '/process_resource_request', post_data); 
-		PendingReplies++;
-	}
-	*/
 }
 
 function getNextRequestDeferred()
@@ -466,26 +454,70 @@ function processApproval(IP)
 }
 
 app.post('/request_token', function(req, res) {
-	var the_body = req.body;  
+	var the_body = req.body;
 	if(debug) debugLog("getting token from CA: "+ the_body.reqIP);
 	
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
+	/*Verification process here*/
+	
 	var post_data = { token : 1 };
-	generalPOST(the_body.reqIP, '/token_received_from_CA', post_data); 
+	generalPOST(the_body.reqIP, '/token_received_from_CA', post_data);
 });
 
 app.post('/token_received_from_CA', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
-	var post_data = { myIP : tokenRing.getMyIP() , token : the_body.token };
+	var post_data = { reqIP : tokenRing.getMyIP() , token : the_body.token };
 	generalPOST(tokenRing.getIPofIndex(0), '/request_CS', post_data);
+});
+
+function checkToken( var token )
+{
+	if( token == 1 )
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+var releaseIP;
+
+function ReleaseCriticalSection()
+{
+	var post_data = { myIP: tokenRing.getMyIP() };
+
+	generalPOST( releaseIP, '/release_CS', post_data );
+}
+
+app.post('release_CS', function( req, res) {
+	var the_body = req.body;
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	
+	releaseShotgun();
 });
 
 app.post('/request_CS', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	
+	var accept = checkToken( the_body.token );
+	
+	releaseIP = the_body.reqIP;
+	
+	if( accept )
+	{ 
+		critical_counter++;
+		setTimeout( ReleaseCriticalSection, 100 );
+	}
+	else
+	{
+		setTimeout( ReleaseCriticalSection, 10 );
+	}
 });
 
 app.post('/resource_approved', function(req, res) {
