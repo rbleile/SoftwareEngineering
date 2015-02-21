@@ -451,7 +451,7 @@ function processApproval(IP)
 			box.style.bg = 'red';
 			screen.render();
 			if(debug) debugLog ( "resource_approved...working");
-			var post_data = { reqIP : tokenRing.getMyIP() };
+			var post_data = { reqIP : tokenRing.getMyIP(), worker : 1 };
 			generalPOST( PICA_IP, '/request_token', post_data);
 		}
 	}
@@ -459,6 +459,14 @@ function processApproval(IP)
 	{ 
 		if(debug) debugLog ( "I never requested, shouldn't be approving. Node down.");
 	}
+}
+
+var CS_TOKEN = 0;
+var validToken = false;
+
+function generateToken()
+{
+	CS_TOKEN++;
 }
 
 app.post('/request_token', function(req, res) {
@@ -469,13 +477,23 @@ app.post('/request_token', function(req, res) {
 
 	/*Verification process here*/
 	
-	var post_data = { token : 1 };
+	if( validToken == false && the_body.worker == 1 ){
+		var post_data = { token : CS_TOKEN };
+		validToken == true;
+	}
+	else
+	{
+		var post_data = { token : -1 };
+	}
+	/*Encrypt Message*/
 	generalPOST(the_body.reqIP, '/token_received_from_CA', post_data);
 });
 
 app.post('/token_received_from_CA', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	
+	/*Dycrypt and Encrypt token with own private key*/
 
 	var post_data = { reqIP : tokenRing.getMyIP() , token : the_body.token };
 	generalPOST(PICA_IP, '/request_CS', post_data);
@@ -483,7 +501,7 @@ app.post('/token_received_from_CA', function(req, res) {
 
 function checkToken( token )
 {
-	if( token == 1 )
+	if( token == CS_TOKEN )
 	{
 		return 1;
 	}
@@ -514,14 +532,16 @@ var critical_counter = 0;
 app.post('/request_CS', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	if( debug ) debugLog( "Token Received: " + the_body.token + " - verify against - " + CS_TOKEN );
 	
 	var accept = checkToken( the_body.token );
 	
 	releaseIP = the_body.reqIP;
 	
-	if( accept )
+	if( accept && validToken )
 	{ 
-
+		generateToken();
+		validToken = false;
 		critical_counter++;
 		if(debug) debugLog(" Critical Counter: " + critical_counter); 	
 		setTimeout( ReleaseCriticalSection, 1000 );
