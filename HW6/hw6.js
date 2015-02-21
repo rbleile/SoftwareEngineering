@@ -479,7 +479,7 @@ app.post('/request_token', function(req, res) {
 	
 	if( validToken == false && the_body.worker == 1 ){
 		var post_data = { token : CS_TOKEN };
-		validToken == true;
+		validToken = true;
 	}
 	else
 	{
