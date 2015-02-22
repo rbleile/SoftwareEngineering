@@ -552,6 +552,7 @@ app.post('/request_CS', function(req, res) {
 	}
 	else
 	{
+		if(debug) debugLog(" Critical Counter: " + critical_counter);
 		setTimeout( ReleaseCriticalSection, 10 );
 	}
 });
@@ -636,7 +637,7 @@ function initializePICA()
 	{
 		STATE = GAP_STATE;
 		box.setContent('{center} - Malicious Node - {/center}');
-		box.style.bg = 'purple';
+		box.style.bg = 'black';
 		if( PICA_IP ){
 			reqResourceButton.hidden = false;
 		}
