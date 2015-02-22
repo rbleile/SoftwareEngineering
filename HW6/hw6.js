@@ -636,8 +636,13 @@ function initializePICA()
 	{
 		STATE = GAP_STATE;
 		box.setContent('{center} - Malicious Node - {/center}');
-		box.style.bg = 'DarkOrange';
-		reqResourceButton.hidden = true;
+		box.style.bg = 'purple';
+		if( PICA_IP ){
+			reqResourceButton.hidden = false;
+		}
+		else{
+			reqResourceButton.hidden = true;
+		}
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
 		reqResourceButton.style.bg = 'green';
 		screen.render();
