@@ -13,6 +13,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var debug = true;
 tokenRing.debugMessages(false);
 
+var myArgs = process.argv.slice(2);
+
+if( !myArgs[0] ) myArgs[0] = -1;
+
+var node_functionality = myArgs[0];
+
+var PICA_IP;
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -83,14 +91,16 @@ reqResourceButton.on('click', function(data) {
 	if (STATE == GAP_STATE)
 		reqResource();
 	else if (STATE == WORK_STATE)
-		releaseShotgun();
+		if(debug) debugLog( "Pending CS Return" );
+		//releaseShotgun();
 });
 
 screen.key(['z', 'Z'], function(ch, key) {
 	if (STATE == GAP_STATE)
 		reqResource();
 	else if (STATE == WORK_STATE)
-		releaseShotgun();
+		if(debug) debugLog( "Pending CS Return" );
+		//releaseShotgun();
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
@@ -327,22 +337,10 @@ function reqResource()
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
 		if (theRing[i] != tokenRing.getMyIP())
 		{
-			generalPOST(theRing[i], '/process_resource_request', post_data); 
 			PendingReplies.push(theRing[i]);
-		}  
+			generalPOST(theRing[i], '/process_resource_request', post_data);
+		}
 	}
-
-	/*
-	for (var i = 0; i < everyoneElse.length; i++)
-	{
-		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
-		debugLog ("to: " + everyoneElse[i] + post_data);
-		//var convertedIndex = tokenRing.getIPofIndex(everyoneElse[i]);
-		debugLog("QQQQQQIndex to IP: " + tokenRing.getIPofIndex('0'));
-		//generalPOST(convertedIndex, '/process_resource_request', post_data); 
-		PendingReplies++;
-	}
-	*/
 }
 
 function getNextRequestDeferred()
@@ -455,8 +453,8 @@ function processApproval(IP)
 			box.style.bg = 'red';
 			screen.render();
 			if(debug) debugLog ( "resource_approved...working");
-			var post_data = { reqIP : tokenRing.getMyIP() };
-			generalPOST(tokenRing.getIPofIndex(0), '/request_token', post_data);
+			var post_data = { reqIP : tokenRing.getMyIP(), worker : node_functionality};
+			generalPOST( PICA_IP, '/request_token', post_data);
 		}
 	}
 	else 
@@ -465,27 +463,98 @@ function processApproval(IP)
 	}
 }
 
+var CS_TOKEN = 0;
+var validToken = false;
+
+function generateToken()
+{
+	CS_TOKEN++;
+}
+
 app.post('/request_token', function(req, res) {
-	var the_body = req.body;  
+	var the_body = req.body;
 	if(debug) debugLog("getting token from CA: "+ the_body.reqIP);
 	
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
-	var post_data = { token : 1 };
-	generalPOST(the_body.reqIP, '/token_received_from_CA', post_data); 
+	/*Verification process here*/
+	
+	if( validToken == false && the_body.worker == 1 ){
+		var post_data = { token : CS_TOKEN };
+		validToken = true;
+	}
+	else
+	{
+		var post_data = { token : -1 };
+	}
+	/*Encrypt Message*/
+	generalPOST(the_body.reqIP, '/token_received_from_CA', post_data);
 });
 
 app.post('/token_received_from_CA', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	
+	/*Dycrypt and Encrypt token with own private key*/
 
-	var post_data = { myIP : tokenRing.getMyIP() , token : the_body.token };
-	generalPOST(tokenRing.getIPofIndex(0), '/request_CS', post_data);
+	var post_data = { reqIP : tokenRing.getMyIP() , token : the_body.token };
+	generalPOST(PICA_IP, '/request_CS', post_data);
 });
+
+function checkToken( token )
+{
+	if( token == CS_TOKEN )
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+var releaseIP;
+
+function ReleaseCriticalSection()
+{
+	var post_data = { myIP: tokenRing.getMyIP() };
+
+	generalPOST( releaseIP, '/release_CS', post_data );
+}
+
+app.post('/release_CS', function( req, res) {
+	var the_body = req.body;
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	
+	releaseShotgun();
+});
+
+var critical_counter = 0;
 
 app.post('/request_CS', function(req, res) {
 	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	if( debug ) debugLog( "Token Received: " + the_body.token + " - verify against - " + CS_TOKEN );
+	
+	var accept = checkToken( the_body.token );
+	
+	if( debug ) debugLog( "Validation: " + accept + " " + validToken );
+	
+	releaseIP = the_body.reqIP;
+	
+	if( accept && validToken )
+	{ 
+		generateToken();
+		validToken = false;
+		critical_counter++;
+		if(debug) debugLog(" Critical Counter: " + critical_counter); 	
+		setTimeout( ReleaseCriticalSection, 1000 );
+	}
+	else
+	{
+		if(debug) debugLog(" Critical Counter: " + critical_counter);
+		setTimeout( ReleaseCriticalSection, 10 );
+	}
 });
 
 app.post('/resource_approved', function(req, res) {
@@ -497,26 +566,84 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
+app.post( '/init_PA', function( req, res){
+
+	var the_body = req.body;  
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+
+	if(debug) debugLog("recieved PA IP: " + the_body.pica_ip );
+
+	PICA_IP = the_body.pica_ip;
+	
+	if( PICA_IP != tokenRing.getMyIP() ){
+		reqResourceButton.hidden = false;
+		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+		reqResourceButton.style.bg = 'green';
+		screen.render();
+	}
+
+});
+
+function Broadcast_IP()
+{
+	var listIPs = tokenRing.getRing();
+	
+	var post_data = { "pica_ip" : PICA_IP };
+	
+	for( var i = 0; i < listIPs.length; i++) 
+	{
+		if (listIPs[i] != tokenRing.getMyIP())
+		{
+			if( debug ) debugLog( "Sending to ip: " + listIPs[i] );
+			generalPOST( listIPs[i], "/init_PA", post_data );
+		}
+	}	
+}
+
 function initializePICA()
 {
 	var ring = tokenRing.getRing();
-	var id = tokenRing.indexOf(token.Ring.getMyIP());
+	var id = tokenRing.indexOf(tokenRing.getMyIP());
 
-	if (id == 0)
+	if ( node_functionality == 0)
 	{
-		box.setContent('{center}PICA - PICA - PICA{/center}');
+		box.setContent('{center}PICA - PICS - PICA{/center}');
 		box.style.bg = 'blue';
 		reqResourceButton.hidden = true;
 		reqResourceButton.setContent('{center}center}');	
 		reqResourceButton.style.bg = 'blue';
 		screen.render();
+		PICA_IP = tokenRing.getMyIP();
+		setTimeout( Broadcast_IP, 3000 );
+		
 	}
-	else
+	else if( node_functionality == 1 )
 	{
 		STATE = GAP_STATE;
 		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
 		box.style.bg = 'green';
-		reqResourceButton.hidden = false;
+		if( PICA_IP ){
+			reqResourceButton.hidden = false;
+		}
+		else{
+			reqResourceButton.hidden = true;
+		}
+		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
+		reqResourceButton.style.bg = 'green';
+
+		screen.render();
+	}
+	else
+	{
+		STATE = GAP_STATE;
+		box.setContent('{center} - Malicious Node - {/center}');
+		box.style.bg = 'black';
+		if( PICA_IP ){
+			reqResourceButton.hidden = false;
+		}
+		else{
+			reqResourceButton.hidden = true;
+		}
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
 		reqResourceButton.style.bg = 'green';
 		screen.render();
