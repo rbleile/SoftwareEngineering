@@ -1,4 +1,5 @@
 Installing the GoPiGo library:
 
+git clone https://github.com/DexterInd/GoPiGo.git
 cd GoPiGo/Software/Python
 sudo python setup.py install

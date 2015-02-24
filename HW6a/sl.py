@@ -5,7 +5,7 @@
 #Encoder Pulse:	18 times per revolution
 #Distance Moved per Pulse: circumference/18 = (2.5(pi))/(18) = 0.1389(pi) = 0.4361 in
 
-import sys, getopt
+import sys, getopt, time
 from gopigo import *
 
 DistancePerPulse = 0.4361
@@ -14,29 +14,34 @@ DistancePerPulse = 0.4361
 # distance is in inches
 # speed is fixed range 0..10
 def Move(direction, distance, speed):
-	enable_encoders()
+	print("\nIn Move() function")
+
+	#enable_encoders()
 
 	#convert distance to no. of pulses
-	numPulses = (1/DistancePerPulse)*distance
+	numPulses = int((1/DistancePerPulse)*distance)
+	print("\nnumPulses: " + str(numPulses))
 
 	#set speed of both motors (default speed is 200, range is 0 to 255)
-	set_speed(speed)
+	targetSpeed = int((speed/10.0)*255)
+	print( "Target Speed : " + str( targetSpeed ) )
+	set_speed(targetSpeed)
 
 	if (direction == True):
-		enc_tgt(1,1,numPulses)
+		print enc_tgt(1,1,numPulses)
 		fwd()
-	elif (direction == False):
-		enc_tgt(1,1,numPulses)
+	else:
+		print enc_tgt(1,1,numPulses)
 		bwd()
 
-	disable_encoders()
 
 
 # +degrees turn left, -degrees turn right
 def TurnInPlace(degrees):
-	enable_encoders()
+	#enable_encoders()
 
-	numPulses = DistancePerPulse*(abs(degrees)/360)
+	numPulses = int( 32.5*(abs(degrees)/360.0))
+	print("\nnumPulses: " + str(numPulses))
 
 	if (degrees > 0):
 		enc_tgt(1,1,numPulses)
@@ -45,17 +50,17 @@ def TurnInPlace(degrees):
 		enc_tgt(1,1,numPulses)
 		right_rot()
 
-	disable_encoders()
 
 
 # +degrees turn left, -degrees turn right
 # Cannot turn beyond 180 degree freedom of action
 def TurnSensor(degrees):
-	if (degrees > 180):
+	if (degrees > 180 ):
 		print("ERROR")
 	elif (degrees > 0 and degrees <= 180):
 		enable_servo()
 		servo(degrees)
+		time.sleep(0.5)
 		disable_servo()
 
 # Return value of the range-finder sensor
@@ -63,6 +68,7 @@ def ReadSensor():
 	return us_dist(15)
 
 def main():
+	#enable_encoders()
 	ans = True
 	while ans:
 		print("""
@@ -71,23 +77,26 @@ def main():
 2. Turn GoPiGo In Place
 3. Turn Sensor
 4. Read Sensor
-5. End
+5. GoPiGo Stop
+6. End
 		""")
-		ans = raw_input("Selection (1-5): ")
+		ans = raw_input("Selection (1-6): ")
 		if ans == "1":
-			inpDirection = raw_input("\nDirection (True for fwd, False for bwd): ")
-			inpDistance = raw_input("Distance: ")
-			inpSpeed = raw_input("Speed (0-10): ")
+			inpDirection = int(raw_input("\nDirection (1 for fwd, 0 for bwd): "))
+			inpDistance = float(raw_input("Distance (in inches): "))
+			inpSpeed = int(raw_input("Speed (0-10): "))
 			Move(inpDirection, inpDistance, inpSpeed)
 		elif ans == "2":
-			inpRobotDegrees = raw_input("\nDegrees (+ for left, - for right): ")
+			inpRobotDegrees = int(raw_input("\nDegrees (positive number for left, negative number for right): "))
 			TurnInPlace(inpRobotDegrees)
 		elif ans == "3":
-			inpSensorDegrees = raw_input("\nDegrees (0-180): ")
+			inpSensorDegrees = int(raw_input("\nDegrees (0-180): "))
 			TurnSensor(inpSensorDegrees)
 		elif ans == "4":
-			outpSensor = ReadSensor()
+			print ReadSensor()
 		elif ans == "5":
+			stop()
+		elif ans == "6":
 			print("\nGoodbye!")
 			ans = False
 		elif ans != "":
