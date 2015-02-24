@@ -1,4 +1,0 @@
-Installing the GoPiGo library:
-
-cd GoPiGo/Software/Python
-sudo python setup.py install
