@@ -3,7 +3,7 @@ var express = require('express');
 var connect = require("connect");
 var bodyParser = require('body-parser');
 var app = express();
-var tokenRing = require('./TokenRingManager');
+//var tokenRing = require('./TokenRingManager');
 var PythonShell = require('python-shell');
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
