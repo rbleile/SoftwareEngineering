@@ -95,7 +95,7 @@ var moveButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}Move{/center}',
+    content: '{center}M = Move{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -121,7 +121,7 @@ var turninplaceButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}TurnInPlace{/center}',
+    content: '{center}P = TurnInPlace{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -147,7 +147,7 @@ var turnsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}TurnSensor{/center}',
+    content: '{center}T = TurnSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -173,7 +173,7 @@ var readsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}ReadSensor{/center}',
+    content: '{center}R = ReadSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -273,7 +273,7 @@ function turnsensorFunctionality()
 	readsensorButton.hidden = true;
 	screen.render();
 	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
+    var post_data = { myIP : tokenRing.getMyIP(), command : "turn sensor" };
     generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 }
 
@@ -299,7 +299,7 @@ function readsensorFunctionality()
 	readsensorButton.hidden = false;
 	screen.render();
 	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
+    var post_data = { myIP : tokenRing.getMyIP(), command : "read sensor" };
     generalPOST(TRUCK_IP, '/action_readsensor', post_data);
 }
 
@@ -537,22 +537,22 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 function defaultmenu()
 {
-	moveButton.setContent("{center}Move{/center}");
+	moveButton.setContent("{center}M = Move{/center}");
 	moveButton.style.bg = "green";
 	moveButton.style.fg = "white";
 	moveButton.hidden = false;
 
-	turninplaceButton.setContent("{center}TurnInPlace{/center}");
+	turninplaceButton.setContent("{center}P = TurnInPlace{/center}");
 	turninplaceButton.style.bg = "green";
 	turninplaceButton.style.fg = "white";
 	turninplaceButton.hidden = false;
 
-	turnsensor.setContent("{center}TurnSensor{/center}");
+	turnsensorButton.setContent("{center}T = TurnSensor{/center}");
 	turnsensorButton.style.bg = "green";
 	turnsensorButton.style.fg = "white";
 	turnsensorButton.hidden = false;
 
-	readsensor.setContent("{center}ReadSensor{/center}");
+	readsensorButton.setContent("{center}R = ReadSensor{/center}");
 	readsensorButton.style.bg = "green";
 	readsensorButton.style.fg = "white";
 	readsensorButton.hidden = false;
