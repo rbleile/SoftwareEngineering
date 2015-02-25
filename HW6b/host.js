@@ -133,8 +133,8 @@ function moveFunctionality()
 	moveButton.hidden = false;
 	
 	turninplaceButton.setContent = "";
-	turninplaceButton.style.bg = "white";
-	turninplaceButton.style.fg = "white";
+	turninplaceButton.style.bg = "black";
+	turninplaceButton.style.fg = "black";
 	turninplaceButton.hidden = true;
 
 	screen.render();
