@@ -5,7 +5,6 @@ var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
-var whiteList = require('./TokenRingManager');
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
@@ -26,7 +25,7 @@ var PICA_IP;
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
+	log.insertLine(1, msg);
 	screen.render();
 	return;
 }
@@ -249,38 +248,25 @@ app.post( '/gather_ips', function( req, res ){
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
-	var i = the_body.which;
+	var i = parseInt(the_body.which);
 	
 	switch (i){
 		case 0:
-			HOST_IP = the_body.IP;
+			HOST_IP = the_body.IP; break;
 		case 1:
-			TRUCK_IP = the_body.IP;
+			TRUCK_IP = the_body.IP; break;
 		case 2:
-			GoPiGo_IP = the_body.IP;
+			GoPiGo_IP = the_body.IP; break;
 		case 3:
-			Grove_Sensor_IP = the_body.IP;
+			Grove_Sensor_IP = the_body.IP; break;
 		case 4:
-			Human_Sensor_IP = the_body.IP;
+			Human_Sensor_IP = the_body.IP; break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.which );	
 	}
 
 });
 
-function releaseShotgun()
-{
-	initializePICA();
-	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
-	var numRequests = ReqDeferred.length;
-	for (var i = 0; i < numRequests; i++)
-	{
-		var nextPendingRequest = getNextRequestDeferred();
-		var post_data = { myIP : tokenRing.getMyIP() };
-	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
-		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
-	}
-}
 
 // Render the screen.
 screen.render();
