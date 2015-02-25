@@ -79,7 +79,8 @@ var log2 = blessed.scrollabletext({
     top: '50%',
     left: '50%',
     align: 'left',
-    tags: true
+    tags: true,
+	hidden: false
 });
 
 var box = blessed.box({
@@ -250,12 +251,12 @@ var moveButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}M = Move{/center}',
+    content: '{center}M=Move{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true 
 });
 moveButton.on('click', function(data) {
     moveFunctionality();
@@ -276,12 +277,12 @@ var turninplaceButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}P = TurnInPlace{/center}',
+    content: '{center}P=TurnInPlace{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 turninplaceButton.on('click', function(data) {
     turninplaceFunctionality();
@@ -302,12 +303,12 @@ var turnsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}T = TurnSensor{/center}',
+    content: '{center}T=TurnSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 turnsensorButton.on('click', function(data) {
     turnsensorFunctionality();
@@ -328,12 +329,12 @@ var readsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}R = ReadSensor{/center}',
+    content: '{center}R=ReadSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 turninplaceButton.on('click', function(data) {
     readsensorFunctionality();
@@ -354,12 +355,12 @@ var scanbaysButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}X = ScanBays{/center}',
+    content: '{center}X=ScanBays{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 moveButton.on('click', function(data) {
     scanbaysFunctionality();
@@ -388,7 +389,7 @@ var bay1Button = blessed.box({
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 var bay2Button = blessed.box({
 	parent: screen,
@@ -407,7 +408,7 @@ var bay2Button = blessed.box({
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 var bay3Button = blessed.box({
 	parent: screen,
@@ -426,7 +427,7 @@ var bay3Button = blessed.box({
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true
 });
 //moveButton.focus();
 //turninplaceButton.focus();
@@ -435,6 +436,10 @@ var bay3Button = blessed.box({
 //scanbaysButton.focus();
 screen.render();
 /********* END BUTTON ***********/
+
+var grove_sensor = true;
+var human_sensor = true;
+var human2_sensor = true;
 
 function scanbaysFunctionality()
 {
@@ -445,9 +450,33 @@ function scanbaysFunctionality()
 	screen.render();
 
 	var post_data = {myIP : tokenRing.getMyIP()};
-	generalPOST(Grove_Sensor_IP, "/do_sensor", post_data);
-	generalPOST(Human_Sensor_IP, "/do_sensor", post_data);
-	generalPOST(Human_Sensor2_IP, "/do_sensor", post_data);
+
+	if (Grove_Sensor_IP && grove_sensor)
+	{
+		generalPOST(Grove_Sensor_IP, "/do_sensor", post_data);
+		grove_sensor = false;
+	}
+	if (Human_Sensor_IP && human_sensor)
+	{
+		generalPOST(Human_Sensor_IP, "/do_sensor", post_data);
+		human_sensor = false;
+	}
+	if (Human_Sensor2_IP && human2_sensor)
+	{
+		generalPOST(Human_Sensor2_IP, "/do_sensor", post_data);
+		human2_sensor = false;
+	}
+	
+	setTimeout( clickedscanbays , 500 );
+}
+	
+function clickedscanbays()
+{
+	scanbaysButton.style.fg = "white";
+	scanbaysButton.style.bg = "green";
+	scanbaysButton.hidden = false;
+
+	screen.render();
 }
 
 app.post("/do_sensor_response", function(req, res) {
@@ -455,33 +484,39 @@ app.post("/do_sensor_response", function(req, res) {
 	baycolor(the_body);
 });
 
+
 function baycolor(fields)
 {
 	var full = fields.isFull;
 	var col = "green";
 	if (full) 
 		col = "red";
+
 	if (fields.ip == Grove_Sensor_IP)
 	{
 		bay1Button.setContent("{center}Bay1{/center}");
 		bay1Button.style.bg = col;
 		bay1Button.style.fg = "white";
-		log2.insertLine(0,"Looking for sensor in Bay 1...");
+		log2.insertLine(0,"Returning sensor status of Bay 1...");
+		grove_sensor = true;
 	}
 	else if (fields.ip == Human_Sensor_IP)
 	{
 		bay2Button.setContent("{center}Bay2{/center}");
 		bay2Button.style.bg = col;
 		bay2Button.style.fg = "white";
-		log2.insertLine(0,"Looking for sensor in Bay 2...");
+		log2.insertLine(0,"Returning sensor status of Bay 2...");
+		human_sensor = true;
 	}
 	else if (fields.ip == Human_Sensor2_IP)
 	{
 		bay3Button.setContent("{center}Bay3{/center}");
 		bay3Button.style.bg = col;
 		bay3Button.style.fg = "white";
-		log2.insertLine(0,"Looking for sensor in Bay 3...");
+		log2.insertLine(0,"Returning sensor status of Bay 3...");
+		human2_sensor = true;
 	}
+
 	screen.render();
 }
 
@@ -902,30 +937,45 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 function defaultmenu()
 {
-	moveButton.setContent("{center}M = Move{/center}");
+	moveButton.setContent("{center}M=Move{/center}");
 	moveButton.style.bg = "green";
 	moveButton.style.fg = "white";
 	moveButton.hidden = false;
 
-	turninplaceButton.setContent("{center}P = TurnInPlace{/center}");
+	turninplaceButton.setContent("{center}P=TurnInPlace{/center}");
 	turninplaceButton.style.bg = "green";
 	turninplaceButton.style.fg = "white";
 	turninplaceButton.hidden = false;
 
-	turnsensorButton.setContent("{center}T = TurnSensor{/center}");
+	turnsensorButton.setContent("{center}T=TurnSensor{/center}");
 	turnsensorButton.style.bg = "green";
 	turnsensorButton.style.fg = "white";
 	turnsensorButton.hidden = false;
 
-	readsensorButton.setContent("{center}R = ReadSensor{/center}");
+	readsensorButton.setContent("{center}R=ReadSensor{/center}");
 	readsensorButton.style.bg = "green";
 	readsensorButton.style.fg = "white";
 	readsensorButton.hidden = false;
 
-	scanbaysButton.setContent("{center}X = ScanBays{/center}");
+	scanbaysButton.setContent("{center}X=ScanBays{/center}");
 	scanbaysButton.style.bg = "green";
 	scanbaysButton.style.fg = "white";
 	scanbaysButton.hidden = false;
+
+	bay1Button.setContent("{center}Bay1{/center}");
+	bay1Button.style.bg = "white";
+	bay1Button.style.fg = "black";
+	bay1Button.hidden = false;
+
+	bay2Button.setContent("{center}Bay2{/center}");
+	bay2Button.style.bg = "white";
+	bay2Button.style.fg = "black";
+	bay2Button.hidden = false;
+
+	bay3Button.setContent("{center}Bay3{/center}");
+	bay3Button.style.bg = "white";
+	bay3Button.style.fg = "black";
+	bay3Button.hidden = false;
 
 	screen.render();
 }
@@ -938,6 +988,8 @@ function printIPs()
 	debugLog("GroveSensor_IP = " + Grove_Sensor_IP);
 	debugLog("Human_Sensor_IP = " + Human_Sensor_IP);
 	debugLog("Human_Sensor2_IP = " + Human_Sensor2_IP);
+
+	defaultmenu();
 }
 
 app.post('/do_keepalive', function(req, res) {
