@@ -132,12 +132,67 @@ screen.key(['p', 'P'], function(ch, key) {
     turninplaceFunctionality();
 });
 
+/*
+var turnsensorButton = blessed.box({
+    parent: screen,
+    top: '50%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+        type: 'line',
+        fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}TurnInPlace{/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'green'
+    },
+    hidden: false
+});
+turninplaceButton.on('click', function(data) {
+    turninplaceFunctionality()
+});
+screen.key(['p', 'P'], function(ch, key) {
+    turninplaceFunctionality();
+});
+
+var readsensorButton = blessed.box({
+    parent: screen,
+    top: '50%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+        type: 'line',
+        fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}TurnInPlace{/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'green'
+    },
+    hidden: false
+});
+turninplaceButton.on('click', function(data) {
+    turninplaceFunctionality()
+});
+screen.key(['p', 'P'], function(ch, key) {
+    turninplaceFunctionality();
+});
+*/
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
 moveButton.focus();
 turninplaceButton.focus();
+//turnsensorButton.focus();
+//readsensorButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
@@ -147,7 +202,7 @@ function moveFunctionality()
 	moveButton.style.fg = "white";
 	moveButton.hidden = false;
 	
-	turninplaceButton.setContent = "";
+	turninplaceButton.setContent("");
 	turninplaceButton.style.bg = "black";
 	turninplaceButton.style.fg = "black";
 	turninplaceButton.hidden = true;
@@ -160,9 +215,9 @@ function moveFunctionality()
 
 function turninplaceFunctionality()
 {
-	moveButton.setContent = "";
-	moveButton.style.bg = "white";
-	moveButton.style.fg = "white";
+	moveButton.setContent("");
+	moveButton.style.bg = "black";
+	moveButton.style.fg = "black";
 	moveButton.hidden = true;
 
 	turninplaceButton.style.bg = "red";
