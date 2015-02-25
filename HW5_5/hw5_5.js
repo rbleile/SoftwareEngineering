@@ -6,6 +6,8 @@ var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
 
+var sha1 = require('./SHA1Encryption');
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -144,6 +146,8 @@ passwordBox.setLabel({
 
 passwordBox.on('submit', function(data) {
 	debugLog("Password entered: " + passwordBox.value);
+	debugLog("Password encrypt: " + sha1.hash(passwordBox.value));
+	password = passwordBox.value;
 	passwordBox.hide();
 	screen.remove(passwordBox);
 });
