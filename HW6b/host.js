@@ -157,7 +157,7 @@ var turnsensorButton = blessed.box({
 turnsensorButton.on('click', function(data) {
     turnsensorFunctionality()
 });
-screen.key(['s', 'S'], function(ch, key) {
+screen.key(['t', 'T'], function(ch, key) {
     turnsensorFunctionality();
 });
 
@@ -183,7 +183,7 @@ var readsensorButton = blessed.box({
 turninplaceButton.on('click', function(data) {
     readsensorFunctionality()
 });
-screen.key(['s', 'S'], function(ch, key) {
+screen.key(['r', 'R'], function(ch, key) {
     readSensorFunctionality();
 });
 
