@@ -1,12 +1,4 @@
 
-	var _passCheck = setInterval(function() {
-    	if (password) {
-        	clearInterval(_passCheck);
-        	theCallback(); // the function to run once all flags are true
-    	}
-    }, 100); // interval set at 100 milliseconds
-
-
 var http = require('http');
 var express = require('express');
 var connect = require("connect");
@@ -640,31 +632,38 @@ app.post( '/whitelist_req', function( req, res ){
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
 	if(debug) debugLog("White list request: " + the_body.ip );
-	
-	/* Add to white list and broadcast white updated white list to all members*/
-	if( the_body.mac_addr == 1 && the_body.pass == password )
-	{
-		whiteList.addRingMember(the_body.ip);
 
-		var listIPs = whiteList.getRing();
 	
-		var post_data = { members: listIPs }
- 
-		for( var i = 0; i < listIPs.length; i++) 
-		{
-			if (listIPs[i] != tokenRing.getMyIP())
+	var _passCheck = setInterval(function() {
+    	if (password) {
+        	clearInterval(_passCheck);	
+			/* Add to white list and broadcast white updated white list to all members*/
+			if( the_body.mac_addr == 1 && the_body.pass == password )
 			{
-				if( debug ) debugLog( "Sending list to ip: " + listIPs[i] );
-				generalPOST( listIPs[i], "/init_workers", post_data );
+				whiteList.addRingMember(the_body.ip);
+		
+				var listIPs = whiteList.getRing();
+			
+				var post_data = { members: listIPs }
+		 
+				for( var i = 0; i < listIPs.length; i++) 
+				{
+					if (listIPs[i] != tokenRing.getMyIP())
+					{
+						if( debug ) debugLog( "Sending list to ip: " + listIPs[i] );
+						generalPOST( listIPs[i], "/init_workers", post_data );
+					}
+				}	
 			}
-		}	
-	}
-	else
-	{
-		var post_data = { members: [the_body.ip] };
+			else
+			{
+				var post_data = { members: [the_body.ip] };
 
-		generalPOST( the_body.ip, "/init_workers", post_data );
-	}
+				generalPOST( the_body.ip, "/init_workers", post_data );
+			}
+
+		}
+	}, 100);
 
 });
 
@@ -679,9 +678,14 @@ app.post( '/init_PA', function( req, res){
 
 	var post_data = { ip: tokenRing.getMyIP(), mac_addr: 1, pass: node_functionality };
 
-	while( password == "" ){}
+	var _passCheck = setInterval(function() {
+    	if (password) {
+        	clearInterval(_passCheck);
+			generalPOST( PICA_IP, '/whitelist_req', post_data );
+    	}
+    }, 100); // interval set at 100 milliseconds
 
-	generalPOST( PICA_IP, '/whitelist_req', post_data );
+
 
 });
 
