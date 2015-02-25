@@ -30,7 +30,7 @@ var screen = blessed.screen();
 var log = blessed.scrollabletext({
     parent: screen,
     mouse: true,
-    keys: true,
+    keys: false,
     vi: true,
     border: {
 	type: 'line',
@@ -57,15 +57,15 @@ var box = blessed.box({
     content: '',
     tags: true,
     border: {
-	type: 'line',
-	fg: 'white'
+		type: 'line',
+		fg: 'white'
     },
     style: {
-	fg: 'white',
-	bg: 'black',
-	border: {
-	    fg: '#f0f0f0'
-	}
+		fg: 'white',
+		bg: 'black',
+		border: {
+	    	fg: '#f0f0f0'
+		}
     }
 });
 
@@ -77,15 +77,15 @@ var reqResourceButton = blessed.box({
     width: '50%',
     left: '0%',
     border: {
-	type: 'line',
-	fg: '#ffffff'
+		type: 'line',
+		fg: '#ffffff'
     },
-    fg: '#ffffff',
+	fg: '#ffffff',
     bg: '#228822',
     content: '{center}Z = Request Resource{/center}',
     tags: true,
     hoverEffects: {
-	bg: 'green'
+		bg: 'green'
     },
 	hidden: true
 });
@@ -110,7 +110,7 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-reqResourceButton.focus();
+//reqResourceButton.focus();
 
 /*****
  * Begin password code:
@@ -122,8 +122,8 @@ var passwordBox = blessed.textbox({
 	top: '40%',
 	left: '30%',
 	width: '40%',
-	height: '10%',
-	content: '',
+	height: '30%',
+	//content: '',
 	tags: false,
 	censor: true,
 	inputOnFocus: true,
@@ -138,7 +138,6 @@ var passwordBox = blessed.textbox({
 			fg: 'white'
 		}
 	},
-	name: 'password',
 });
 
 passwordBox.setLabel({
@@ -146,13 +145,15 @@ passwordBox.setLabel({
 	side: 'left'
 });
 
-passwordBox.on('submit', function(data) {
+passwordBox.on('submit', function() {
 	password = passwordBox.value;
 	password_hash = sha1.hash(password);
+
 	debugLog("Password entered: " + password);
 	debugLog("Password encrypt: " + password_hash);
+
 	passwordBox.hide();
-//	screen.remove(passwordBox);
+	screen.remove(passwordBox);
 	screen.render();
 });
 
@@ -234,7 +235,7 @@ var keepAliveTimeout = 1000;
 function discover() 
 {
 	box.style.bg = 'red';
-    log.focus();
+    //log.focus();
     screen.render();
 
     if(debug) debugLog("Starting Discovery");
@@ -355,7 +356,7 @@ box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its
 screen.render();
 
 // Focus our element.
-box.focus();
+//box.focus();
 
 var GAP_STATE = 0;
 var REQUEST_STATE = 1;
