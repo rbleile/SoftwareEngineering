@@ -145,19 +145,19 @@ app.post('/do_discover', function(req, res) {
 
 	switch (i){
 		case 0:
-			HOST_IP = the_body.IP;
+			HOST_IP = the_body.ip;
 			break;
 		case 1:
-			TRUCK_IP = the_body.IP;
+			TRUCK_IP = the_body.ip;
 			break;
 		case 2:
-			GoPiGo_IP = the_body.IP;
+			GoPiGo_IP = the_body.ip;
 			break;
 		case 3:
-			Grove_Sensor_IP = the_body.IP;
+			Grove_Sensor_IP = the_body.ip;
 			break;
 		case 4:
-			Human_Sensor_IP = the_body.IP;
+			Human_Sensor_IP = the_body.ip;
 			break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.role );	
@@ -208,19 +208,19 @@ function PostDiscover(ip_address)
 
 		switch (i){
 			case 0:
-				HOST_IP = resultObject.IP;
+				HOST_IP = resultObject.ip;
 				break;
 			case 1:
-				TRUCK_IP = resultObject.IP;
+				TRUCK_IP = resultObject.ip;
 				break;
 			case 2:
-				GoPiGo_IP = resultObject.IP;
+				GoPiGo_IP = resultObject.ip;
 				break;
 			case 3:
-				Grove_Sensor_IP = resultObject.IP;
+				Grove_Sensor_IP = resultObject.ip;
 				break;
 			case 4:
-				Human_Sensor_IP = resultObject.IP;
+				Human_Sensor_IP = resultObject.ip;
 				break;
 			default:
 				if(debug) debugLog( "which not Special type" + resultObject.body.role );	
