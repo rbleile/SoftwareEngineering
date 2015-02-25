@@ -119,14 +119,14 @@ screen.render();
 
 function doneFunctionality()
 {
-	//doneButton.setContent("");
+	doneButton.setContent('');
 	doneButton.style.fg = "black";
 	doneButton.style.bg = "black";
 	doneButton.hidden = true;
 	screen.render();
 
 	var post_data = { myIP : tokenRing.getMyIP() };
-	if (debug) debugLog ("HOST_IP: " + HOST_IP);
+	//if (debug) debugLog ("HOST_IP: " + HOST_IP);
 	generalPOST(HOST_IP, '/action_completed', post_data);
 }
 
@@ -371,34 +371,42 @@ app.post('/do_keepalive', function(req, res) {
 	var the_body = req.body;  //see connect package above
 });
 
-app.post('/action_move', function(req, res) {
-    var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
-    res.json(req.body);
 
-	doneButton.setContent = "{center}Action Completed{/center}";
+function displayButton()
+{
+
+	doneButton.setContent( "{center}Action Completed{/center}");
 	doneButton.style.bg = "green";
 	doneButton.style.fg = "white";
 	doneButton.hidden = false;
 	screen.render();
+}
+app.post('/action_move', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
+    res.json(req.body);
+	 displayButton();
 });
 
 app.post('/action_turninplace', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);
+    displayButton();
 });
 
 app.post('/action_turnsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);
+    displayButton();
 });
 
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);
+    displayButton();
 });
 
 // Render the screen.
