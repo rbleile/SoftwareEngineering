@@ -30,7 +30,7 @@ var screen = blessed.screen();
 var log = blessed.scrollabletext({
     parent: screen,
     mouse: true,
-    keys: false,
+    keys: true,
     vi: true,
     border: {
 	type: 'line',
@@ -121,7 +121,7 @@ var password_hash = '';
 var passwordBox = blessed.textbox({
 	top: '80%',
 	left: '10%',
-	width: '90%',
+	width: '80%',
 	height: '20%',
 	//content: '',
 	tags: false,
@@ -134,8 +134,11 @@ var passwordBox = blessed.textbox({
 	style: {
 		fg: 'white',
 		bg: 'blue',
+		bold: true,
 		border: {
-			fg: 'white'
+			fg: 'blue',
+			bold: true,
+			underline: false
 		}
 	},
 });
@@ -152,6 +155,7 @@ passwordBox.on('submit', function() {
 	debugLog("Password entered: " + password);
 	debugLog("Password encrypt: " + password_hash);
 
+	log.focus();
 	passwordBox.hide();
 	screen.remove(passwordBox);
 	screen.render();
@@ -168,7 +172,7 @@ screen.render();
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
+	log.insertLine(0, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
 	screen.render();
 	return;
 }
