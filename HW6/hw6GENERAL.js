@@ -5,7 +5,6 @@ var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
-var whiteList = require('./TokenRingManager');
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
