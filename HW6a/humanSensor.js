@@ -39,7 +39,7 @@ var log = blessed.scrollabletext({
 	ch: '|'
     },
     width: '100%',
-    height: '60%',
+    height: '40%',
     top: '20%',
     left: 'left',
     align: 'left',
@@ -68,19 +68,19 @@ var box = blessed.box({
 });
 
 /********* BUTTON CODE *********/
-var reqResourceButton = blessed.box({
+var isEmptyButton = blessed.box({
     parent: screen,
     top: '80%',
-    height: '20%',
+    height: '30%',
     width: '50%',
     left: '0%',
     border: {
 	type: 'line',
-	fg: '#ffffff'
+	fg: '#ff0000'
     },
     fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}Z = Request Resource{/center}',
+    bg: '#ff0000',
+    content: '{center}Bay is Empty{/center}',
     tags: true,
     hoverEffects: {
 	bg: 'green'
@@ -88,33 +88,66 @@ var reqResourceButton = blessed.box({
 	hidden: true
 });
 
-reqResourceButton.on('click', function(data) {
-	//if (STATE == GAP_STATE)
-	//	reqResource();
-	//else if (STATE == WORK_STATE)
-	//	if(debug) debugLog( "Pending CS Return" );
-		//releaseShotgun();
+
+
+var isFullButton = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '30%',
+    width: '50%',
+    left: '50%',
+    border: {
+	type: 'line',
+	fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}Bay is Full{/center}',
+    tags: true,
+    hoverEffects: {
+	bg: 'red'
+    },
+	hidden: true
+});
+
+function sendCommandResposne(isFull)
+{
+	debugLog("HUMAN has responded. Initiating response to master control.");
+	isFullButton.setContent("");
+	isEmptyButton.setContent("");
+	isFullButton.hidden = true;
+	isEmptyButton.hidden = true;
+	screen.render();
+}
+
+isEmptyButton.on('click', function(data) {
+	
+	sendCommandResposne(false);
+});
+
+isFullButton.on('click', function(data) {
+	sendCommandResposne(true);
 });
 
 screen.key(['z', 'Z'], function(ch, key) {
-	//if (STATE == GAP_STATE)
-	//	reqResource();
-	//else if (STATE == WORK_STATE)
-	//	if(debug) debugLog( "Pending CS Return" );
-	//	//releaseShotgun();
+	sendCommandResposne(false);
+});
+
+screen.key(['x', 'X'], function(ch, key) {
+	sendCommandResposne(true);
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-reqResourceButton.focus();
+isFullButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
+	log.insertLine(1,msg);
 	screen.render();
 	return;
 }
@@ -132,6 +165,14 @@ app.post('/do_discover', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
+app.post('/do_sensor', function(req, res) {
+	var the_body = req.body;  //see connect package above
+	debugLog("HUMAN : Pi demands to know if bay is FULL or EMPTY.");
+	isFullButton.hidden = false;
+	isEmptyButton.hidden = false;
+	screen.render();
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
 
 
 /*
@@ -243,9 +284,10 @@ app.get('/do_get_dist', function (req, res){
 //screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
-	//debugLog("Express server listening on port " + app.get('port'));
+	debugLog("Express server listening on port " + app.get('port'));
 	//discover();
-//	debugLog( "Discovery Complete" );
-//	setTimeout( initializePICA, 4000  );
+	debugLog( "Discovery Complete" );
+	//debugLog.setContent("");
+	//setTimeout( initializePICA, 4000  );
 });
 var http = require('http');
