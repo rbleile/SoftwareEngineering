@@ -122,7 +122,7 @@ var passwordBox = blessed.textbox({
 	top: '40%',
 	left: '30%',
 	width: '40%',
-	height: '30%',
+	height: '10%',
 	//content: '',
 	tags: false,
 	censor: true,
