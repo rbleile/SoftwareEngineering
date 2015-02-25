@@ -178,12 +178,35 @@ app.post('/do_discover', function(req, res) {
 
 	tokenRing.addRingMember(the_body.ip);
 
+	var i = parseInt(the_body.role);
+
+	switch (i){
+		case 0:
+			HOST_IP = the_body.IP;
+			break;
+		case 1:
+			TRUCK_IP = the_body.IP;
+			break;
+		case 2:
+			GoPiGo_IP = the_body.IP;
+			break;
+		case 3:
+			Grove_Sensor_IP = the_body.IP;
+			break;
+		case 4:
+			Human_Sensor_IP = the_body.IP;
+			break;
+		default:
+			if(debug) debugLog( "which not Special type" + the_body.which );	
+	}
+
+
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
 function PostDiscover(ip_address)
 {
-	var post_data = { ip : tokenRing.getMyIP() };    
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
         
 	var dataString = JSON.stringify( post_data );
 
@@ -213,6 +236,29 @@ function PostDiscover(ip_address)
 			var resultObject = JSON.parse(responseString);
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
+
+		var i = parseInt(resultObject.role);
+
+		switch (i){
+			case 0:
+				HOST_IP = the_body.IP;
+				break;
+			case 1:
+				TRUCK_IP = the_body.IP;
+				break;
+			case 2:
+				GoPiGo_IP = the_body.IP;
+				break;
+			case 3:
+				Grove_Sensor_IP = the_body.IP;
+				break;
+			case 4:
+				Human_Sensor_IP = the_body.IP;
+				break;
+			default:
+				if(debug) debugLog( "which not Special type" + the_body.which );	
+		}
+
 		});
 	});
 
@@ -269,7 +315,7 @@ function keepAlive()
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
-		var post_data = { myIP : i };
+		var post_data = { myIP : i, role: node_functionality };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
