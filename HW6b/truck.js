@@ -67,7 +67,7 @@ var box = blessed.box({
     left: 'left',
     width: '100%',
     height: '20%',
-    content: '',
+    content: '{center}TRUCK - TRUCK - TRUCK{/center}',
     tags: true,
     border: {
     type: 'line',
@@ -119,15 +119,15 @@ screen.render();
 
 function doneFunctionality()
 {
-	var post_data = { myIP : tokenRing.getMyIP() };
-	if (debug) debugLog ("HOST_IP: " + HOST_IP);
-	generalPOST(HOST_IP, '/action_completed', post_data);
-
 	doneButton.setContent("");
 	doneButton.style.fg = "black";
 	doneButton.style.bg = "black";
 	doneButton.hidden = true;
 	screen.render();
+
+	var post_data = { myIP : tokenRing.getMyIP() };
+	if (debug) debugLog ("HOST_IP: " + HOST_IP);
+	generalPOST(HOST_IP, '/action_completed', post_data);
 }
 
 function debugLog( msg ) 
