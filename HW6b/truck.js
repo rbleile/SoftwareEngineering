@@ -300,7 +300,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-			processApproval(genHost);
+			//processApproval(genHost);
 
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
