@@ -93,7 +93,7 @@ def main():
 			inpSensorDegrees = int(raw_input("\nDegrees (20-150): "))
 			TurnSensor(inpSensorDegrees)
 		elif ans == "4":
-			print ReadSensor()
+			print("Distance from Object (in cm): " + str(ReadSensor()))
 		elif ans == "5":
 			stop()
 		elif ans == "6":
