@@ -84,8 +84,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-			processApproval(genHost);
-
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
 	}
@@ -129,44 +127,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	post_request.write(dataString);
 	post_request.end();
 }
-
-app.post('/do_discover', function(req, res) {
-	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "discovery received: " + JSON.stringify( the_body) );
-
-	tokenRing.addRingMember(the_body.ip);
-
-	var i = parseInt(the_body.role);
-
-	debugLog( "recieved role: " + i );
-
-	switch (i){
-		case 0:
-			HOST_IP = the_body.ip;
-			break;
-		case 1:
-			TRUCK_IP = the_body.ip;
-			break;
-		case 2:
-			GoPiGo_IP = the_body.ip;
-			break;
-		case 3:
-			Grove_Sensor_IP = the_body.ip;
-			break;
-		case 4:
-			Human_Sensor_IP = the_body.ip;
-			break;
-		case 5:
-			Human_Sensor_IP2 = the_body.ip;
-			break;
-		default:
-			if(debug) debugLog( "which not Special type" + the_body.role );	
-	}
-
-	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
-
-	res.json( post_data );
-});
 
 function PostDiscover(ip_address)
 {
@@ -222,6 +182,9 @@ function PostDiscover(ip_address)
 			case 4:
 				Human_Sensor_IP = resultObject.ip;
 				break;
+			case 5:
+				Human_Sensor2_IP = resultObject.ip;
+				break;
 			default:
 				if(debug) debugLog( "which not Special type" + resultObject.role );	
 		}
@@ -237,6 +200,46 @@ function PostDiscover(ip_address)
 	post_request.write(dataString);
 	post_request.end();
 }
+var keepAliveTimeout = 1000;
+
+
+app.post('/do_discover', function(req, res) {
+	var the_body = req.body;  //see connect package above
+	if(debug) debugLog ( "discovery received: " + JSON.stringify( the_body) );
+
+	tokenRing.addRingMember(the_body.ip);
+
+	var i = parseInt(the_body.role);
+
+	debugLog( "recieved role: " + i );
+
+	switch (i){
+		case 0:
+			HOST_IP = the_body.ip;
+			break;
+		case 1:
+			TRUCK_IP = the_body.ip;
+			break;
+		case 2:
+			GoPiGo_IP = the_body.ip;
+			break;
+		case 3:
+			Grove_Sensor_IP = the_body.ip;
+			break;
+		case 4:
+			Human_Sensor_IP = the_body.ip;
+			break;
+		case 5:
+			Human_Sensor2_IP = the_body.ip;
+			break;
+		default:
+			if(debug) debugLog( "which not Special type" + the_body.role );	
+	}
+
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
+
+	res.json( post_data );
+});
 
 var keepAliveTimeout = 1000;
 
@@ -348,6 +351,8 @@ function sendCommandResposne(isFull)
 	isFullButton.hidden = true;
 	isEmptyButton.hidden = true;
 	screen.render();
+	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull};
+	generalPOST(HOST_IP, 'do_sensor_response', sresponse);
 }
 
 isEmptyButton.on('click', function(data) {
