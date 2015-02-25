@@ -212,7 +212,7 @@ app.post('/do_discover', function(req, res) {
 			Human_Sensor_IP = the_body.IP;
 			break;
 		default:
-			if(debug) debugLog( "which not Special type" + the_body.which );	
+			if(debug) debugLog( "which not Special type" + the_body.role );	
 	}
 
 
@@ -355,7 +355,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-			processApproval(genHost);
+//			processApproval(genHost);
 
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
