@@ -392,6 +392,9 @@ function reqResource()
 	//debugLog ("Requesting Resource, " + everyoneElse);
 
 	var theRing = whiteList.getRing(); 
+	
+	
+
 	for (var i = 0; i < theRing.length; i++)
 	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
@@ -632,7 +635,6 @@ app.post( '/whitelist_req', function( req, res ){
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
 	if(debug) debugLog("White list request: " + the_body.ip );
-
 	
 	var _passCheck = setInterval(function() {
     	if (password) {
@@ -640,6 +642,8 @@ app.post( '/whitelist_req', function( req, res ){
 			/* Add to white list and broadcast white updated white list to all members*/
 			if( the_body.mac_addr == 1 && the_body.pass == password )
 			{
+
+				debugLog( "made it into white list yay"  );
 				whiteList.addRingMember(the_body.ip);
 		
 				var listIPs = whiteList.getRing();
@@ -676,11 +680,11 @@ app.post( '/init_PA', function( req, res){
 
 	PICA_IP = the_body.pica_ip;
 
-	var post_data = { ip: tokenRing.getMyIP(), mac_addr: 1, pass: node_functionality };
 
 	var _passCheck = setInterval(function() {
     	if (password) {
         	clearInterval(_passCheck);
+			var post_data = { ip: tokenRing.getMyIP(), mac_addr: node_functionality, pass: password};
 			generalPOST( PICA_IP, '/whitelist_req', post_data );
     	}
     }, 100); // interval set at 100 milliseconds
