@@ -150,7 +150,7 @@ passwordBox.on('submit', function(data) {
 	password = passwordBox.value;
 	password_hash = sha1.hash(password);
 	debugLog("Password entered: " + password);
-	debugLog("Password encrypt: " + password_hash));
+	debugLog("Password encrypt: " + password_hash);
 	passwordBox.hide();
 	screen.remove(passwordBox);
 	screen.render();
