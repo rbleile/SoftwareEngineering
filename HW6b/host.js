@@ -19,6 +19,21 @@ if( !myArgs[0] ) myArgs[0] = -1;
 
 var node_functionality = myArgs[0];
 
+// Input 0
+var HOST_IP;
+
+//Input 1
+var TRUCK_IP;
+
+//Input 2
+var GoPiGo_IP;
+
+//Input 3
+var Grove_Sensor_IP;
+
+//Input 4
+var Human_Sensor_IP;
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -178,12 +193,35 @@ app.post('/do_discover', function(req, res) {
 
 	tokenRing.addRingMember(the_body.ip);
 
+	var i = parseInt(the_body.role);
+
+	switch (i){
+		case 0:
+			HOST_IP = the_body.IP;
+			break;
+		case 1:
+			TRUCK_IP = the_body.IP;
+			break;
+		case 2:
+			GoPiGo_IP = the_body.IP;
+			break;
+		case 3:
+			Grove_Sensor_IP = the_body.IP;
+			break;
+		case 4:
+			Human_Sensor_IP = the_body.IP;
+			break;
+		default:
+			if(debug) debugLog( "which not Special type" + the_body.role );	
+	}
+
+
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
 function PostDiscover(ip_address)
 {
-	var post_data = { ip : tokenRing.getMyIP() };    
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
         
 	var dataString = JSON.stringify( post_data );
 
@@ -213,6 +251,29 @@ function PostDiscover(ip_address)
 			var resultObject = JSON.parse(responseString);
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
+
+		var i = parseInt(resultObject.role);
+
+		switch (i){
+			case 0:
+				HOST_IP = the_body.IP;
+				break;
+			case 1:
+				TRUCK_IP = the_body.IP;
+				break;
+			case 2:
+				GoPiGo_IP = the_body.IP;
+				break;
+			case 3:
+				Grove_Sensor_IP = the_body.IP;
+				break;
+			case 4:
+				Human_Sensor_IP = the_body.IP;
+				break;
+			default:
+				if(debug) debugLog( "which not Special type" + the_body.which );	
+		}
+
 		});
 	});
 
@@ -269,7 +330,7 @@ function keepAlive()
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
-		var post_data = { myIP : i };
+		var post_data = { myIP : i, role: node_functionality };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
@@ -294,7 +355,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-			processApproval(genHost);
+//			processApproval(genHost);
 
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
@@ -346,96 +407,12 @@ app.post('/do_keepalive', function(req, res) {
 });
 
 
-// Input 0
-var HOST_IP;
-
-//Input 1
-var TRUCK_IP;
-
-//Input 2
-var GoPiGo_IP;
-
-//Input 3
-var Grove_Sensor_IP;
-
-//Input 4
-var Human_Sensor_IP;
-
-function Broadcast_IP()
-{
-	var listIPs = tokenRing.getRing();
-	
-	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
-	
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			if( debug ) debugLog( "Sending to ip: " + listIPs[i] );
-			generalPOST( listIPs[i], "/gather_ips", post_data );
-		}
-	}	
-
-	if (node_functionality == 0)
-	{
-		box.setContent('{center}HOST - HOST - HOST{/center}');
-		box.style.bg = 'blue';
-		screen.render();		
-	}
-}
-
-app.post( '/gather_ips', function( req, res ){
-
-	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "gather_ips: " + JSON.stringify( the_body) );
-
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
-
-	var i = parseInt(the_body.which);
-
-	switch (i){
-		case 0:
-			HOST_IP = the_body.IP;
-			break;
-		case 1:
-			TRUCK_IP = the_body.IP;
-			break;
-		case 2:
-			GoPiGo_IP = the_body.IP;
-			break;
-		case 3:
-			Grove_Sensor_IP = the_body.IP;
-			break;
-		case 4:
-			Human_Sensor_IP = the_body.IP;
-			break;
-		default:
-			if(debug) debugLog( "which not Special type" + the_body.which );	
-	}
-
-});
-
 app.post('/action_completed', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Action completed!!!");
     res.json(req.body);
 });
 
-/*
-function releaseShotgun()
-{
-	initializePICA();
-	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
-	var numRequests = ReqDeferred.length;
-	for (var i = 0; i < numRequests; i++)
-	{
-		var nextPendingRequest = getNextRequestDeferred();
-		var post_data = { myIP : tokenRing.getMyIP() };
-	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
-		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
-	}
-}
-*/
 
 // Render the screen.
 screen.render();
@@ -444,5 +421,4 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( Broadcast_IP, 4000  );
 });

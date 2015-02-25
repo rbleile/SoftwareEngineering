@@ -19,6 +19,22 @@ if( !myArgs[0] ) myArgs[0] = -1;
 
 var node_functionality = myArgs[0];
 
+// Input 0
+var HOST_IP;
+
+//Input 1
+var TRUCK_IP;
+
+//Input 2
+var GoPiGo_IP;
+
+//Input 3
+var Grove_Sensor_IP;
+
+//Input 4
+var Human_Sensor_IP;
+
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -123,12 +139,37 @@ app.post('/do_discover', function(req, res) {
 
 	tokenRing.addRingMember(the_body.ip);
 
+	var i = parseInt(the_body.role);
+
+	debugLog( "recieved role: " + i );
+
+	switch (i){
+		case 0:
+			HOST_IP = the_body.IP;
+			break;
+		case 1:
+			TRUCK_IP = the_body.IP;
+			break;
+		case 2:
+			GoPiGo_IP = the_body.IP;
+			break;
+		case 3:
+			Grove_Sensor_IP = the_body.IP;
+			break;
+		case 4:
+			Human_Sensor_IP = the_body.IP;
+			break;
+		default:
+			if(debug) debugLog( "which not Special type" + the_body.role );	
+	}
+
+
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
 function PostDiscover(ip_address)
 {
-	var post_data = { ip : tokenRing.getMyIP() };    
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
         
 	var dataString = JSON.stringify( post_data );
 
@@ -158,6 +199,32 @@ function PostDiscover(ip_address)
 			var resultObject = JSON.parse(responseString);
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
+
+		var i = parseInt(resultObject.role);
+
+		debugLog( "Role responce: " + resultObject.role );
+		debugLog( JSON.stringify( resultObject ) );
+
+		switch (i){
+			case 0:
+				HOST_IP = resultObject.IP;
+				break;
+			case 1:
+				TRUCK_IP = resultObject.IP;
+				break;
+			case 2:
+				GoPiGo_IP = resultObject.IP;
+				break;
+			case 3:
+				Grove_Sensor_IP = resultObject.IP;
+				break;
+			case 4:
+				Human_Sensor_IP = resultObject.IP;
+				break;
+			default:
+				if(debug) debugLog( "which not Special type" + resultObject.role );	
+		}
+
 		});
 	});
 
@@ -169,7 +236,6 @@ function PostDiscover(ip_address)
 	post_request.write(dataString);
 	post_request.end();
 }
-
 var keepAliveTimeout = 1000;
 
 function discover() 
@@ -239,7 +305,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-			processApproval(genHost);
+			//processApproval(genHost);
 
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
@@ -290,75 +356,6 @@ app.post('/do_keepalive', function(req, res) {
 	var the_body = req.body;  //see connect package above
 });
 
-
-// Input 0
-var HOST_IP;
-
-//Input 1
-var TRUCK_IP;
-
-//Input 2
-var GoPiGo_IP;
-
-//Input 3
-var Grove_Sensor_IP;
-
-//Input 4
-var Human_Sensor_IP;
-
-function Broadcast_IP()
-{
-	var listIPs = tokenRing.getRing();
-	
-	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
-
-	if(debug) debugLog( post_data );
-	
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			if( debug ) debugLog( "Sending to ip: " + listIPs[i] );
-			generalPOST( listIPs[i], "/gather_ips", post_data );
-		}
-	}	
-
-	if (node_functionality == 1) 
-	{
-		box.setContent('{center}TRUCK - TRUCK - TRUCK{/center}');
-		box.style.bg = 'yellow';
-		screen.render();
-	}
-}
-
-app.post( '/gather_ips', function( req, res ){
-
-	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "gather_ips: " + JSON.stringify( the_body) );
-
-	var i = parseInt( the_body.which );
-	
-	switch (i){
-		case 0:
-			HOST_IP = the_body.IP;
-			break;
-		case 1:
-			TRUCK_IP = the_body.IP;
-			break;
-		case 2:
-			GoPiGo_IP = the_body.IP;
-			break;
-		case 3:
-			Grove_Sensor_IP = the_body.IP;
-			break;
-		case 4:
-			Human_Sensor_IP = the_body.IP;
-			break;
-		default:
-			if(debug) debugLog( "which not Special type" + the_body.which );	
-	}
-});
-
 app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
@@ -382,5 +379,4 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( Broadcast_IP(), 4000 );
 });
