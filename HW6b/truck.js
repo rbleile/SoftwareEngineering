@@ -126,7 +126,7 @@ function doneFunctionality()
 	screen.render();
 
 	var post_data = { myIP : tokenRing.getMyIP() };
-	if (debug) debugLog ("HOST_IP: " + HOST_IP);
+	//if (debug) debugLog ("HOST_IP: " + HOST_IP);
 	generalPOST(HOST_IP, '/action_completed', post_data);
 }
 
