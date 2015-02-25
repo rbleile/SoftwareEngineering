@@ -702,6 +702,16 @@ app.post('/init_workers', function( req, res ){
 	}
 
 	if( PICA_IP != tokenRing.getMyIP() ){
+		if( node_functionality == 1 )
+		{
+			box.setContent('{center} - Registering Node - {/center}');
+			box.style.bg = 'yellow';
+		}
+		else
+		{
+			box.setContent('{center} - Malicious Node - {/center}');
+			box.style.bg = 'black';
+		}
 		reqResourceButton.hidden = false;
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
 		reqResourceButton.style.bg = 'green';
@@ -746,8 +756,8 @@ function initializePICA()
 	else
 	{
 		STATE = GAP_STATE;
-		box.setContent('{center} - Malicious Node - {/center}');
-		box.style.bg = 'black';
+		box.setContent('{center} - Registering Node - {/center}');
+		box.style.bg = 'yellow';
 		if( PICA_IP ){
 			reqResourceButton.hidden = false;
 		}
