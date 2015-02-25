@@ -382,5 +382,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	Broadcast_IP();
+	setTimeout( Broadcast_IP(), 4000 );
 });
