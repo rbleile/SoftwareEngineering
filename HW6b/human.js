@@ -19,7 +19,8 @@ if( !myArgs[0] ) myArgs[0] = -1;
 
 var node_functionality = myArgs[0];
 
-var PICA_IP;
+var HUMAN_IP;
+var TRUCKPI_IP;
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -37,10 +38,10 @@ var log = blessed.scrollabletext({
 	fg: 'blue',
 	ch: '|'
     },
-    width: '100%',
+    width: '50%',
     height: '60%',
     top: '20%',
-    left: 'left',
+    left: '50%',
     align: 'left',
     tags: true
 });
@@ -67,53 +68,114 @@ var box = blessed.box({
 });
 
 /********* BUTTON CODE *********/
-var reqResourceButton = blessed.box({
+var doneButton = blessed.box({
     parent: screen,
-    top: '80%',
+    top: '30%',
     height: '20%',
     width: '50%',
     left: '0%',
     border: {
-	type: 'line',
-	fg: '#ffffff'
+		type: 'line',
+		fg: '#ffffff'
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}Z = Request Resource{/center}',
+    content: '{center}Action Complete{/center}',
     tags: true,
     hoverEffects: {
-	bg: 'green'
+		bg: 'green'
     },
-	hidden: true
+	hidden: true 
+});
+doneButton.on('click', function(data) {
+	doneFunctionality()
+});
+screen.key(['d', 'D'], function(ch, key) {
+	doneFunctionality();
 });
 
-reqResourceButton.on('click', function(data) {
-	if (STATE == GAP_STATE)
-		reqResource();
-	else if (STATE == WORK_STATE)
-		if(debug) debugLog( "Pending CS Return" );
-		//releaseShotgun();
+var moveButton = blessed.box({
+    parent: screen,
+    top: '30%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+		type: 'line',
+		fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}Move{/center}',
+    tags: true,
+    hoverEffects: {
+		bg: 'green'
+    },
+	hidden: false
+});
+moveButton.on('click', function(data) {
+	moveFunctionality()
+});
+screen.key(['m', 'M'], function(ch, key) {
+	moveFunctionality();
 });
 
-screen.key(['z', 'Z'], function(ch, key) {
-	if (STATE == GAP_STATE)
-		reqResource();
-	else if (STATE == WORK_STATE)
-		if(debug) debugLog( "Pending CS Return" );
-		//releaseShotgun();
+var turninplaceButton = blessed.box({
+    parent: screen,
+    top: '50%',
+    height: '20%',
+    width: '50%',
+    left: '0%',
+    border: {
+		type: 'line',
+		fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}TurnInPlace{/center}',
+    tags: true,
+    hoverEffects: {
+		bg: 'green'
+    },
+	hidden: false
+});
+turninplaceButton.on('click', function(data) {
+	turninplaceFunctionality()
+});
+screen.key(['p', 'P'], function(ch, key) {
+	turninplaceFunctionality();
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-reqResourceButton.focus();
+moveButton.focus();
+turninplaceButton.focus();
+doneButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
+function moveFunctionality()
+{
+	var post_data = { myIP : tokenRing.getMyIP() , command : "move" }; 
+	generalPOST(TRUCKPI_IP, '/action_move', post_data); 
+}
+
+function turninplaceFunctionality()
+{
+	var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" }; 
+	generalPOST(TRUCKPI_IP, '/action_turninplace', post_data); 
+}
+
+function doneFunctionality()
+{
+	
+}
+
 function debugLog( msg ) 
 {
-	log.insertLine(1, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
+	log.insertLine(1, msg);
 	screen.render();
 	return;
 }
@@ -175,8 +237,6 @@ function PostDiscover(ip_address)
 	post_request.end();
 }
 
-var keepAliveTimeout = 1000;
-
 function discover() 
 {
 	box.style.bg = 'red';
@@ -206,30 +266,8 @@ function discover()
 			PostDiscover(ip);
 		}
 	}
-
-	setTimeout( keepAlive, keepAliveTimeout);
 }
 /***********End Discovery***********************/
-
-var count = 0;
-
-/* Function to check if other devices are there. */
-function keepAlive()
-{
-	//debugLog("Calling keepalive " );
-	var listIPs = tokenRing.getRing();
-	count++;
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-		var post_data = { myIP : i };
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			generalPOST ( listIPs[i], '/do_keepalive', post_data );
-		}
-	}
-	
-	setTimeout( keepAlive, keepAliveTimeout );
-}
 
 /*
  * General function to replace separate functions for all different types of
@@ -292,27 +330,11 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	post_request.end();
 }
 
-app.post('/do_keepalive', function(req, res) {
-	res.json(req.body);
-	var the_body = req.body;  //see connect package above
-});
-
-box.setContent('this node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
+box.setContent('This node (' + tokenRing.getMyIP() + ') will attempt to send its token to other nodes on network. ');
 screen.render();
 
 // Focus our element.
 box.focus();
-
-var GAP_STATE = 0;
-var REQUEST_STATE = 1;
-var WORK_STATE = 2;
-
-var STATE = GAP_STATE;
-
-var highestTS = 0;
-var myTS = 0;
-var ReqDeferred = [];
-var PendingReplies = [];
 
 function reqResource()
 {
@@ -522,48 +544,34 @@ function ReleaseCriticalSection()
 	generalPOST( releaseIP, '/release_CS', post_data );
 }
 
-app.post('/release_CS', function( req, res) {
+app.post('/action_move', function(req, res) {
 	var the_body = req.body;
+	if(debug) debugLog("Sending action " + the_body.command + " to " + TRUCKPI_IP );
+
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
-	
-	releaseShotgun();
 });
 
-var critical_counter = 0;
-
-app.post('/request_CS', function(req, res) {
+app.post('/action_turninplace', function(req, res) {
 	var the_body = req.body;
+	if(debug) debugLog("Sending action " + the_body.command + " to " + TRUCKPI_IP);
+
+	doneButton.setContent('Action Done');	
+	doneButton.style.bg = 'red';
+	doneButton.style.fg = 'white';
+	doneButton.hidden = false;
+	
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
-	if( debug ) debugLog( "Token Received: " + the_body.token + " - verify against - " + CS_TOKEN );
-	
-	var accept = checkToken( the_body.token );
-	
-	if( debug ) debugLog( "Validation: " + accept + " " + validToken );
-	
-	releaseIP = the_body.reqIP;
-	
-	if( accept && validToken )
-	{ 
-		generateToken();
-		validToken = false;
-		critical_counter++;
-		if(debug) debugLog(" Critical Counter: " + critical_counter); 	
-		setTimeout( ReleaseCriticalSection, 1000 );
-	}
-	else
-	{
-		if(debug) debugLog(" Critical Counter: " + critical_counter);
-		setTimeout( ReleaseCriticalSection, 10 );
-	}
 });
 
-app.post('/resource_approved', function(req, res) {
-	var the_body = req.body;  
-	if(debug) debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
-	
-	processApproval(the_body.myIP);
-
+app.post('/action_readsensor', function(req, res) {
+	var the_body = req.body;
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
+
+app.post('/action_turnsensor', function(req, res) {
+	var the_body = req.body;
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	if(debug) debugLog("recieved resource approved from : "+ the_body.myIP); 
 });
 
 app.post( '/init_PA', function( req, res){
@@ -571,24 +579,17 @@ app.post( '/init_PA', function( req, res){
 	var the_body = req.body;  
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
-	if(debug) debugLog("recieved PA IP: " + the_body.pica_ip );
+	if(debug) debugLog("recieved HUMAN IP: " + the_body.human_ip );
 
-	PICA_IP = the_body.pica_ip;
-	
-	if( PICA_IP != tokenRing.getMyIP() ){
-		reqResourceButton.hidden = false;
-		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-		reqResourceButton.style.bg = 'green';
-		screen.render();
-	}
-
+	HUMAN_IP = the_body.human_ip;
+	TRUCKPI_IP = the_body.truckpi_ip;
 });
 
 function Broadcast_IP()
 {
 	var listIPs = tokenRing.getRing();
 	
-	var post_data = { "pica_ip" : PICA_IP };
+	var post_data = { "human_ip" : HUMAN_IP , "truckpi_ip" : TRUCKPI_IP };
 	
 	for( var i = 0; i < listIPs.length; i++) 
 	{
@@ -600,67 +601,24 @@ function Broadcast_IP()
 	}	
 }
 
-function initializePICA()
+function initialize()
 {
 	var ring = tokenRing.getRing();
 	var id = tokenRing.indexOf(tokenRing.getMyIP());
 
-	if ( node_functionality == 0)
+	if ( node_functionality == 0 )
 	{
-		box.setContent('{center}PICA - PICS - PICA{/center}');
+		box.setContent('{center}HUMAN - HUMAN - HUMAN{/center}');
 		box.style.bg = 'blue';
 		reqResourceButton.hidden = true;
-		reqResourceButton.setContent('{center}center}');	
-		reqResourceButton.style.bg = 'blue';
 		screen.render();
-		PICA_IP = tokenRing.getMyIP();
+		HUMAN_IP = tokenRing.getMyIP();
 		setTimeout( Broadcast_IP, 3000 );
-		
 	}
 	else if( node_functionality == 1 )
 	{
-		STATE = GAP_STATE;
-		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
-		box.style.bg = 'green';
-		if( PICA_IP ){
-			reqResourceButton.hidden = false;
-		}
-		else{
-			reqResourceButton.hidden = true;
-		}
-		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-		reqResourceButton.style.bg = 'green';
-
-		screen.render();
-	}
-	else
-	{
-		STATE = GAP_STATE;
-		box.setContent('{center} - Malicious Node - {/center}');
-		box.style.bg = 'black';
-		if( PICA_IP ){
-			reqResourceButton.hidden = false;
-		}
-		else{
-			reqResourceButton.hidden = true;
-		}
-		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-		reqResourceButton.style.bg = 'green';
-		screen.render();
-	}
-}
-
-function releaseShotgun()
-{
-	initializePICA();
-	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
-	var numRequests = ReqDeferred.length;
-	for (var i = 0; i < numRequests; i++)
-	{
-		var nextPendingRequest = getNextRequestDeferred();
-		var post_data = { myIP : tokenRing.getMyIP() };
-	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
-		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
+		TRUCKPI_IP = tokenRing.getMyIP();
+		setTimeout( Broadcast_IP, 3000 );
 	}
 }
 
@@ -671,5 +629,6 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( initializePICA, 4000  );
+	setTimeout( initialize, 4000  );
+	//generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 });
