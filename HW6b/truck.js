@@ -19,6 +19,22 @@ if( !myArgs[0] ) myArgs[0] = -1;
 
 var node_functionality = myArgs[0];
 
+// Input 0
+var HOST_IP;
+
+//Input 1
+var TRUCK_IP;
+
+//Input 2
+var GoPiGo_IP;
+
+//Input 3
+var Grove_Sensor_IP;
+
+//Input 4
+var Human_Sensor_IP;
+
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -123,12 +139,35 @@ app.post('/do_discover', function(req, res) {
 
 	tokenRing.addRingMember(the_body.ip);
 
+	var i = parseInt(the_body.role);
+
+	switch (i){
+		case 0:
+			HOST_IP = the_body.IP;
+			break;
+		case 1:
+			TRUCK_IP = the_body.IP;
+			break;
+		case 2:
+			GoPiGo_IP = the_body.IP;
+			break;
+		case 3:
+			Grove_Sensor_IP = the_body.IP;
+			break;
+		case 4:
+			Human_Sensor_IP = the_body.IP;
+			break;
+		default:
+			if(debug) debugLog( "which not Special type" + the_body.which );	
+	}
+
+
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
 function PostDiscover(ip_address)
 {
-	var post_data = { ip : tokenRing.getMyIP() };    
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
         
 	var dataString = JSON.stringify( post_data );
 
@@ -158,6 +197,29 @@ function PostDiscover(ip_address)
 			var resultObject = JSON.parse(responseString);
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
+
+		var i = parseInt(resultObject.role);
+
+		switch (i){
+			case 0:
+				HOST_IP = the_body.IP;
+				break;
+			case 1:
+				TRUCK_IP = the_body.IP;
+				break;
+			case 2:
+				GoPiGo_IP = the_body.IP;
+				break;
+			case 3:
+				Grove_Sensor_IP = the_body.IP;
+				break;
+			case 4:
+				Human_Sensor_IP = the_body.IP;
+				break;
+			default:
+				if(debug) debugLog( "which not Special type" + the_body.which );	
+		}
+
 		});
 	});
 
@@ -169,7 +231,6 @@ function PostDiscover(ip_address)
 	post_request.write(dataString);
 	post_request.end();
 }
-
 var keepAliveTimeout = 1000;
 
 function discover() 
@@ -291,20 +352,6 @@ app.post('/do_keepalive', function(req, res) {
 });
 
 
-// Input 0
-var HOST_IP;
-
-//Input 1
-var TRUCK_IP;
-
-//Input 2
-var GoPiGo_IP;
-
-//Input 3
-var Grove_Sensor_IP;
-
-//Input 4
-var Human_Sensor_IP;
 
 function Broadcast_IP()
 {
