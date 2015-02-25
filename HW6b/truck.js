@@ -312,7 +312,7 @@ function Broadcast_IP()
 	
 	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
 
-	if(debug) debugLog( post_data );
+	if(debug) debugLog( "Post data: " + post_data + "\n\nToo: " + listIPs );
 	
 	for( var i = 0; i < listIPs.length; i++) 
 	{
