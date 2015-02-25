@@ -352,7 +352,7 @@ function sendCommandResposne(isFull)
 	isEmptyButton.hidden = true;
 	screen.render();
 	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull};
-	generalPOST(HOST_IP, 'do_sensor_response', sresponse);
+	generalPOST(HOST_IP, '/do_sensor_response', sresponse);
 }
 
 isEmptyButton.on('click', function(data) {
