@@ -5,6 +5,7 @@ var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
+var whiteList = require('./TokenRingManager');
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
@@ -108,52 +109,6 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 });
 
 reqResourceButton.focus();
-
-/*****
- * Begin password code:
- */
-var password = ''; //<--- Loop and wait for this to be non-zero.
-
-var passwordBox = blessed.textbox({
-	top: '40%',
-	left: '30%',
-	width: '40%',
-	height: '10%',
-	content: '',
-	tags: false,
-	censor: true,
-	inputOnFocus: true,
-	border: {
-		type: 'line',
-		fg: 'white'
-	},
-	style: {
-		fg: 'white',
-		bg: 'blue',
-		border: {
-			fg: 'white'
-		}
-	},
-	name: 'password',
-});
-
-passwordBox.setLabel({
-	text: 'Enter a PASSWORD:',
-	side: 'left'
-});
-
-passwordBox.on('submit', function(data) {
-	debugLog("Password entered: " + passwordBox.value);
-	passwordBox.hide();
-	screen.remove(passwordBox);
-});
-
-screen.append(passwordBox);
-passwordBox.focus();
-/*
- * ...end of password code.
- **********/
-
 screen.render();
 /********* END BUTTON ***********/
 
@@ -377,7 +332,7 @@ function reqResource()
 	//var everyoneElse = tokenRing.getEveryoneElse(); // returns index
 	//debugLog ("Requesting Resource, " + everyoneElse);
 
-	var theRing = tokenRing.getRing(); 
+	var theRing = whiteList.getRing(); 
 	for (var i = 0; i < theRing.length; i++)
 	{
 		var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
@@ -612,6 +567,42 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
+app.post( '/whitelist_req', function( req, res ){
+
+	var the_body = req.body;
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+
+	if(debug) debugLog("White list request: " + the_body.ip );
+
+	while( password == "" ){}
+	
+	/* Add to white list and broadcast white updated white list to all members*/
+	if( the_body.mac_addr == 1 && the_body.pass == password )
+	{
+		whiteList.addRingMember(the_body.ip);
+
+		var listIPs = whiteList.getRing();
+	
+		var post_data = { members: listIPs }
+ 
+		for( var i = 0; i < listIPs.length; i++) 
+		{
+			if (listIPs[i] != tokenRing.getMyIP())
+			{
+				if( debug ) debugLog( "Sending list to ip: " + listIPs[i] );
+				generalPOST( listIPs[i], "/init_workers", post_data );
+			}
+		}	
+	}
+	else
+	{
+		var post_data = { members: [the_body.ip] };
+
+		generalPOST( the_body.ip, "/init_workers", post_data );
+	}
+
+});
+
 app.post( '/init_PA', function( req, res){
 
 	var the_body = req.body;  
@@ -620,7 +611,27 @@ app.post( '/init_PA', function( req, res){
 	if(debug) debugLog("recieved PA IP: " + the_body.pica_ip );
 
 	PICA_IP = the_body.pica_ip;
-	
+
+	var post_data = { ip: tokenRing.getMyIP(), mac_addr: 1, pass: node_functionality };
+
+	while( password == "" ){}
+
+	generalPOST( PICA_IP, '/whitelist_req', post_data );
+
+});
+
+app.post('/init_workers', function( req, res ){
+
+	var the_body = req.body;  
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+
+	if(debug) debugLog("recieved white list: " + the_body.members );
+
+	for( var i = 0; i < the_body.members.length; i++ )
+	{
+		whiteList.addRingMember( the_body.members[i] );
+	}
+
 	if( PICA_IP != tokenRing.getMyIP() ){
 		reqResourceButton.hidden = false;
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
@@ -653,6 +664,7 @@ function initializePICA()
 
 	if ( node_functionality == 0)
 	{
+		STATE = GAP_STATE;
 		box.setContent('{center}PICA - PICS - PICA{/center}');
 		box.style.bg = 'blue';
 		reqResourceButton.hidden = true;
@@ -661,23 +673,6 @@ function initializePICA()
 		screen.render();
 		PICA_IP = tokenRing.getMyIP();
 		setTimeout( Broadcast_IP, 3000 );
-		
-	}
-	else if( node_functionality == 1 )
-	{
-		STATE = GAP_STATE;
-		box.setContent('{center}IDLE - IDLE - IDLE{/center}');
-		box.style.bg = 'green';
-		if( PICA_IP ){
-			reqResourceButton.hidden = false;
-		}
-		else{
-			reqResourceButton.hidden = true;
-		}
-		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
-		reqResourceButton.style.bg = 'green';
-
-		screen.render();
 	}
 	else
 	{
@@ -692,6 +687,7 @@ function initializePICA()
 		}
 		reqResourceButton.setContent('{center}REQUEST RESOURCE!!{/center}');	
 		reqResourceButton.style.bg = 'green';
+
 		screen.render();
 	}
 }
