@@ -335,7 +335,7 @@ app.post( '/gather_ips', function( req, res ){
 	var the_body = req.body;  //see connect package above
 	if(debug) debugLog ( "gather_ips: " + JSON.stringify( the_body) );
 
-	var i = the_body.which;
+	var i = parseInt( the_body.which );
 	
 	switch (i){
 		case 0:
