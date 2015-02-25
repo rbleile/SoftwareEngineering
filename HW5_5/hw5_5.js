@@ -119,9 +119,9 @@ var password = ''; //<--- Loop and wait for this to be non-zero.
 var password_hash = '';
 
 var passwordBox = blessed.textbox({
-	top: '40%',
-	left: '30%',
-	width: '40%',
+	top: '30%',
+	left: '10%',
+	width: '60%',
 	height: '20%',
 	//content: '',
 	tags: false,
