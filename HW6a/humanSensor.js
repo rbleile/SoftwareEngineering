@@ -461,7 +461,7 @@ function keepAlive()
 }
 
 /*
- * General function to replace separate functions for all different types of
+ * General function to replace separate functions for all different types of    s
  * posts, e.g. winner, election
  */
 
