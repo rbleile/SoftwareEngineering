@@ -661,6 +661,7 @@ app.post( '/whitelist_req', function( req, res ){
 			}
 			else
 			{
+				debugLog( "REJECTED"  );
 				var post_data = { members: [the_body.ip] };
 
 				generalPOST( the_body.ip, "/init_workers", post_data );
