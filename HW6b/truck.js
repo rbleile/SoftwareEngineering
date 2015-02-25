@@ -95,7 +95,7 @@ var doneButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}Action Complete{/center}',
+    content: '{center}D = Action Completed{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -375,7 +375,7 @@ app.post('/do_keepalive', function(req, res) {
 function displayButton()
 {
 
-	doneButton.setContent( "{center}Action Completed{/center}");
+	doneButton.setContent( "{center}D = Action Completed{/center}");
 	doneButton.style.bg = "green";
 	doneButton.style.fg = "white";
 	doneButton.hidden = false;

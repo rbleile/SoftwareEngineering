@@ -112,7 +112,7 @@ var inputBox1 = blessed.textbox({
 	left: '0%',
 	width: '50%',
 	height: '15%',
-	//content: '',
+	content: '',
 	tags: false,
 	hidden: true,
 	censor: false,
@@ -141,6 +141,8 @@ inputBox1.setLabel({
 inputBox1.on('submit', function() {
 	response1 = inputBox1.value;
 	debugLog("Response1 entered: " + response1);
+	inputBox1.value = "";
+	//debugLog("inputbox1 value: " + inputBox1.value);
 	log.focus();
 	inputBox1.hide();
 	//screen.remove(inputBox);
@@ -153,7 +155,7 @@ var inputBox2 = blessed.textbox({
 	left: '0%',
 	width: '50%',
 	height: '15%',
-	//content: '',
+	content: '',
 	tags: false,
 	hidden: true,
 	censor: false,
@@ -176,6 +178,8 @@ var inputBox2 = blessed.textbox({
 inputBox2.on('submit', function() {
 	response2 = inputBox2.value;
 	debugLog("Response2 entered: " + response2);
+	inputBox2.value = "";
+	//debugLog("inputbox2 value: " + inputBox2.value);
 	log.focus();
 	inputBox2.hide();
 	//screen.remove(inputBox);
@@ -193,7 +197,7 @@ var inputBox3 = blessed.textbox({
 	left: '0%',
 	width: '50%',
 	height: '15%',
-	//content: '',
+	content: '',
 	tags: false,
 	hidden: true,
 	censor: false,
@@ -216,6 +220,8 @@ var inputBox3 = blessed.textbox({
 inputBox3.on('submit', function() {
 	response3 = inputBox3.value;
 	debugLog("Response3 entered: " + response3);
+	inputBox3.value = "";
+	//debugLog("inputbox3 value: " + inputBox3.value);
 	log.focus();
 	inputBox3.hide();
 	//screen.remove(inputBox);
@@ -511,9 +517,10 @@ function moveFunctionality()
 	var _responseCheck1 = setInterval(function() {
 		if (response1) {
 			clearInterval(_responseCheck1);
-			//inputBox1.setContent("");
+			inputBox1.setContent("");
 			direction = response1;
-
+			response1 = "";
+		
 			inputBox2.hidden = false;
 			inputBox2.focus();
 			//debugLog("Enter distance (in inches)");
@@ -522,8 +529,9 @@ function moveFunctionality()
 			var _responseCheck2 = setInterval(function() {
 				if (response2) {
 					clearInterval(_responseCheck2);
-					//inputBox2.setContent("");
+					inputBox2.setContent("");
 					distance = response2;
+					response2 = "";
 
 					inputBox3.hidden = false;
 					inputBox3.focus();
@@ -533,8 +541,10 @@ function moveFunctionality()
 					var _responseCheck3 = setInterval(function() {
 						if (response3) {
 							clearInterval(_responseCheck3);
-							//inputBox3.setContent("");
+							inputBox3.setContent("");
 							speed = response3;
+							response3 = "";
+
 							var post_data = { myIP : tokenRing.getMyIP() , command : "Move" , inpdistance : distance, inpdirection : direction , inpspeed : speed };
 							generalPOST(TRUCK_IP, '/action_move', post_data);
 						}
@@ -577,6 +587,7 @@ function turninplaceFunctionality()
 			clearInterval(_responseCheck1);
 			//inputBox1.setContent("");
 			degrees = response1;
+			response1 = "";
 			var post_data = { myIP : tokenRing.getMyIP(), command : "Turn in place", inpdegrees : degrees };
 			generalPOST(TRUCK_IP, '/action_turninplace', post_data);
 		}
@@ -616,6 +627,7 @@ function turnsensorFunctionality()
 			clearInterval(_responseCheck1);
 			//inputBox1.setContent("");
 			degrees = response1;
+			response1 = "";
 			var post_data = { myIP : tokenRing.getMyIP(), command : "Turn sensor", inpdegrees : degrees};
 			generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 		}
