@@ -25,7 +25,7 @@ var PICA_IP;
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
+	log.insertLine(1, msg);
 	screen.render();
 	return;
 }
@@ -267,19 +267,6 @@ app.post( '/gather_ips', function( req, res ){
 
 });
 
-function releaseShotgun()
-{
-	initializePICA();
-	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
-	var numRequests = ReqDeferred.length;
-	for (var i = 0; i < numRequests; i++)
-	{
-		var nextPendingRequest = getNextRequestDeferred();
-		var post_data = { myIP : tokenRing.getMyIP() };
-	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
-		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
-	}
-}
 
 // Render the screen.
 screen.render();
