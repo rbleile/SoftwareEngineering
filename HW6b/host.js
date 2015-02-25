@@ -529,16 +529,16 @@ function moveFunctionality()
 								clearInterval(_responseCheck3);
 								//inputBox3.setContent("");
 								speed = response3;
+								var post_data = { myIP : tokenRing.getMyIP() , command : "move" , inpdistance : distance, inpDirection : direction , inpspeed : speed };
+								generalPOST(TRUCK_IP, '/action_move', post_data);
 							}
 						}, 100);
 					}
 				}, 100);
 			}
+
 	}, 100);
 	screen.render();
-
-    var post_data = { myIP : tokenRing.getMyIP() , command : "move" , inpdistance : distance, inpDirection : direction , inpspeed : speed };
-    generalPOST(TRUCK_IP, '/action_move', post_data);
 }
 
 function turninplaceFunctionality()
@@ -571,12 +571,12 @@ function turninplaceFunctionality()
 			clearInterval(_responseCheck1);
 			//inputBox1.setContent("");
 			degrees = response1;
+			var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place", inpdegrees : degrees };
+			generalPOST(TRUCK_IP, '/action_turninplace', post_data);
 		}
 	}, 100);
 	screen.render();
 	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place", inpdegrees : degrees };
-    generalPOST(TRUCK_IP, '/action_turninplace', post_data);
 }
 
 function turnsensorFunctionality()
@@ -608,12 +608,12 @@ function turnsensorFunctionality()
 			clearInterval(_responseCheck1);
 			//inputBox1.setContent("");
 			degrees = response1;
+			var post_data = { myIP : tokenRing.getMyIP(), command : "turn sensor", inpdegrees : degrees};
+			generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 		}
 	}, 100);
 	screen.render();
 	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn sensor", inpdegrees : degrees};
-    generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 }
 
 var count = 0;
