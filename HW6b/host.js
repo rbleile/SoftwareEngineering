@@ -108,10 +108,10 @@ var response2 = "";
 var response3 = "";
 var inputBox1 = blessed.textbox({
 	parent: screen,
-	top: '70%',
+	top: '80%',
 	left: '0%',
 	width: '50%',
-	height: '20%',
+	height: '15%',
 	//content: '',
 	tags: false,
 	hidden: true,
@@ -140,7 +140,7 @@ inputBox1.setLabel({
 */
 inputBox1.on('submit', function() {
 	response1 = inputBox1.value;
-	debugLog("response1 entered: " + response1);
+	debugLog("Response1 entered: " + response1);
 	log.focus();
 	inputBox1.hide();
 	//screen.remove(inputBox);
@@ -149,10 +149,10 @@ inputBox1.on('submit', function() {
 screen.append(inputBox1);
 
 var inputBox2 = blessed.textbox({
-	top: '70%',
+	top: '80%',
 	left: '0%',
 	width: '50%',
-	height: '20%',
+	height: '15%',
 	//content: '',
 	tags: false,
 	hidden: true,
@@ -175,7 +175,7 @@ var inputBox2 = blessed.textbox({
 }); 
 inputBox2.on('submit', function() {
 	response2 = inputBox2.value;
-	debugLog("response2 entered: " + response2);
+	debugLog("Response2 entered: " + response2);
 	log.focus();
 	inputBox2.hide();
 	//screen.remove(inputBox);
@@ -189,10 +189,10 @@ inputBox2.setLabel({
 */
 
 var inputBox3 = blessed.textbox({
-	top: '70%',
+	top: '80%',
 	left: '0%',
 	width: '50%',
-	height: '20%',
+	height: '15%',
 	//content: '',
 	tags: false,
 	hidden: true,
@@ -215,7 +215,7 @@ var inputBox3 = blessed.textbox({
 }); 
 inputBox3.on('submit', function() {
 	response3 = inputBox3.value;
-	debugLog("response3 entered: " + response3);
+	debugLog("Response3 entered: " + response3);
 	log.focus();
 	inputBox3.hide();
 	//screen.remove(inputBox);
@@ -369,7 +369,7 @@ var bay1Button = blessed.box({
 	parent: screen,
     top: '70%',
     height: '10%',
-    width: '20%',
+    width: '15%',
     left: '0%',
     border: {
         type: 'line',
@@ -386,10 +386,10 @@ var bay1Button = blessed.box({
 });
 var bay2Button = blessed.box({
 	parent: screen,
-    top: '80%',
+    top: '70%',
     height: '10%',
-    width: '20%',
-    left: '20%',
+    width: '15%',
+    left: '15%',
     border: {
         type: 'line',
         fg: '#ffffff'
@@ -405,10 +405,10 @@ var bay2Button = blessed.box({
 });
 var bay3Button = blessed.box({
 	parent: screen,
-    top: '90%',
+    top: '70%',
     height: '10%',
-    width: '20%',
-    left: '40%',
+    width: '15%',
+    left: '30%',
     border: {
         type: 'line',
         fg: '#ffffff'
@@ -446,34 +446,27 @@ app.post("/do_sensor_response", function(req, res) {
 function baycolor(fields)
 {
 	var full = fields.isFull;
-	debugLog("full " + full);
 	var col = "green";
 	if (full) 
 		col = "red";
 	if (fields.ip == Grove_Sensor_IP)
 	{
-		bay1Button.setContent("Bay1");
+		bay1Button.setContent("{center}Bay1{/center}");
 		bay1Button.style.bg = col;
 		bay1Button.style.fg = "white";
 	}
 	else if (fields.ip == Human_Sensor_IP)
 	{
-		bay2Button.setContent("Bay2");
+		bay2Button.setContent("{center}Bay2{/center}");
 		bay2Button.style.bg = col;
 		bay2Button.style.fg = "white";
 	}
 	else if (fields.ip == Human_Sensor_IP2)
 	{
-		bay3Button.setContent("Bay3");
+		bay3Button.setContent("{center}Bay3{/center}");
 		bay3Button.style.bg = col;
 		bay3Button.style.fg = "white";
-		debugLog("human sensor2 " + col);
 	}
-	else
-	{
-		debugLog("ERRRRRRRROR");
-	}
-
 	screen.render();
 }
 
@@ -498,45 +491,53 @@ function moveFunctionality()
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
 
+	scanbaysButton.setContent("");
+	scanbaysButton.style.bg = "black";
+	scanbaysButton.style.fg = "black";
+	scanbaysButton.hidden = true;
+
 	inputBox1.hidden = false;
 	inputBox1.focus();
-	debugLog("Enter direction (fwd or bwd)");
+	//log.insertLine(1, msg);
+	//debugLog("Enter direction (fwd or bwd)");
+	log2.insertLine(0,"Enter direction (fwd or bwd).");
 	var direction = "";
 	var distance = "";
 	var speed = "";
 	var _responseCheck1 = setInterval(function() {
-			if (response1) {
-				clearInterval(_responseCheck1);
-				//inputBox1.setContent("");
-				direction = response1;
+		if (response1) {
+			clearInterval(_responseCheck1);
+			//inputBox1.setContent("");
+			direction = response1;
 
-				inputBox2.hidden = false;
-				screen.render();
-				inputBox2.focus();
-				debugLog("Enter distance (in inches)");
-				var _responseCheck2 = setInterval(function() {
-					if (response2) {
-						clearInterval(_responseCheck2);
-						//inputBox2.setContent("");
-						distance = response2;
+			inputBox2.hidden = false;
+			inputBox2.focus();
+			//debugLog("Enter distance (in inches)");
+			log2.insertLine(0, "Enter distance (in inches).");
+			screen.render();
+			var _responseCheck2 = setInterval(function() {
+				if (response2) {
+					clearInterval(_responseCheck2);
+					//inputBox2.setContent("");
+					distance = response2;
 
-						inputBox3.hidden = false;
-						screen.render();
-						inputBox3.focus();
-						debugLog("Enter speed (0 to 10)");
-						var _responseCheck3 = setInterval(function() {
-							if (response3) {
-								clearInterval(_responseCheck3);
-								//inputBox3.setContent("");
-								speed = response3;
-								var post_data = { myIP : tokenRing.getMyIP() , command : "move" , inpdistance : distance, inpDirection : direction , inpspeed : speed };
-								generalPOST(TRUCK_IP, '/action_move', post_data);
-							}
-						}, 100);
-					}
-				}, 100);
-			}
-
+					inputBox3.hidden = false;
+					inputBox3.focus();
+					//debugLog("Enter speed (0 to 10)");
+					log2.insertLine(0, "Enter speed (0 to 10).");
+					screen.render();
+					var _responseCheck3 = setInterval(function() {
+						if (response3) {
+							clearInterval(_responseCheck3);
+							//inputBox3.setContent("");
+							speed = response3;
+							var post_data = { myIP : tokenRing.getMyIP() , command : "Move" , inpdistance : distance, inpDirection : direction , inpspeed : speed };
+							generalPOST(TRUCK_IP, '/action_move', post_data);
+						}
+					}, 100);
+				}
+			}, 100);
+		}
 	}, 100);
 	screen.render();
 }
@@ -562,16 +563,22 @@ function turninplaceFunctionality()
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
 
+	scanbaysButton.setContent("");
+	scanbaysButton.style.bg = "black";
+	scanbaysButton.style.fg = "black";
+	scanbaysButton.hidden = true;
+
 	inputBox1.hidden = false;
 	inputBox1.focus();
-	debugLog("Enter degrees (pos or neg)");
+	//debugLog("Enter degrees (pos or neg)");
+	log2.insertLine(0, "Enter degrees (-360 to +360).");
 	var degrees = "";
 	var _responseCheck1 = setInterval(function() {
 		if (response1) {
 			clearInterval(_responseCheck1);
 			//inputBox1.setContent("");
 			degrees = response1;
-			var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place", inpdegrees : degrees };
+			var post_data = { myIP : tokenRing.getMyIP(), command : "Turn in place", inpdegrees : degrees };
 			generalPOST(TRUCK_IP, '/action_turninplace', post_data);
 		}
 	}, 100);
@@ -599,16 +606,23 @@ function turnsensorFunctionality()
 	readsensorButton.style.bg = "black";
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
+
+	scanbaysButton.setContent("");
+	scanbaysButton.style.bg = "black";
+	scanbaysButton.style.fg = "black";
+	scanbaysButton.hidden = true;
+
 	inputBox1.hidden = false;
 	inputBox1.focus();
-	debugLog("Enter degrees (0 to 180)");
+	//debugLog("Enter degrees (0 to 180)");
+	log2.insertLine(0, "Enter degrees (0 to 180).");
 	var degrees = "";
 	var _responseCheck1 = setInterval(function() {
 		if (response1) {
 			clearInterval(_responseCheck1);
 			//inputBox1.setContent("");
 			degrees = response1;
-			var post_data = { myIP : tokenRing.getMyIP(), command : "turn sensor", inpdegrees : degrees};
+			var post_data = { myIP : tokenRing.getMyIP(), command : "Turn sensor", inpdegrees : degrees};
 			generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 		}
 	}, 100);
@@ -638,16 +652,22 @@ function readsensorFunctionality()
 	readsensorButton.style.bg = "red";
 	readsensorButton.style.fg = "white";
 	readsensorButton.hidden = false;
-	screen.render();
 	
+	scanbaysButton.setContent("");
+	scanbaysButton.style.bg = "black";
+	scanbaysButton.style.fg = "black";
+	scanbaysButton.hidden = true;
+
+	screen.render();
+
 	count++;
-    var post_data = { myIP : tokenRing.getMyIP(), command : "read sensor", inpdistance : count };
+    var post_data = { myIP : tokenRing.getMyIP(), command : "Read sensor", inpdistance : count };
     generalPOST(TRUCK_IP, '/action_readsensor', post_data);
 }
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, msg);
+	log.insertLine(0, msg);
 	screen.render();
 	return;
 }

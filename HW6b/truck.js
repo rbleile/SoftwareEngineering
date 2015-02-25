@@ -132,7 +132,7 @@ function doneFunctionality()
 
 function debugLog( msg ) 
 {
-	log.insertLine(1, msg);
+	log.insertLine(0, msg);
 	screen.render();
 	return;
 }
@@ -383,28 +383,29 @@ function displayButton()
 }
 app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: Move " + JSON.stringify(the_body.inpdirection) + " " + JSON.stringify(the_body.inpdistance) + "inches at " + JSON.stringify(the_body.inpspeed) );
+    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) + " " + JSON.stringify(the_body.inpdirection) + " " + JSON.stringify(the_body.inpdistance) + "inches at speed of " + JSON.stringify(the_body.inpspeed) );
     res.json(req.body);
 	 displayButton();
 });
 
 app.post('/action_turninplace', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: Turn in place " + JSON.stringify(the_body.inpdegrees) + " degrees");
+    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) + " " + JSON.stringify(the_body.inpdegrees) + " degrees");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_turnsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: Turn sensor " + JSON.stringify(the_body.inpdegrees) + " degrees");
+    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) + " " + JSON.stringify(the_body.inpdegrees) + " degrees");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: Read sensor, object is " + JSON.stringify(the_body.inpdistance) + " inches" );
+    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command));
+	log2.insertLine(0, "Object is " + JSON.stringify(the_body.inpdistance) + " inches away" );
     res.json(req.body);
     displayButton();
 });
