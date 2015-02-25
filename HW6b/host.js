@@ -374,14 +374,19 @@ app.post( '/gather_ips', function( req, res ){
 	switch (i){
 		case 0:
 			HOST_IP = the_body.IP;
+			break;
 		case 1:
 			TRUCK_IP = the_body.IP;
+			break;
 		case 2:
 			GoPiGo_IP = the_body.IP;
+			break;
 		case 3:
 			Grove_Sensor_IP = the_body.IP;
+			break;
 		case 4:
 			Human_Sensor_IP = the_body.IP;
+			break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.which );	
 	}
