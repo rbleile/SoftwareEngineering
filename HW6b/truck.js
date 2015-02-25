@@ -351,61 +351,6 @@ app.post('/do_keepalive', function(req, res) {
 	var the_body = req.body;  //see connect package above
 });
 
-
-
-function Broadcast_IP()
-{
-	var listIPs = tokenRing.getRing();
-	
-	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
-
-	if(debug) debugLog( "Post data: " + JSON.stringify(post_data) + "\n\nToo: " + listIPs );
-	
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			if( debug ) debugLog( "Sending to ip: " + listIPs[i] );
-			generalPOST( listIPs[i], "/gather_ips", post_data );
-		}
-	}	
-
-	if (node_functionality == 1) 
-	{
-		box.setContent('{center}TRUCK - TRUCK - TRUCK{/center}');
-		box.style.bg = 'yellow';
-		screen.render();
-	}
-}
-
-app.post( '/gather_ips', function( req, res ){
-
-	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "gather_ips: " + JSON.stringify( the_body) );
-
-	var i = parseInt( the_body.which );
-	
-	switch (i){
-		case 0:
-			HOST_IP = the_body.IP;
-			break;
-		case 1:
-			TRUCK_IP = the_body.IP;
-			break;
-		case 2:
-			GoPiGo_IP = the_body.IP;
-			break;
-		case 3:
-			Grove_Sensor_IP = the_body.IP;
-			break;
-		case 4:
-			Human_Sensor_IP = the_body.IP;
-			break;
-		default:
-			if(debug) debugLog( "which not Special type" + the_body.which );	
-	}
-});
-
 app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
@@ -429,5 +374,4 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( Broadcast_IP(), 4000 );
 });
