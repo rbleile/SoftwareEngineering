@@ -453,6 +453,7 @@ function scanbaysFunctionality()
 
 	if (Grove_Sensor_IP && grove_sensor)
 	{
+		debugLog("checking grove sensor");
 		generalPOST(Grove_Sensor_IP, "/do_sensor", post_data);
 		grove_sensor = false;
 	}
@@ -488,6 +489,7 @@ app.post("/do_sensor_response", function(req, res) {
 function baycolor(fields)
 {
 	var full = fields.isFull;
+	log2.insertLine(0,"grove " + full);
 	var col = "green";
 	if (full) 
 		col = "red";
