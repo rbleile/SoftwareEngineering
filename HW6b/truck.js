@@ -34,6 +34,8 @@ var Grove_Sensor_IP;
 //Input 4
 var Human_Sensor_IP;
 
+//Input 5
+var Human_Sensor2_IP;
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -120,6 +122,11 @@ function doneFunctionality()
 	var post_data = { myIP : tokenRing.getMyIP() };
 	if (debug) debugLog ("HOST_IP: " + HOST_IP);
 	generalPOST(HOST_IP, '/action_completed', post_data);
+
+	doneButton.setContent("");
+	doneButton.style.fg = "black";
+	doneButton.style.bg = "black";
+	screen.render();
 }
 
 function debugLog( msg ) 
@@ -158,6 +165,9 @@ app.post('/do_discover', function(req, res) {
 			break;
 		case 4:
 			Human_Sensor_IP = the_body.ip;
+			break;
+		case 5:
+			Human_Sensor2_IP = the_body.ip;
 			break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.role );	
@@ -221,6 +231,9 @@ function PostDiscover(ip_address)
 				break;
 			case 4:
 				Human_Sensor_IP = resultObject.ip;
+				break;
+			case 5:
+				Human_Sensor2_IP = resultObject.ip;
 				break;
 			default:
 				if(debug) debugLog( "which not Special type" + resultObject.role );	
@@ -368,6 +381,18 @@ app.post('/action_move', function(req, res) {
 });
 
 app.post('/action_turninplace', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
+    res.json(req.body);
+});
+
+app.post('/action_turnsensor', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
+    res.json(req.body);
+});
+
+app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);

@@ -34,6 +34,9 @@ var Grove_Sensor_IP;
 //Input 4
 var Human_Sensor_IP;
 
+//Input 5
+var Human_Sensor2_IP;
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -82,8 +85,8 @@ var box = blessed.box({
 /********* BUTTON CODE *********/
 var moveButton = blessed.box({
     parent: screen,
-    top: '30%',
-    height: '20%',
+    top: '20%',
+    height: '10%',
     width: '50%',
     left: '0%',
     border: {
@@ -108,8 +111,8 @@ screen.key(['m', 'M'], function(ch, key) {
 
 var turninplaceButton = blessed.box({
     parent: screen,
-    top: '50%',
-    height: '20%',
+    top: '30%',
+    height: '10%',
     width: '50%',
     left: '0%',
     border: {
@@ -132,11 +135,10 @@ screen.key(['p', 'P'], function(ch, key) {
     turninplaceFunctionality();
 });
 
-/*
 var turnsensorButton = blessed.box({
     parent: screen,
-    top: '50%',
-    height: '20%',
+    top: '40%',
+    height: '10%',
     width: '50%',
     left: '0%',
     border: {
@@ -145,24 +147,24 @@ var turnsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}TurnInPlace{/center}',
+    content: '{center}TurnSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
     hidden: false
 });
-turninplaceButton.on('click', function(data) {
-    turninplaceFunctionality()
+turnsensorButton.on('click', function(data) {
+    turnsensorFunctionality()
 });
-screen.key(['p', 'P'], function(ch, key) {
-    turninplaceFunctionality();
+screen.key(['t', 'T'], function(ch, key) {
+    turnsensorFunctionality();
 });
 
 var readsensorButton = blessed.box({
     parent: screen,
     top: '50%',
-    height: '20%',
+    height: '10%',
     width: '50%',
     left: '0%',
     border: {
@@ -171,7 +173,7 @@ var readsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}TurnInPlace{/center}',
+    content: '{center}ReadSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -179,20 +181,20 @@ var readsensorButton = blessed.box({
     hidden: false
 });
 turninplaceButton.on('click', function(data) {
-    turninplaceFunctionality()
+    readsensorFunctionality()
 });
-screen.key(['p', 'P'], function(ch, key) {
-    turninplaceFunctionality();
+screen.key(['r', 'R'], function(ch, key) {
+    readSensorFunctionality();
 });
-*/
+
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
 moveButton.focus();
 turninplaceButton.focus();
-//turnsensorButton.focus();
-//readsensorButton.focus();
+turnsensorButton.focus();
+readsensorButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
@@ -206,6 +208,16 @@ function moveFunctionality()
 	turninplaceButton.style.bg = "black";
 	turninplaceButton.style.fg = "black";
 	turninplaceButton.hidden = true;
+
+	turnsensorButton.setContent("");
+	turnsensorButton.style.bg = "black";
+	turnsensorButton.style.fg = "black";
+	turnsensorButton.hidden = true;
+
+	readsensorButton.setContent("");
+	readsensorButton.style.bg = "black";
+	readsensorButton.style.fg = "black";
+	readsensorButton.hidden = true;
 
 	screen.render();
 
@@ -224,12 +236,72 @@ function turninplaceFunctionality()
 	turninplaceButton.style.fg = "white";
 	turninplaceButton.hidden = true;
 
+	turnsensorButton.setContent("");
+	turnsensorButton.style.bg = "black";
+	turnsensorButton.style.fg = "black";
+	turnsensorButton.hidden = true;
+
+	readsensorButton.setContent("");
+	readsensorButton.style.bg = "black";
+	readsensorButton.style.fg = "black";
+	readsensorButton.hidden = true;
 	screen.render();
 	
     var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
     generalPOST(TRUCK_IP, '/action_turninplace', post_data);
 }
 
+function turnsensorFunctionality()
+{
+	moveButton.setContent("");
+	moveButton.style.bg = "black";
+	moveButton.style.fg = "black";
+	moveButton.hidden = true;
+
+	turninplaceButton.setContent("");
+	turninplaceButton.style.bg = "black";
+	turninplaceButton.style.fg = "black";
+	turninplaceButton.hidden = true;
+
+	turnsensorButton.style.bg = "red";
+	turnsensorButton.style.fg = "white";
+	turnsensorButton.hidden = false;
+
+	readsensorButton.setContent("");
+	readsensorButton.style.bg = "black";
+	readsensorButton.style.fg = "black";
+	readsensorButton.hidden = true;
+	screen.render();
+	
+    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
+    generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
+}
+
+function readsensorFunctionality()
+{
+	moveButton.setContent("");
+	moveButton.style.bg = "black";
+	moveButton.style.fg = "black";
+	moveButton.hidden = true;
+
+	turninplaceButton.setContent("");
+	turninplaceButton.style.bg = "black";
+	turninplaceButton.style.fg = "black";
+	turninplaceButton.hidden = true;
+
+	turnsensorButton.setContent("");
+	turnsensorButton.style.bg = "black";
+	turnsensorButton.style.fg = "black";
+	turnsensorButton.hidden = true;
+
+	readsensorButton.style.bg = "red";
+	readsensorButton.style.fg = "white";
+	readsensorButton.hidden = false;
+	screen.render();
+	
+    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
+    generalPOST(TRUCK_IP, '/action_readsensor', post_data);
+}
 
 function debugLog( msg ) 
 {
@@ -265,6 +337,9 @@ app.post('/do_discover', function(req, res) {
 			break;
 		case 4:
 			Human_Sensor_IP = the_body.ip;
+			break;
+		case 5:
+			Human_Sensor2_IP = the_body.ip;
 			break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.role );	
@@ -325,6 +400,9 @@ function PostDiscover(ip_address)
 				break;
 			case 4:
 				Human_Sensor_IP = resultObject.ip;
+				break;
+			case 5:
+				Human_Sensor2_IP = resultObject.ip;
 				break;
 			default:
 				if(debug) debugLog( "Role not Special type" + resultObject.role );	
@@ -457,6 +535,26 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	post_request.end();
 }
 
+function defaultmenu()
+{
+	moveButton.style.bg = "red";
+	moveButton.style.fg = "white";
+	moveButton.hidden = false;
+
+	turninplaceButton.style.bg = "red";
+	turninplaceButton.style.fg = "white";
+	turninplaceButton.hidden = false;
+
+	turnsensorButton.style.bg = "red";
+	turnsensorButton.style.fg = "white";
+	turnsensorButton.hidden = false;
+
+	readsensorButton.style.bg = "red";
+	readsensorButton.style.fg = "white";
+	readsensorButton.hidden = false;
+	screen.render();
+}
+
 app.post('/do_keepalive', function(req, res) {
 	res.json(req.body);
 	var the_body = req.body;  //see connect package above
@@ -467,6 +565,7 @@ app.post('/action_completed', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Action completed!!!");
     res.json(req.body);
+	defaultmenu();
 });
 
 
