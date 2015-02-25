@@ -119,7 +119,6 @@ screen.render();
 
 function doneFunctionality()
 {
-	debugLog("Hinding Button");
 	doneButton.setContent('');
 	doneButton.style.fg = "black";
 	doneButton.style.bg = "black";
