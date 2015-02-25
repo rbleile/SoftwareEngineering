@@ -366,6 +366,8 @@ function Broadcast_IP()
 	var listIPs = tokenRing.getRing();
 	
 	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
+
+	if(debug) debugLog( "Broadcasting: " + post_data + "\n\nToo: " + listIPs );
 	
 	for( var i = 0; i < listIPs.length; i++) 
 	{
