@@ -117,7 +117,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // 	return;
 // }
 
-// app.set('port', process.env.PORT || 3000);
+ app.set('port', process.env.PORT || 3000);
 
 // //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // // handle discovery requests
@@ -222,16 +222,18 @@ var options = {
   scriptPath: '/home/pi/GrovePi/Software/Python',
   //args: ['value1', 'value2', 'value3']
 };
-
+var isFull =false;
 app.get('/do_get_dist', function (req, res){
 	var the_body = req.query;
-	var distance;
-	PythonShell.run('my_script.py', options, function (err, results) {
+//	var isFull = false;
+	PythonShell.run('one_ultra.py', options, function (err, results) {
 	if (err) throw err;
 	  // results is an array consisting of messages collected during execution 
 	  console.log('results: %j', results);
+	  if(results[0] < 50) isFull = true;
+          console.log("is full : " + isFull + " "+results[0]);	
 	});
-	res.json({"distance"  : results});
+	res.json({"isFull" : isFull});
 });
 
 
@@ -239,8 +241,9 @@ app.get('/do_get_dist', function (req, res){
 //screen.render();
 
 http.createServer(app).listen(app.get('port'), function(){
-	debugLog("Express server listening on port " + app.get('port'));
-	discover();
-	debugLog( "Discovery Complete" );
-	setTimeout( initializePICA, 4000  );
+	//debugLog("Express server listening on port " + app.get('port'));
+	//discover();
+//	debugLog( "Discovery Complete" );
+//	setTimeout( initializePICA, 4000  );
 });
+var http = require('http');
