@@ -55,7 +55,7 @@ var log = blessed.scrollabletext({
     },
     width: '50%',
     height: '40%',
-    top: '20%',
+    top: '10%',
     left: '50%',
     align: 'left',
     tags: true
@@ -75,8 +75,8 @@ var log2 = blessed.scrollabletext({
     ch: '|'
     },
     width: '50%',
-    height: '30%',
-    top: '60%',
+    height: '50%',
+    top: '50%',
     left: '50%',
     align: 'left',
     tags: true
@@ -87,7 +87,7 @@ var box = blessed.box({
     top: '0%',
     left: 'left',
     width: '100%',
-    height: '20%',
+    height: '10%',
     content: '{center}HOST - HOST - HOST{/center}',
     tags: true,
     border: {
@@ -234,7 +234,7 @@ screen.append(inputBox3);
 /********* BUTTON CODE *********/
 var moveButton = blessed.box({
     parent: screen,
-    top: '20%',
+    top: '10%',
     height: '10%',
     width: '50%',
     left: '0%',
@@ -260,7 +260,7 @@ screen.key(['m', 'M'], function(ch, key) {
 
 var turninplaceButton = blessed.box({
     parent: screen,
-    top: '30%',
+    top: '20%',
     height: '10%',
     width: '50%',
     left: '0%',
@@ -286,7 +286,7 @@ screen.key(['p', 'P'], function(ch, key) {
 
 var turnsensorButton = blessed.box({
     parent: screen,
-    top: '40%',
+    top: '30%',
     height: '10%',
     width: '50%',
     left: '0%',
@@ -312,7 +312,7 @@ screen.key(['t', 'T'], function(ch, key) {
 
 var readsensorButton = blessed.box({
     parent: screen,
-    top: '50%',
+    top: '40%',
     height: '10%',
     width: '50%',
     left: '0%',
@@ -432,6 +432,12 @@ screen.render();
 
 function scanbaysFunctionality()
 {
+	scanbaysButton.style.fg = "white";
+	scanbaysButton.style.bg = "red";
+	scanbaysButton.hidden = false;
+
+	screen.render();
+
 	var post_data = {myIP : tokenRing.getMyIP()};
 	generalPOST(Grove_Sensor_IP, "/do_sensor", post_data);
 	generalPOST(Human_Sensor_IP, "/do_sensor", post_data);
@@ -454,18 +460,21 @@ function baycolor(fields)
 		bay1Button.setContent("{center}Bay1{/center}");
 		bay1Button.style.bg = col;
 		bay1Button.style.fg = "white";
+		log2.insertLine(0,"Looking for sensor in Bay 1...");
 	}
 	else if (fields.ip == Human_Sensor_IP)
 	{
 		bay2Button.setContent("{center}Bay2{/center}");
 		bay2Button.style.bg = col;
 		bay2Button.style.fg = "white";
+		log2.insertLine(0,"Looking for sensor in Bay 2...");
 	}
 	else if (fields.ip == Human_Sensor2_IP)
 	{
 		bay3Button.setContent("{center}Bay3{/center}");
 		bay3Button.style.bg = col;
 		bay3Button.style.fg = "white";
+		log2.insertLine(0,"Looking for sensor in Bay 3...");
 	}
 	screen.render();
 }
@@ -490,11 +499,6 @@ function moveFunctionality()
 	readsensorButton.style.bg = "black";
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
-
-	scanbaysButton.setContent("");
-	scanbaysButton.style.bg = "black";
-	scanbaysButton.style.fg = "black";
-	scanbaysButton.hidden = true;
 
 	inputBox1.hidden = false;
 	inputBox1.focus();
@@ -531,7 +535,7 @@ function moveFunctionality()
 							clearInterval(_responseCheck3);
 							//inputBox3.setContent("");
 							speed = response3;
-							var post_data = { myIP : tokenRing.getMyIP() , command : "Move" , inpdistance : distance, inpDirection : direction , inpspeed : speed };
+							var post_data = { myIP : tokenRing.getMyIP() , command : "Move" , inpdistance : distance, inpdirection : direction , inpspeed : speed };
 							generalPOST(TRUCK_IP, '/action_move', post_data);
 						}
 					}, 100);
@@ -562,11 +566,6 @@ function turninplaceFunctionality()
 	readsensorButton.style.bg = "black";
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
-
-	scanbaysButton.setContent("");
-	scanbaysButton.style.bg = "black";
-	scanbaysButton.style.fg = "black";
-	scanbaysButton.hidden = true;
 
 	inputBox1.hidden = false;
 	inputBox1.focus();
@@ -607,11 +606,6 @@ function turnsensorFunctionality()
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
 
-	scanbaysButton.setContent("");
-	scanbaysButton.style.bg = "black";
-	scanbaysButton.style.fg = "black";
-	scanbaysButton.hidden = true;
-
 	inputBox1.hidden = false;
 	inputBox1.focus();
 	//debugLog("Enter degrees (0 to 180)");
@@ -651,11 +645,6 @@ function readsensorFunctionality()
 	readsensorButton.style.fg = "white";
 	readsensorButton.hidden = false;
 	
-	scanbaysButton.setContent("");
-	scanbaysButton.style.bg = "black";
-	scanbaysButton.style.fg = "black";
-	scanbaysButton.hidden = true;
-
 	screen.render();
 
     var post_data = { myIP : tokenRing.getMyIP(), command : "Read sensor"};
@@ -664,7 +653,7 @@ function readsensorFunctionality()
 
 app.post('/do_resultsreadsensor', function(req, res) {
 	var the_body = req.body;
-	log2.insertLine(0,"Object is " + the_body.count + " inches away.");	
+	log2.insertLine(0,"Object is " + the_body.objdistance + " inches away.");	
 });
 
 function debugLog( msg ) 
@@ -769,9 +758,8 @@ function PostDiscover(ip_address)
 				Human_Sensor2_IP = resultObject.ip;
 				break;
 			default:
-				if(debug) debugLog( "Role not Special type" + resultObject.role );	
+				if(debug) debugLog( "Role not special type" + resultObject.role );	
 		}
-
 		});
 	});
 
@@ -921,7 +909,23 @@ function defaultmenu()
 	readsensorButton.style.bg = "green";
 	readsensorButton.style.fg = "white";
 	readsensorButton.hidden = false;
+
+	scanbaysButton.setContent("{center}X = ScanBays{/center}");
+	scanbaysButton.style.bg = "green";
+	scanbaysButton.style.fg = "white";
+	scanbaysButton.hidden = false;
+
 	screen.render();
+}
+
+function printIPs()
+{
+	debugLog("This is the list of IPs in the ring: " + tokenRing.getRing());
+	debugLog("TRUCK_IP = " + TRUCK_IP);
+	debugLog("GoPiGo_IP = " + GoPiGo_IP);
+	debugLog("GroveSensor_IP = " + Grove_Sensor_IP);
+	debugLog("Human_Sensor_IP = " + Human_Sensor_IP);
+	debugLog("Human_Sensor2_IP = " + Human_Sensor2_IP);
 }
 
 app.post('/do_keepalive', function(req, res) {
@@ -944,5 +948,7 @@ screen.render();
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
-	debugLog( "Discovery Complete" );
+	debugLog( "Discovery Complete." );
+	debugLog("Waiting before printing IPs...");
+	setTimeout( printIPs , 10000 );
 });
