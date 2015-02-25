@@ -369,8 +369,8 @@ app.post( '/gather_ips', function( req, res ){
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
-	var i = the_body.which;
-	
+	var i = parseInt(the_body.which);
+
 	switch (i){
 		case 0:
 			HOST_IP = the_body.IP;
