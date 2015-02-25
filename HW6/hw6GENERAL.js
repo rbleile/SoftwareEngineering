@@ -19,9 +19,23 @@ if( !myArgs[0] ) myArgs[0] = -1;
 
 var node_functionality = myArgs[0];
 
-var PICA_IP;
+// Input 0
+var HOST_IP;
 
-// Create a screen object.
+//Input 1
+var TRUCK_IP;
+
+//Input 2
+var GoPiGo_IP;
+
+//Input 3
+var Grove_Sensor_IP;
+
+//Input 4
+var Human_Sensor_IP;
+
+//Input 5
+var Human_Sensor2_IP;
 
 function debugLog( msg ) 
 {
@@ -35,17 +49,47 @@ app.set('port', process.env.PORT || 3000);
 //curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
 // handle discovery requests
 app.post('/do_discover', function(req, res) {
-	var the_body = req.body;  //see connect package above
+var the_body = req.body;  //see connect package above
 	if(debug) debugLog ( "discovery received: " + JSON.stringify( the_body) );
 
 	tokenRing.addRingMember(the_body.ip);
 
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	var i = parseInt(the_body.role);
+
+	debugLog( "recieved role: " + i );
+
+	switch (i){
+		case 0:
+			HOST_IP = the_body.ip;
+			break;
+		case 1:
+			TRUCK_IP = the_body.ip;
+			break;
+		case 2:
+			GoPiGo_IP = the_body.ip;
+			break;
+		case 3:
+			Grove_Sensor_IP = the_body.ip;
+			break;
+		case 4:
+			Human_Sensor_IP = the_body.ip;
+			break;
+		case 5:
+			Human_Sensor2_IP = the_body.ip;
+			break;
+		default:
+			if(debug) debugLog( "which not Special type" + the_body.role );	
+	}
+
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
+
+	res.json( post_data );
+
 });
 
 function PostDiscover(ip_address)
 {
-	var post_data = { ip : tokenRing.getMyIP() };    
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
         
 	var dataString = JSON.stringify( post_data );
 
@@ -75,6 +119,35 @@ function PostDiscover(ip_address)
 			var resultObject = JSON.parse(responseString);
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
+
+		var i = parseInt(resultObject.role);
+
+		//debugLog( "Role responce: " + resultObject.role );
+		debugLog( JSON.stringify( resultObject ) );
+
+		switch (i){
+			case 0:
+				HOST_IP = resultObject.ip;
+				break;
+			case 1:
+				TRUCK_IP = resultObject.ip;
+				break;
+			case 2:
+				GoPiGo_IP = resultObject.ip;
+				break;
+			case 3:
+				Grove_Sensor_IP = resultObject.ip;
+				break;
+			case 4:
+				Human_Sensor_IP = resultObject.ip;
+				break;
+			case 5:
+				Human_Sensor2_IP = resultObject.ip;
+				break;
+			default:
+				if(debug) debugLog( "which not Special type" + resultObject.role );	
+		}
+
 		});
 	});
 
@@ -158,8 +231,6 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-			processApproval(genHost);
-
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
 	}
@@ -209,65 +280,6 @@ app.post('/do_keepalive', function(req, res) {
 	var the_body = req.body;  //see connect package above
 });
 
-
-// Input 0
-var HOST_IP;
-
-//Input 1
-var TRUCK_IP;
-
-//Input 2
-var GoPiGo_IP;
-
-//Input 3
-var Grove_Sensor_IP;
-
-//Input 4
-var Human_Sensor_IP;
-
-function Broadcast_IP()
-{
-	var listIPs = tokenRing.getRing();
-	
-	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
-	
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			if( debug ) debugLog( "Sending to ip: " + listIPs[i] );
-			generalPOST( listIPs[i], "/gather_ips", post_data );
-		}
-	}	
-}
-
-app.post( '/gather_ips', function( req, res ){
-
-	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "gather_ips: " + JSON.stringify( the_body) );
-
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
-
-	var i = parseInt(the_body.which);
-	
-	switch (i){
-		case 0:
-			HOST_IP = the_body.IP; break;
-		case 1:
-			TRUCK_IP = the_body.IP; break;
-		case 2:
-			GoPiGo_IP = the_body.IP; break;
-		case 3:
-			Grove_Sensor_IP = the_body.IP; break;
-		case 4:
-			Human_Sensor_IP = the_body.IP; break;
-		default:
-			if(debug) debugLog( "which not Special type" + the_body.which );	
-	}
-
-});
-
-
 // Render the screen.
 screen.render();
 
@@ -275,5 +287,4 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( Broadcast_IP, 4000  );
 });
