@@ -34,6 +34,9 @@ var Grove_Sensor_IP;
 //Input 4
 var Human_Sensor_IP;
 
+//Input 5
+var Human_Sensor2_IP;
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -271,7 +274,7 @@ function turnsensorFunctionality()
 	screen.render();
 	
     var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
-    generalPOST(TRUCK_IP, '/action_turninplace', post_data);
+    generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 }
 
 function readsensorFunctionality()
@@ -297,7 +300,7 @@ function readsensorFunctionality()
 	screen.render();
 	
     var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
-    generalPOST(TRUCK_IP, '/action_turninplace', post_data);
+    generalPOST(TRUCK_IP, '/action_readsensor', post_data);
 }
 
 function debugLog( msg ) 
@@ -334,6 +337,9 @@ app.post('/do_discover', function(req, res) {
 			break;
 		case 4:
 			Human_Sensor_IP = the_body.ip;
+			break;
+		case 5:
+			Human_Sensor2_IP = the_body.ip;
 			break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.role );	
@@ -394,6 +400,9 @@ function PostDiscover(ip_address)
 				break;
 			case 4:
 				Human_Sensor_IP = resultObject.ip;
+				break;
+			case 5:
+				Human_Sensor2_IP = resultObject.ip;
 				break;
 			default:
 				if(debug) debugLog( "Role not Special type" + resultObject.role );	
