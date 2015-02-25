@@ -402,11 +402,15 @@ app.post('/action_turnsensor', function(req, res) {
     displayButton();
 });
 
+var count = 0;
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command));
-	log2.insertLine(0, "Object is " + JSON.stringify(the_body.inpdistance) + " inches away" );
+	//log2.insertLine(0, "Object is " + JSON.stringify(the_body.inpdistance) + " inches away" );
     res.json(req.body);
+	count++;
+	var post_data = { objdistance : count };
+	generalPOST(HOST_IP, '/do_resultsreadsensor', post_data);
     displayButton();
 });
 

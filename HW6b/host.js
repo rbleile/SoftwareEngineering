@@ -435,7 +435,7 @@ function scanbaysFunctionality()
 	var post_data = {myIP : tokenRing.getMyIP()};
 	generalPOST(Grove_Sensor_IP, "/do_sensor", post_data);
 	generalPOST(Human_Sensor_IP, "/do_sensor", post_data);
-	generalPOST(Human_Sensor_IP2, "/do_sensor", post_data);
+	generalPOST(Human_Sensor2_IP, "/do_sensor", post_data);
 }
 
 app.post("/do_sensor_response", function(req, res) {
@@ -461,7 +461,7 @@ function baycolor(fields)
 		bay2Button.style.bg = col;
 		bay2Button.style.fg = "white";
 	}
-	else if (fields.ip == Human_Sensor_IP2)
+	else if (fields.ip == Human_Sensor2_IP)
 	{
 		bay3Button.setContent("{center}Bay3{/center}");
 		bay3Button.style.bg = col;
@@ -630,8 +630,6 @@ function turnsensorFunctionality()
 	
 }
 
-var count = 0;
-
 function readsensorFunctionality()
 {
 	moveButton.setContent("");
@@ -660,10 +658,14 @@ function readsensorFunctionality()
 
 	screen.render();
 
-	count++;
-    var post_data = { myIP : tokenRing.getMyIP(), command : "Read sensor", inpdistance : count };
+    var post_data = { myIP : tokenRing.getMyIP(), command : "Read sensor"};
     generalPOST(TRUCK_IP, '/action_readsensor', post_data);
 }
+
+app.post('/do_resultsreadsensor', function(req, res) {
+	var the_body = req.body;
+	log2.insertLine(0,"Object is " + the_body.count + " inches away.");	
+});
 
 function debugLog( msg ) 
 {
