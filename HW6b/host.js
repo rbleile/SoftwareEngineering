@@ -103,7 +103,7 @@ var moveButton = blessed.box({
     hidden: false
 });
 moveButton.on('click', function(data) {
-    moveFunctionality()
+    moveFunctionality();
 });
 screen.key(['m', 'M'], function(ch, key) {
     moveFunctionality();
@@ -129,7 +129,7 @@ var turninplaceButton = blessed.box({
     hidden: false
 });
 turninplaceButton.on('click', function(data) {
-    turninplaceFunctionality()
+    turninplaceFunctionality();
 });
 screen.key(['p', 'P'], function(ch, key) {
     turninplaceFunctionality();
@@ -155,7 +155,7 @@ var turnsensorButton = blessed.box({
     hidden: false
 });
 turnsensorButton.on('click', function(data) {
-    turnsensorFunctionality()
+    turnsensorFunctionality();
 });
 screen.key(['t', 'T'], function(ch, key) {
     turnsensorFunctionality();
@@ -181,7 +181,7 @@ var readsensorButton = blessed.box({
     hidden: false
 });
 turninplaceButton.on('click', function(data) {
-    readsensorFunctionality()
+    readsensorFunctionality();
 });
 screen.key(['r', 'R'], function(ch, key) {
     readSensorFunctionality();
