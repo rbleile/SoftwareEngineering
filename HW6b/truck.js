@@ -102,6 +102,7 @@ screen.render();
 function doneFunctionality()
 {
 	var post_data = { myIP : tokenRing.getMyIP() };
+	if (debug) debugLog ("HOST_IP: " + HOST_IP);
 	generalPOST(HOST_IP, '/action_completed', post_data);
 }
 
@@ -374,22 +375,6 @@ app.post('/action_turninplace', function(req, res) {
     res.json(req.body);
 });
 
-/*
-function releaseShotgun()
-{
-	initializePICA();
-	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
-	var numRequests = ReqDeferred.length;
-	for (var i = 0; i < numRequests; i++)
-	{
-		var nextPendingRequest = getNextRequestDeferred();
-		var post_data = { myIP : tokenRing.getMyIP() };
-	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
-		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
-	}
-}
-*/
-
 // Render the screen.
 screen.render();
 
@@ -397,5 +382,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete" );
-	setTimeout( Broadcast_IP, 4000  );
+	Broadcast_IP();
 });
