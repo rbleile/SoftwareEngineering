@@ -202,6 +202,9 @@ function PostDiscover(ip_address)
 
 		var i = parseInt(resultObject.role);
 
+		debugLog( "Role responce: " + resultObject.role );
+		debugLog( JSON.stringify( resultObject ) );
+
 		switch (i){
 			case 0:
 				HOST_IP = resultObject.IP;
