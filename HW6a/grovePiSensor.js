@@ -222,15 +222,15 @@ var options = {
   scriptPath: '/home/pi/GrovePi/Software/Python',
   //args: ['value1', 'value2', 'value3']
 };
-
+var isFull =false;
 app.get('/do_get_dist', function (req, res){
 	var the_body = req.query;
-	var isFull = false;
+//	var isFull = false;
 	PythonShell.run('one_ultra.py', options, function (err, results) {
 	if (err) throw err;
 	  // results is an array consisting of messages collected during execution 
 	  console.log('results: %j', results);
-	  if(results[0] < 50) this.isFull = true;
+	  if(results[0] < 50) isFull = true;
           console.log("is full : " + isFull + " "+results[0]);	
 	});
 	res.json({"isFull" : isFull});
