@@ -141,6 +141,8 @@ app.post('/do_discover', function(req, res) {
 
 	var i = parseInt(the_body.role);
 
+	debugLog( "recieved role: " + i );
+
 	switch (i){
 		case 0:
 			HOST_IP = the_body.IP;
@@ -158,7 +160,7 @@ app.post('/do_discover', function(req, res) {
 			Human_Sensor_IP = the_body.IP;
 			break;
 		default:
-			if(debug) debugLog( "which not Special type" + the_body.which );	
+			if(debug) debugLog( "which not Special type" + the_body.role );	
 	}
 
 
