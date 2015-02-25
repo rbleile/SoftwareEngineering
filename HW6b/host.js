@@ -257,22 +257,22 @@ function PostDiscover(ip_address)
 
 		switch (i){
 			case 0:
-				HOST_IP = the_body.IP;
+				HOST_IP = resultObject.IP;
 				break;
 			case 1:
-				TRUCK_IP = the_body.IP;
+				TRUCK_IP = resultObject.IP;
 				break;
 			case 2:
-				GoPiGo_IP = the_body.IP;
+				GoPiGo_IP = resultObject.IP;
 				break;
 			case 3:
-				Grove_Sensor_IP = the_body.IP;
+				Grove_Sensor_IP = resultObject.IP;
 				break;
 			case 4:
-				Human_Sensor_IP = the_body.IP;
+				Human_Sensor_IP = resultObject.IP;
 				break;
 			default:
-				if(debug) debugLog( "which not Special type" + the_body.which );	
+				if(debug) debugLog( "which not Special type" + resultObject.role );	
 		}
 
 		});
