@@ -14,7 +14,7 @@ function someFunction() {
 		height: '20%',
 		//content: '',
 		tags: false,
-		censor: true,
+		censor: false,
 		inputOnFocus: true,
 		border: {
 			type: 'line',
