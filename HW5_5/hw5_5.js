@@ -1,3 +1,12 @@
+
+	var _passCheck = setInterval(function() {
+    	if (password) {
+        	clearInterval(_passCheck);
+        	theCallback(); // the function to run once all flags are true
+    	}
+    }, 100); // interval set at 100 milliseconds
+
+
 var http = require('http');
 var express = require('express');
 var connect = require("connect");
@@ -631,8 +640,6 @@ app.post( '/whitelist_req', function( req, res ){
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
 	if(debug) debugLog("White list request: " + the_body.ip );
-
-	while( password == "" ){}
 	
 	/* Add to white list and broadcast white updated white list to all members*/
 	if( the_body.mac_addr == 1 && the_body.pass == password )
