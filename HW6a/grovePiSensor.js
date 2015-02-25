@@ -302,6 +302,10 @@ app.get('/do_get_dist', function (req, res){
           console.log("is full : " + isFull + " "+results[0]);	
 	});
 	res.json({"isFull" : isFull});
+
+	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull }
+
+	generalPOST( HOST_IP, '/do_sensor_responce', post_data )
 });
 
 
