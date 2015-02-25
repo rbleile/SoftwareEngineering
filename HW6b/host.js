@@ -366,7 +366,7 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 });
 
 var bay1Button = blessed.box({
-    parent: screen,
+	parent: screen,
     top: '70%',
     height: '10%',
     width: '20%',
@@ -385,7 +385,7 @@ var bay1Button = blessed.box({
     hidden: false
 });
 var bay2Button = blessed.box({
-    parent: screen,
+	parent: screen,
     top: '80%',
     height: '10%',
     width: '20%',
@@ -404,7 +404,7 @@ var bay2Button = blessed.box({
     hidden: false
 });
 var bay3Button = blessed.box({
-    parent: screen,
+	parent: screen,
     top: '90%',
     height: '10%',
     width: '20%',
@@ -440,31 +440,42 @@ function scanbaysFunctionality()
 
 app.post("/do_sensor_response", function(req, res) {
 	var the_body = req.body;
+	baycolor(the_body);
+});
 
-	var full = the_body.isFull;
+function baycolor(fields)
+{
+	var full = fields.isFull;
+	debugLog("full " + full);
 	var col = "green";
 	if (full) 
 		col = "red";
-		
-	if (the_body.ip == Grove_Sensor_IP)
+	if (fields.ip == Grove_Sensor_IP)
 	{
-		bay1Button.bg = col;
-		debugLog("Grove sensor " + col);
-		//set button to appropriate color
+		bay1Button.setContent("Bay1");
+		bay1Button.style.bg = col;
+		bay1Button.style.fg = "white";
 	}
-	else if (the_body.ip == Human_Sensor_IP)
+	else if (fields.ip == Human_Sensor_IP)
 	{
-		bay2Button.bg = col;
-		debugLog("human sensor " + col);
+		bay2Button.setContent("Bay2");
+		bay2Button.style.bg = col;
+		bay2Button.style.fg = "white";
 	}
-	else if (the_body.ip == Human_Sensor_IP2)
+	else if (fields.ip == Human_Sensor_IP2)
 	{
-		bay3Button.bg = col;
+		bay3Button.setContent("Bay3");
+		bay3Button.style.bg = col;
+		bay3Button.style.fg = "white";
 		debugLog("human sensor2 " + col);
+	}
+	else
+	{
+		debugLog("ERRRRRRRROR");
 	}
 
 	screen.render();
-});
+}
 
 function moveFunctionality()
 {
