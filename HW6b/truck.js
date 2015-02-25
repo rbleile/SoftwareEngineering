@@ -48,15 +48,15 @@ var log = blessed.scrollabletext({
     border: {
     type: 'line',
     fg: '#00ff00'
-    },
+    },  
     scrollbar: {
     fg: 'blue',
-    ch: '|'
-    },
-    width: '50%',
+    ch: '|' 
+    },  
+    width: '100%',
     height: '60%',
     top: '20%',
-    left: '50%',
+    left: 'left',
     align: 'left',
     tags: true
 });
@@ -67,7 +67,7 @@ var box = blessed.box({
     left: 'left',
     width: '100%',
     height: '20%',
-    content: '{center}HOST - HOST - HOST{/center}',
+    content: '{center}TRUCK - TRUCK - TRUCK{/center}',
     tags: true,
     border: {
     type: 'line',
@@ -83,10 +83,10 @@ var box = blessed.box({
 });
 
 /********* BUTTON CODE *********/
-var moveButton = blessed.box({
+var doneButton = blessed.box({
     parent: screen,
-    top: '20%',
-    height: '10%',
+    top: '80%',
+    height: '20%',
     width: '50%',
     left: '0%',
     border: {
@@ -95,212 +95,39 @@ var moveButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}Move{/center}',
+    content: '{center}Action Complete{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false
+    hidden: true 
 });
-moveButton.on('click', function(data) {
-    moveFunctionality();
+doneButton.on('click', function(data) {
+    doneFunctionality();
 });
-screen.key(['m', 'M'], function(ch, key) {
-    moveFunctionality();
-});
-
-var turninplaceButton = blessed.box({
-    parent: screen,
-    top: '30%',
-    height: '10%',
-    width: '50%',
-    left: '0%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}TurnInPlace{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: false
-});
-turninplaceButton.on('click', function(data) {
-    turninplaceFunctionality();
-});
-screen.key(['p', 'P'], function(ch, key) {
-    turninplaceFunctionality();
-});
-
-var turnsensorButton = blessed.box({
-    parent: screen,
-    top: '40%',
-    height: '10%',
-    width: '50%',
-    left: '0%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}TurnSensor{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: false
-});
-turnsensorButton.on('click', function(data) {
-    turnsensorFunctionality();
-});
-screen.key(['t', 'T'], function(ch, key) {
-    turnsensorFunctionality();
-});
-
-var readsensorButton = blessed.box({
-    parent: screen,
-    top: '50%',
-    height: '10%',
-    width: '50%',
-    left: '0%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}ReadSensor{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: false
-});
-turninplaceButton.on('click', function(data) {
-    readsensorFunctionality();
-});
-screen.key(['r', 'R'], function(ch, key) {
-    readsensorFunctionality();
+screen.key(['d', 'D'], function(ch, key) {
+    doneFunctionality();
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-moveButton.focus();
-turninplaceButton.focus();
-turnsensorButton.focus();
-readsensorButton.focus();
+doneButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
-function moveFunctionality()
+function doneFunctionality()
 {
-	moveButton.style.bg = "red";
-	moveButton.style.fg = "white";
-	moveButton.hidden = false;
-	
-	turninplaceButton.setContent("");
-	turninplaceButton.style.bg = "black";
-	turninplaceButton.style.fg = "black";
-	turninplaceButton.hidden = true;
-
-	turnsensorButton.setContent("");
-	turnsensorButton.style.bg = "black";
-	turnsensorButton.style.fg = "black";
-	turnsensorButton.hidden = true;
-
-	readsensorButton.setContent("");
-	readsensorButton.style.bg = "black";
-	readsensorButton.style.fg = "black";
-	readsensorButton.hidden = true;
-
+	//doneButton.setContent("");
+	doneButton.style.fg = "black";
+	doneButton.style.bg = "black";
+	doneButton.hidden = true;
 	screen.render();
 
-    var post_data = { myIP : tokenRing.getMyIP() , command : "move" };
-    generalPOST(TRUCK_IP, '/action_move', post_data);
-}
-
-function turninplaceFunctionality()
-{
-	moveButton.setContent("");
-	moveButton.style.bg = "black";
-	moveButton.style.fg = "black";
-	moveButton.hidden = true;
-
-	turninplaceButton.style.bg = "red";
-	turninplaceButton.style.fg = "white";
-	turninplaceButton.hidden = true;
-
-	turnsensorButton.setContent("");
-	turnsensorButton.style.bg = "black";
-	turnsensorButton.style.fg = "black";
-	turnsensorButton.hidden = true;
-
-	readsensorButton.setContent("");
-	readsensorButton.style.bg = "black";
-	readsensorButton.style.fg = "black";
-	readsensorButton.hidden = true;
-	screen.render();
-	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
-    generalPOST(TRUCK_IP, '/action_turninplace', post_data);
-}
-
-function turnsensorFunctionality()
-{
-	moveButton.setContent("");
-	moveButton.style.bg = "black";
-	moveButton.style.fg = "black";
-	moveButton.hidden = true;
-
-	turninplaceButton.setContent("");
-	turninplaceButton.style.bg = "black";
-	turninplaceButton.style.fg = "black";
-	turninplaceButton.hidden = true;
-
-	turnsensorButton.style.bg = "red";
-	turnsensorButton.style.fg = "white";
-	turnsensorButton.hidden = false;
-
-	readsensorButton.setContent("");
-	readsensorButton.style.bg = "black";
-	readsensorButton.style.fg = "black";
-	readsensorButton.hidden = true;
-	screen.render();
-	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
-    generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
-}
-
-function readsensorFunctionality()
-{
-	moveButton.setContent("");
-	moveButton.style.bg = "black";
-	moveButton.style.fg = "black";
-	moveButton.hidden = true;
-
-	turninplaceButton.setContent("");
-	turninplaceButton.style.bg = "black";
-	turninplaceButton.style.fg = "black";
-	turninplaceButton.hidden = true;
-
-	turnsensorButton.setContent("");
-	turnsensorButton.style.bg = "black";
-	turnsensorButton.style.fg = "black";
-	turnsensorButton.hidden = true;
-
-	readsensorButton.style.bg = "red";
-	readsensorButton.style.fg = "white";
-	readsensorButton.hidden = false;
-	screen.render();
-	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
-    generalPOST(TRUCK_IP, '/action_readsensor', post_data);
+	var post_data = { myIP : tokenRing.getMyIP() };
+	if (debug) debugLog ("HOST_IP: " + HOST_IP);
+	generalPOST(HOST_IP, '/action_completed', post_data);
 }
 
 function debugLog( msg ) 
@@ -321,6 +148,8 @@ app.post('/do_discover', function(req, res) {
 	tokenRing.addRingMember(the_body.ip);
 
 	var i = parseInt(the_body.role);
+
+	debugLog( "recieved role: " + i );
 
 	switch (i){
 		case 0:
@@ -347,7 +176,7 @@ app.post('/do_discover', function(req, res) {
 
 	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
 
-	res.json(post_data);
+	res.json( post_data );
 });
 
 function PostDiscover(ip_address)
@@ -385,6 +214,9 @@ function PostDiscover(ip_address)
 
 		var i = parseInt(resultObject.role);
 
+		debugLog( "Role responce: " + resultObject.role );
+		debugLog( JSON.stringify( resultObject ) );
+
 		switch (i){
 			case 0:
 				HOST_IP = resultObject.ip;
@@ -405,7 +237,7 @@ function PostDiscover(ip_address)
 				Human_Sensor2_IP = resultObject.ip;
 				break;
 			default:
-				if(debug) debugLog( "Role not Special type" + resultObject.role );	
+				if(debug) debugLog( "which not Special type" + resultObject.role );	
 		}
 
 		});
@@ -419,7 +251,6 @@ function PostDiscover(ip_address)
 	post_request.write(dataString);
 	post_request.end();
 }
-
 var keepAliveTimeout = 1000;
 
 function discover() 
@@ -464,7 +295,7 @@ function keepAlive()
 	var listIPs = tokenRing.getRing();
 	for( var i = 0; i < listIPs.length; i++) 
 	{
-		var post_data = { myIP : i, role: node_functionality };
+		var post_data = { myIP : i };
 		if (listIPs[i] != tokenRing.getMyIP())
 		{
 			generalPOST ( listIPs[i], '/do_keepalive', post_data );
@@ -489,7 +320,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 			tokenRing.removeRingMember(genHost);
 
-//			processApproval(genHost);
+			//processApproval(genHost);
 
 			if(debug) debugLog("generalPOST err called "+ e);
 		};
@@ -535,43 +366,40 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 	post_request.end();
 }
 
-function defaultmenu()
-{
-	moveButton.setContent("{center}Move{/center}");
-	moveButton.style.bg = "green";
-	moveButton.style.fg = "white";
-	moveButton.hidden = false;
-
-	turninplaceButton.setContent("{center}TurnInPlace{/center}");
-	turninplaceButton.style.bg = "green";
-	turninplaceButton.style.fg = "white";
-	turninplaceButton.hidden = false;
-
-	turnsensor.setContent("{center}TurnSensor{/center}");
-	turnsensorButton.style.bg = "green";
-	turnsensorButton.style.fg = "white";
-	turnsensorButton.hidden = false;
-
-	readsensor.setContent("{center}ReadSensor{/center}");
-	readsensorButton.style.bg = "green";
-	readsensorButton.style.fg = "white";
-	readsensorButton.hidden = false;
-	screen.render();
-}
-
 app.post('/do_keepalive', function(req, res) {
 	res.json(req.body);
 	var the_body = req.body;  //see connect package above
 });
 
-
-app.post('/action_completed', function(req, res) {
+app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Action completed!!!");
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);
-	defaultmenu();
+
+	doneButton.setContent = "{center}Action Completed{/center}";
+	doneButton.style.bg = "green";
+	doneButton.style.fg = "white";
+	doneButton.hidden = false;
+	screen.render();
 });
 
+app.post('/action_turninplace', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
+    res.json(req.body);
+});
+
+app.post('/action_turnsensor', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
+    res.json(req.body);
+});
+
+app.post('/action_readsensor', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
+    res.json(req.body);
+});
 
 // Render the screen.
 screen.render();
