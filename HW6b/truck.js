@@ -217,7 +217,7 @@ function PostDiscover(ip_address)
 				Human_Sensor_IP = the_body.IP;
 				break;
 			default:
-				if(debug) debugLog( "which not Special type" + the_body.which );	
+				if(debug) debugLog( "which not Special type" + the_body.role );	
 		}
 
 		});
