@@ -55,9 +55,9 @@ def TurnInPlace(degrees):
 # +degrees turn left, -degrees turn right
 # Cannot turn beyond 180 degree freedom of action
 def TurnSensor(degrees):
-	if (degrees > 180 ):
+	if (degrees > 150 ):
 		print("ERROR")
-	elif (degrees > 0 and degrees <= 180):
+	elif (degrees > 20 and degrees <= 150):
 		enable_servo()
 		servo(degrees)
 		time.sleep(0.5)
@@ -90,7 +90,7 @@ def main():
 			inpRobotDegrees = int(raw_input("\nDegrees (positive number for left, negative number for right): "))
 			TurnInPlace(inpRobotDegrees)
 		elif ans == "3":
-			inpSensorDegrees = int(raw_input("\nDegrees (0-180): "))
+			inpSensorDegrees = int(raw_input("\nDegrees (20-150): "))
 			TurnSensor(inpSensorDegrees)
 		elif ans == "4":
 			print ReadSensor()
