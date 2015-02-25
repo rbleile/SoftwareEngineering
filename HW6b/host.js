@@ -215,8 +215,9 @@ app.post('/do_discover', function(req, res) {
 			if(debug) debugLog( "which not Special type" + the_body.role );	
 	}
 
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
 
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	res.json(post_data);
 });
 
 function PostDiscover(ip_address)
