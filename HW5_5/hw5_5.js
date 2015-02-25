@@ -108,6 +108,52 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 });
 
 reqResourceButton.focus();
+
+/*****
+ * Begin password code:
+ */
+var password = ''; //<--- Loop and wait for this to be non-zero.
+
+var passwordBox = blessed.textbox({
+	top: '40%',
+	left: '30%',
+	width: '40%',
+	height: '10%',
+	content: '',
+	tags: false,
+	censor: true,
+	inputOnFocus: true,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		border: {
+			fg: 'white'
+		}
+	},
+	name: 'password',
+});
+
+passwordBox.setLabel({
+	text: 'Enter a PASSWORD:',
+	side: 'left'
+});
+
+passwordBox.on('submit', function(data) {
+	debugLog("Password entered: " + passwordBox.value);
+	passwordBox.hide();
+	screen.remove(passwordBox);
+});
+
+screen.append(passwordBox);
+passwordBox.focus();
+/*
+ * ...end of password code.
+ **********/
+
 screen.render();
 /********* END BUTTON ***********/
 
