@@ -143,7 +143,7 @@ app.set('port', process.env.PORT || 3000);
 // handle discovery requests
 app.post('/do_discover', function(req, res) {
 	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "discovery received: " + JSON.stringify( the_body) );
+	if(debug) debugLog ( "Discovery received: " + JSON.stringify( the_body) );
 
 	tokenRing.addRingMember(the_body.ip);
 
@@ -215,7 +215,7 @@ function PostDiscover(ip_address)
 		var i = parseInt(resultObject.role);
 
 		//debugLog( "Role responce: " + resultObject.role );
-		debugLog( JSON.stringify( resultObject ) );
+		if (debug) debugLog("Received: " + JSON.stringify( resultObject ));
 
 		switch (i){
 			case 0:
@@ -374,7 +374,6 @@ app.post('/do_keepalive', function(req, res) {
 
 function displayButton()
 {
-
 	doneButton.setContent( "{center}D = Action Completed{/center}");
 	doneButton.style.bg = "green";
 	doneButton.style.fg = "white";
