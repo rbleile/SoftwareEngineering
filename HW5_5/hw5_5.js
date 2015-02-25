@@ -789,7 +789,7 @@ function releaseShotgun()
 		var nextPendingRequest = getNextRequestDeferred();
 		var post_data = { myIP : tokenRing.getMyIP() };
 	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
-		generalPOST(nextPendingRequest, '/resource_approved', post_data); 
+		generalPOST(""+nextPendingRequest, '/resource_approved', post_data); 
 	}
 }
 
