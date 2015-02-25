@@ -200,9 +200,9 @@ function PostDiscover(ip_address)
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
 
-		var i = parseInt(resultObject.role);
+		var i = parseInt(resultObject.body.role);
 
-		debugLog( "Role responce: " + resultObject.role );
+		debugLog( "Role responce: " + resultObject.body.role );
 		debugLog( JSON.stringify( resultObject ) );
 
 		switch (i){
@@ -222,7 +222,7 @@ function PostDiscover(ip_address)
 				Human_Sensor_IP = resultObject.IP;
 				break;
 			default:
-				if(debug) debugLog( "which not Special type" + resultObject.role );	
+				if(debug) debugLog( "which not Special type" + resultObject.body.role );	
 		}
 
 		});
