@@ -383,21 +383,21 @@ function displayButton()
 }
 app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) + " " + JSON.stringify(the_body.inpdirection) + " " + JSON.stringify(the_body.inpdistance) + "inches at speed of " + JSON.stringify(the_body.inpspeed) );
+    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed );
     res.json(req.body);
 	 displayButton();
 });
 
 app.post('/action_turninplace', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) + " " + JSON.stringify(the_body.inpdegrees) + " degrees");
+    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdegrees + " degrees");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_turnsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) + " " + JSON.stringify(the_body.inpdegrees) + " degrees");
+    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdegrees + " degrees");
     res.json(req.body);
     displayButton();
 });
@@ -405,7 +405,7 @@ app.post('/action_turnsensor', function(req, res) {
 var count = 0;
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command));
+    if(debug) debugLog ("Run Command: " + the_body.command);
 	//log2.insertLine(0, "Object is " + JSON.stringify(the_body.inpdistance) + " inches away" );
     res.json(req.body);
 	count++;

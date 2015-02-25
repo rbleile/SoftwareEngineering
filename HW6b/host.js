@@ -251,7 +251,7 @@ var moveButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}M=Move{/center}',
+    content: '{center}M = Move{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -277,7 +277,7 @@ var turninplaceButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}P=TurnInPlace{/center}',
+    content: '{center}P = TurnInPlace{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -303,7 +303,7 @@ var turnsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}T=TurnSensor{/center}',
+    content: '{center}T = TurnSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -329,7 +329,7 @@ var readsensorButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}R=ReadSensor{/center}',
+    content: '{center}R = ReadSensor{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -355,7 +355,7 @@ var scanbaysButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}X=ScanBays{/center}',
+    content: '{center}X = ScanBays{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
@@ -937,27 +937,27 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 function defaultmenu()
 {
-	moveButton.setContent("{center}M=Move{/center}");
+	moveButton.setContent("{center}M = Move{/center}");
 	moveButton.style.bg = "green";
 	moveButton.style.fg = "white";
 	moveButton.hidden = false;
 
-	turninplaceButton.setContent("{center}P=TurnInPlace{/center}");
+	turninplaceButton.setContent("{center}P = TurnInPlace{/center}");
 	turninplaceButton.style.bg = "green";
 	turninplaceButton.style.fg = "white";
 	turninplaceButton.hidden = false;
 
-	turnsensorButton.setContent("{center}T=TurnSensor{/center}");
+	turnsensorButton.setContent("{center}T = TurnSensor{/center}");
 	turnsensorButton.style.bg = "green";
 	turnsensorButton.style.fg = "white";
 	turnsensorButton.hidden = false;
 
-	readsensorButton.setContent("{center}R=ReadSensor{/center}");
+	readsensorButton.setContent("{center}R = ReadSensor{/center}");
 	readsensorButton.style.bg = "green";
 	readsensorButton.style.fg = "white";
 	readsensorButton.hidden = false;
 
-	scanbaysButton.setContent("{center}X=ScanBays{/center}");
+	scanbaysButton.setContent("{center}X = ScanBays{/center}");
 	scanbaysButton.style.bg = "green";
 	scanbaysButton.style.fg = "white";
 	scanbaysButton.hidden = false;
@@ -982,12 +982,12 @@ function defaultmenu()
 
 function printIPs()
 {
-	debugLog("This is the list of IPs in the ring: " + tokenRing.getRing());
-	debugLog("TRUCK_IP = " + TRUCK_IP);
-	debugLog("GoPiGo_IP = " + GoPiGo_IP);
-	debugLog("GroveSensor_IP = " + Grove_Sensor_IP);
-	debugLog("Human_Sensor_IP = " + Human_Sensor_IP);
-	debugLog("Human_Sensor2_IP = " + Human_Sensor2_IP);
+	//debugLog("This is the list of IPs in the ring: " + tokenRing.getRing());
+	if (debug) debugLog("TRUCK_IP = " + TRUCK_IP);
+	if (debug) debugLog("GoPiGo_IP = " + GoPiGo_IP);
+	if (debug) debugLog("GroveSensor_IP = " + Grove_Sensor_IP);
+	if (debug) debugLog("Human_Sensor_IP = " + Human_Sensor_IP);
+	if (debug) debugLog("Human_Sensor2_IP = " + Human_Sensor2_IP);
 
 	defaultmenu();
 }
@@ -1000,7 +1000,7 @@ app.post('/do_keepalive', function(req, res) {
 
 app.post('/action_completed', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Action completed!!!");
+    if(debug) debugLog ("Action completed!!!");
     res.json(req.body);
 	defaultmenu();
 });
@@ -1013,6 +1013,6 @@ http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	discover();
 	debugLog( "Discovery Complete." );
-	debugLog("Waiting before printing IPs...");
+	debugLog("Waiting to print IPs...");
 	setTimeout( printIPs , 10000 );
 });
