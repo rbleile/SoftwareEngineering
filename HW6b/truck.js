@@ -165,7 +165,7 @@ app.post('/do_discover', function(req, res) {
 
 	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
 
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	res.json( post_data );
 });
 
 function PostDiscover(ip_address)
@@ -203,7 +203,7 @@ function PostDiscover(ip_address)
 
 		var i = parseInt(resultObject.role);
 
-		debugLog( "Role responce: " + resultObject.body.role );
+		debugLog( "Role responce: " + resultObject.role );
 		debugLog( JSON.stringify( resultObject ) );
 
 		switch (i){
@@ -223,7 +223,7 @@ function PostDiscover(ip_address)
 				Human_Sensor_IP = resultObject.ip;
 				break;
 			default:
-				if(debug) debugLog( "which not Special type" + resultObject.body.role );	
+				if(debug) debugLog( "which not Special type" + resultObject.role );	
 		}
 
 		});
