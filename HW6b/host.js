@@ -133,6 +133,8 @@ function moveFunctionality()
 	moveButton.hidden = false;
 	
 	turninplaceButton.setContent = "";
+	turninplaceButton.style.bg = "white";
+	turninplaceButton.style.fg = "white";
 	turninplaceButton.hidden = true;
 
 	screen.render();
@@ -143,6 +145,17 @@ function moveFunctionality()
 
 function turninplaceFunctionality()
 {
+	moveButton.setContent = "";
+	moveButton.style.bg = "white";
+	moveButton.style.fg = "white";
+	moveButton.hidden = true;
+
+	turninplaceButton.style.bg = "red";
+	turninplaceButton.style.fg = "white";
+	turninplaceButton.hidden = true;
+
+	screen.render();
+	
     var post_data = { myIP : tokenRing.getMyIP(), command : "turn in place" };
     generalPOST(TRUCK_IP, '/action_turninplace', post_data);
 }
