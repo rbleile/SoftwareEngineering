@@ -152,7 +152,7 @@ passwordBox.on('submit', function(data) {
 	debugLog("Password entered: " + password);
 	debugLog("Password encrypt: " + password_hash);
 	passwordBox.hide();
-	screen.remove(passwordBox);
+//	screen.remove(passwordBox);
 	screen.render();
 });
 
