@@ -6,7 +6,7 @@ var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
-var whiteList = require('./TokenRingManager');
+var whiteList = require('./TokenRingManager2');
 
 var sha1 = require('./SHA1Encryption');
 
