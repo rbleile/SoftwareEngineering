@@ -165,7 +165,7 @@ app.post('/do_discover', function(req, res) {
 
 	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
 
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+	res.json( post_data );
 });
 
 function PostDiscover(ip_address)
