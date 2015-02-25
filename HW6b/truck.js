@@ -163,6 +163,7 @@ app.post('/do_discover', function(req, res) {
 			if(debug) debugLog( "which not Special type" + the_body.role );	
 	}
 
+	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
@@ -200,7 +201,7 @@ function PostDiscover(ip_address)
 			debugLog(resultObject);
 			tokenRing.addRingMember(resultObject.ip);
 
-		var i = parseInt(resultObject.body.role);
+		var i = parseInt(resultObject.role);
 
 		debugLog( "Role responce: " + resultObject.body.role );
 		debugLog( JSON.stringify( resultObject ) );
