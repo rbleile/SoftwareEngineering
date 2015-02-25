@@ -115,6 +115,7 @@ reqResourceButton.focus();
  * Begin password code:
  */
 var password = ''; //<--- Loop and wait for this to be non-zero.
+var password_hash = '';
 
 var passwordBox = blessed.textbox({
 	top: '40%',
@@ -145,11 +146,13 @@ passwordBox.setLabel({
 });
 
 passwordBox.on('submit', function(data) {
-	debugLog("Password entered: " + passwordBox.value);
-	debugLog("Password encrypt: " + sha1.hash(passwordBox.value));
 	password = passwordBox.value;
+	password_hash = sha1.hash(password);
+	debugLog("Password entered: " + password);
+	debugLog("Password encrypt: " + password_hash));
 	passwordBox.hide();
 	screen.remove(passwordBox);
+	screen.render();
 });
 
 screen.append(passwordBox);
