@@ -82,7 +82,7 @@ var doneButton = blessed.box({
     hoverEffects: {
         bg: 'green'
     },
-    hidden: false 
+    hidden: true 
 });
 doneButton.on('click', function(data) {
     doneFunctionality()
@@ -360,13 +360,17 @@ app.post( '/gather_ips', function( req, res ){
 
 app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "command: " + JSON.stringify( the_body) );
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);
+
+	doneButton.setContent = "{center}Action Completed{/center}";
+	doneButton.hidden = false;
+	screen.render();
 });
 
 app.post('/action_turninplace', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "command: " + JSON.stringify( the_body) );
+    if(debug) debugLog ( "Run command: " + JSON.stringify(the_body.command) );
     res.json(req.body);
 });
 

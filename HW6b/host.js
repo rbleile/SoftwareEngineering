@@ -128,6 +128,15 @@ screen.render();
 
 function moveFunctionality()
 {
+	moveButton.style.bg = "red";
+	moveButton.style.fg = "white";
+	moveButton.hidden = false;
+	
+	turninplaceButton.setContent = "";
+	turninplaceButton.hidden = true;
+
+	screen.render();
+
     var post_data = { myIP : tokenRing.getMyIP() , command : "move" };
     generalPOST(TRUCK_IP, '/action_move', post_data);
 }
@@ -391,6 +400,12 @@ app.post( '/gather_ips', function( req, res ){
 			if(debug) debugLog( "which not Special type" + the_body.which );	
 	}
 
+});
+
+app.post('/action_completed', function(req, res) {
+    var the_body = req.body;  //see connect package above
+    if(debug) debugLog ( "Action completed!!!");
+    res.json(req.body);
 });
 
 /*
