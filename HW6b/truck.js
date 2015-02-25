@@ -310,6 +310,8 @@ function Broadcast_IP()
 	var listIPs = tokenRing.getRing();
 	
 	var post_data = { "IP" : tokenRing.getMyIP(), "which" : node_functionality };
+
+	if(debug) debugLog( post_data );
 	
 	for( var i = 0; i < listIPs.length; i++) 
 	{
@@ -332,8 +334,6 @@ app.post( '/gather_ips', function( req, res ){
 
 	var the_body = req.body;  //see connect package above
 	if(debug) debugLog ( "gather_ips: " + JSON.stringify( the_body) );
-
-	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 
 	var i = the_body.which;
 	
