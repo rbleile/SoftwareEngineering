@@ -126,6 +126,7 @@ function doneFunctionality()
 	doneButton.setContent("");
 	doneButton.style.fg = "black";
 	doneButton.style.bg = "black";
+	doneButton.hidden = true;
 	screen.render();
 }
 
