@@ -365,6 +365,63 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
+var bay1Button = blessed.box({
+    parent: screen,
+    top: '70%',
+    height: '10%',
+    width: '20%',
+    left: '0%',
+    border: {
+        type: 'line',
+        fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}Bay1{/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'green'
+    },
+    hidden: false
+});
+var bay2Button = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '10%',
+    width: '20%',
+    left: '20%',
+    border: {
+        type: 'line',
+        fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}Bay2{/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'green'
+    },
+    hidden: false
+});
+var bay3Button = blessed.box({
+    parent: screen,
+    top: '90%',
+    height: '10%',
+    width: '20%',
+    left: '40%',
+    border: {
+        type: 'line',
+        fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}Bay3{/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'green'
+    },
+    hidden: false
+});
 //moveButton.focus();
 //turninplaceButton.focus();
 //turnsensorButton.focus();
@@ -375,8 +432,39 @@ screen.render();
 
 function scanbaysFunctionality()
 {
-	//MATT HERE
+	var post_data = {myIP : tokenRing.getMyIP()};
+	generalPOST(Grove_Sensor_IP, "/do_sensor", post_data);
+	generalPOST(Human_Sensor_IP, "/do_sensor", post_data);
+	generalPOST(Human_Sensor_IP2, "/do_sensor", post_data);
 }
+
+app.post("/do_sensor_response", function(req, res) {
+	var the_body = req.body;
+
+	var full = the_body.isFull;
+	var col = "green";
+	if (full) 
+		col = "red";
+		
+	if (the_body.ip == Grove_Sensor_IP)
+	{
+		bay1Button.bg = col;
+		debugLog("Grove sensor " + col);
+		//set button to appropriate color
+	}
+	else if (the_body.ip == Human_Sensor_IP)
+	{
+		bay2Button.bg = col;
+		debugLog("human sensor " + col);
+	}
+	else if (the_body.ip == Human_Sensor_IP2)
+	{
+		bay3Button.bg = col;
+		debugLog("human sensor2 " + col);
+	}
+
+	screen.render();
+});
 
 function moveFunctionality()
 {
@@ -517,6 +605,8 @@ function turnsensorFunctionality()
     generalPOST(TRUCK_IP, '/action_turnsensor', post_data);
 }
 
+var count = 0;
+
 function readsensorFunctionality()
 {
 	moveButton.setContent("");
@@ -539,7 +629,8 @@ function readsensorFunctionality()
 	readsensorButton.hidden = false;
 	screen.render();
 	
-    var post_data = { myIP : tokenRing.getMyIP(), command : "read sensor" };
+	count++;
+    var post_data = { myIP : tokenRing.getMyIP(), command : "read sensor", inpdistance : count };
     generalPOST(TRUCK_IP, '/action_readsensor', post_data);
 }
 

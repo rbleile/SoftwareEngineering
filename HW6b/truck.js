@@ -404,7 +404,7 @@ app.post('/action_turnsensor', function(req, res) {
 
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ( "Run Command: " + JSON.stringify(the_body.command) );
+    if(debug) debugLog ( "Run Command: Read sensor, object is " + JSON.stringify(the_body.inpdistance) + " inches") );
     res.json(req.body);
     displayButton();
 });
