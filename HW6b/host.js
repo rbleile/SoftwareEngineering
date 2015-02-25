@@ -54,8 +54,29 @@ var log = blessed.scrollabletext({
     ch: '|'
     },
     width: '50%',
-    height: '60%',
+    height: '40%',
     top: '20%',
+    left: '50%',
+    align: 'left',
+    tags: true
+});
+
+var log2 = blessed.scrollabletext({
+    parent: screen,
+    mouse: true,
+    keys: true,
+    vi: true,
+    border: {
+    type: 'line',
+    fg: '#00ff00'
+    },
+    scrollbar: {
+    fg: 'blue',
+    ch: '|'
+    },
+    width: '50%',
+    height: '30%',
+    top: '60%',
     left: '50%',
     align: 'left',
     tags: true
@@ -81,6 +102,132 @@ var box = blessed.box({
     }
     }
 });
+
+var response1 = "";
+var response2 = "";
+var response3 = "";
+var inputBox1 = blessed.textbox({
+	top: '70%',
+	left: '0%',
+	width: '50%',
+	height: '20%',
+	//content: '',
+	tags: false,
+	hidden: true,
+	censor: false,
+	inputOnFocus: true,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},  
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		bold: true,
+		border: {
+			fg: 'blue',
+			bold: true,
+			underline: false
+		}   
+	},  
+}); 
+inputBox1.on('submit', function() {
+	response1 = inputBox1.value;
+	debugLog("response1 entered: " + response1);
+	log.focus();
+	inputBox1.hide();
+	//screen.remove(inputBox);
+	screen.render();
+}); 
+/*
+inputBox1.setLabel({
+	text: 'Enter direction: ',
+	side: 'left'
+}); 
+*/
+screen.append(inputBox1);
+
+var inputBox2 = blessed.textbox({
+	top: '70%',
+	left: '0%',
+	width: '50%',
+	height: '20%',
+	//content: '',
+	tags: false,
+	hidden: true,
+	censor: false,
+	inputOnFocus: true,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},  
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		bold: true,
+		border: {
+			fg: 'blue',
+			bold: true,
+			underline: false
+		}   
+	},  
+}); 
+inputBox2.on('submit', function() {
+	response2 = inputBox2.value;
+	debugLog("response2 entered: " + response2);
+	log.focus();
+	inputBox2.hide();
+	//screen.remove(inputBox);
+	screen.render();
+}); 
+/*
+inputBox2.setLabel({
+	text: 'Enter distance: ',
+	side: 'left'
+}); 
+*/
+screen.append(inputBox2);
+
+var inputBox3 = blessed.textbox({
+	top: '70%',
+	left: '0%',
+	width: '50%',
+	height: '20%',
+	//content: '',
+	tags: false,
+	hidden: true,
+	censor: false,
+	inputOnFocus: true,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},  
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		bold: true,
+		border: {
+			fg: 'blue',
+			bold: true,
+			underline: false
+		}   
+	},  
+}); 
+inputBox3.on('submit', function() {
+	response3 = inputBox3.value;
+	debugLog("response3 entered: " + response3);
+	log.focus();
+	inputBox3.hide();
+	//screen.remove(inputBox);
+	screen.render();
+}); 
+/*
+inputBox3.setLabel({
+	text: 'Enter speed: ',
+	side: 'left'
+}); 
+*/
+screen.append(inputBox3);
 
 /********* BUTTON CODE *********/
 var moveButton = blessed.box({
@@ -187,16 +334,47 @@ screen.key(['r', 'R'], function(ch, key) {
     readsensorFunctionality();
 });
 
+var scanbaysButton = blessed.box({
+    parent: screen,
+    top: '60%',
+    height: '10%',
+    width: '50%',
+    left: '0%',
+    border: {
+        type: 'line',
+        fg: '#ffffff'
+    },
+    fg: '#ffffff',
+    bg: '#228822',
+    content: '{center}X = ScanBays{/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'green'
+    },
+    hidden: false
+});
+moveButton.on('click', function(data) {
+    scanbaysFunctionality();
+});
+screen.key(['x', 'X'], function(ch, key) {
+    scanbaysFunctionality();
+});
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-moveButton.focus();
-turninplaceButton.focus();
-turnsensorButton.focus();
-readsensorButton.focus();
+//moveButton.focus();
+//turninplaceButton.focus();
+//turnsensorButton.focus();
+//readsensorButton.focus();
+//scanbaysButton.focus();
 screen.render();
 /********* END BUTTON ***********/
+
+function scanbaysFunctionality()
+{
+	//MATT HERE
+}
 
 function moveFunctionality()
 {
@@ -219,6 +397,37 @@ function moveFunctionality()
 	readsensorButton.style.fg = "black";
 	readsensorButton.hidden = true;
 
+	inputBox1.hidden = false;
+	inputBox1.focus();
+	var _responseCheck1 = setInterval(function() {
+			if (response1) {
+				clearInterval(_responseCheck1);
+				//inputBox1.setContent("");
+				direction = response1;
+
+				inputBox2.hidden = false;
+				screen.render();
+				inputBox2.focus();
+				var _responseCheck2 = setInterval(function() {
+					if (response2) {
+						clearInterval(_responseCheck2);
+						//inputBox2.setContent("");
+						distance = response2;
+
+						inputBox3.hidden = false;
+						screen.render();
+						inputBox3.focus();
+						var _responseCheck3 = setInterval(function() {
+							if (response3) {
+								clearInterval(_responseCheck3);
+								//inputBox3.setContent("");
+								speed = response3;
+							}
+						}, 100);
+					}
+				}, 100);
+			}
+	}, 100);
 	screen.render();
 
     var post_data = { myIP : tokenRing.getMyIP() , command : "move" };
@@ -425,7 +634,8 @@ var keepAliveTimeout = 1000;
 function discover() 
 {
 	box.style.bg = 'red';
-    log.focus();
+    //log.focus();
+	//log2.focus();
     screen.render();
 
     if(debug) debugLog("Starting Discovery");
