@@ -110,43 +110,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 
 
-app.post('/do_discover', function(req, res) {
-  var the_body = req.body;  //see connect package above
-  console.log( "Discovery received: " + JSON.stringify( the_body) );
 
-  tokenRing.addRingMember(the_body.ip);
-
-  var i = parseInt(the_body.role);
-
-  console.log( "recieved role: " + i );
-
-  switch (i){
-    case 0:
-      HOST_IP = the_body.ip;
-      break;
-    case 1:
-      TRUCK_IP = the_body.ip;
-      break;
-    case 2:
-      GoPiGo_IP = the_body.ip;
-      break;
-    case 3:
-      Grove_Sensor_IP = the_body.ip;
-      break;
-    case 4:
-      Human_Sensor_IP = the_body.ip;
-      break;
-    case 5:
-      Human_Sensor2_IP = the_body.ip;
-      break;
-    default:
-      console.log( "which not Special type" + the_body.role ); 
-  }
-
-  var post_data = { ip : getMyIP(), role: node_functionality };    
-
-  res.json( post_data );
-});
 
 function PostDiscover(ip_address)
 {
@@ -179,34 +143,34 @@ function PostDiscover(ip_address)
     res.on('end', function(){
       console.log(responseString);
       
-      var resultObject = JSON.parse(responseString);
-      console.log(resultObject);
-      addRingMember(resultObject.ip);
+      //var resultObject = JSON.parse(responseString);
+    //   console.log(resultObject);
+    //   addRingMember(resultObject.ip);
 
-    var i = parseInt(resultObject.role);
+    // var i = parseInt(resultObject.role);
 
-    switch (i){
-      case 0:
-        HOST_IP = resultObject.ip;
-        break;
-      case 1:
-        TRUCK_IP = resultObject.ip;
-        break;
-      case 2:
-        GoPiGo_IP = resultObject.ip;
-        break;
-      case 3:
-        Grove_Sensor_IP = resultObject.ip;
-        break;
-      case 4:
-        Human_Sensor_IP = resultObject.ip;
-        break;
-      case 5:
-        Human_Sensor2_IP = resultObject.ip;
-        break;
-      default:
-        console.log( "Undefined role type" + resultObject.role );  
-    }
+    // switch (i){
+    //   case 0:
+    //     HOST_IP = resultObject.ip;
+    //     break;
+    //   case 1:
+    //     TRUCK_IP = resultObject.ip;
+    //     break;
+    //   case 2:
+    //     GoPiGo_IP = resultObject.ip;
+    //     break;
+    //   case 3:
+    //     Grove_Sensor_IP = resultObject.ip;
+    //     break;
+    //   case 4:
+    //     Human_Sensor_IP = resultObject.ip;
+    //     break;
+    //   case 5:
+    //     Human_Sensor2_IP = resultObject.ip;
+    //     break;
+    //   default:
+    //     console.log( "Undefined role type" + resultObject.role );  
+    // }
     });
   });
 
@@ -387,6 +351,44 @@ function isMember(ip_address)
   if(tokenRing.indexOf(ip_address) == -1) return false;
   else return true;
 }
+
+app.post('/do_discover', function(req, res) {
+  var the_body = req.body;  //see connect package above
+  console.log( "Discovery received: " + JSON.stringify( the_body) );
+
+  addRingMember(the_body.ip);
+
+  var i = parseInt(the_body.role);
+
+  console.log( "recieved role: " + i );
+
+  switch (i){
+    case 0:
+      HOST_IP = the_body.ip;
+      break;
+    case 1:
+      TRUCK_IP = the_body.ip;
+      break;
+    case 2:
+      GoPiGo_IP = the_body.ip;
+      break;
+    case 3:
+      Grove_Sensor_IP = the_body.ip;
+      break;
+    case 4:
+      Human_Sensor_IP = the_body.ip;
+      break;
+    case 5:
+      Human_Sensor2_IP = the_body.ip;
+      break;
+    default:
+      console.log( "which not Special type" + the_body.role ); 
+  }
+
+  var post_data = { ip : getMyIP(), role: node_functionality };    
+
+  res.json( post_data );
+});
 
 
 app.set('port', process.env.PORT || tokeRingPortNum);
