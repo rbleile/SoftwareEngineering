@@ -61,6 +61,6 @@ function sensorUpdate()
 
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
-	debugLog("I am bay "+ whichBay);
+	console.log("I am bay "+ whichBay);
 	sensorUpdate();
 });
