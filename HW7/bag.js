@@ -19,29 +19,6 @@ bays[1] = true; //init bays full
 bays[2] = true;
 
 
-
-
-// var log = blessed.scrollabletext({
-//     parent: screen,
-//     //mouse: true,
-//     keys: true,
-//     //vi: true,
-//     border: {
-//     type: 'line',
-//     fg: '#00ff00'
-//     },
-//     scrollbar: {
-//     fg: 'blue',
-//     ch: '|'
-//     },
-//     width: '100%',
-//     height: '100%',
-//     //top: '10%',
-//     //left: '50%',
-//     align: 'left',
-//     tags: true
-// });
-
 //screen.append(log);
 function debugLog( msg ) 
 {
@@ -51,67 +28,69 @@ function debugLog( msg )
 	return;
 }
 
+var box = blessed.box({
+    parent: screen,
+    top: '0%',
+    left: 'left',
+    width: '100%',
+    height: '10%',
+    content: '{center}BAG - BAG - BAG{/center}',
+    tags: true,
+    border: {
+    type: 'line',
+    fg: 'white'
+    },
+    style: {
+    fg: 'white',
+    bg: 'black',
+    border: {
+        fg: '#f0f0f0'
+    }
+    }
+});
 
-/*
- * General function to replace separate functions for all different types of
- * posts, e.g. winner, election
- */
-function generalPOST ( genHost, genPath, post_data, err, res )
-{
-	// check if arg param err does not exist
-	if (typeof(err) != "function")
-	{
-		err = function(e) 
-		{
-			if(debug) debugLog("Lost connection to " + genHost + "removing from ring");
+var logTasks = blessed.scrollabletext({
+    parent: screen,
+    mouse: true,
+    keys: true,
+    vi: true,
+    border: {
+    type: 'line',
+    fg: '#00ff00'
+    },
+    scrollbar: {
+    fg: 'blue',
+    ch: '|'
+    },
+    width: '50%',
+    height: '40%',
+    top: '10%',
+    left: '0%',
+    align: 'left',
+    tags: true
+});
 
-			//tokenRing.removeRingMember(genHost);
+var logResults = blessed.scrollabletext({
+    parent: screen,
+    mouse: true,
+    keys: true,
+    vi: true,
+    border: {
+    type: 'line',
+    fg: '#00ff00'
+    },
+    scrollbar: {
+    fg: 'blue',
+    ch: '|'
+    },
+    width: '50%',
+    height: '40%',
+    top: '10%',
+    left: '50%',
+    align: 'left',
+    tags: true
+});
 
-//			processApproval(genHost);
-
-			if(debug) debugLog("generalPOST err called "+ e);
-		};
-	}
-
-	// check if arg param res does not exist
-	if (typeof(res) != "function")
-	{
-		res = function(r) {} ;
-	}
-
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: genHost,
-		port: '3000',
-		path: genPath,
-		method: 'POST',
-		headers: headers
-	};
-
-	var post_request = http.request(post_options, function(res){
-		res.setEncoding('utf-8');
-		
-		var responseString = '';
-
-		res.on('data', function(data){
-			responseString += data;
-		});
-
-		res.on('end', function(){
-			//var resultObject = JSON.parse(responseString);
-		});
-	});
-	
-	post_request.on('error', err );
-	post_request.write(dataString);
-	post_request.end();
-}
 
 var tasks = new Array();
 var results = new Array();
@@ -143,7 +122,6 @@ app.post('/do_get_task', function(req, res) {
 		}
 	}
 
-
 	if(validTaskIdx != -1)
 	{
 		var task = tasks[validTaskIdx];
@@ -159,7 +137,6 @@ app.post('/do_get_task', function(req, res) {
 		res.json(falseResponse);
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",falseResponse);
 	}
-	
 });
 
 app.post('/do_get_result', function(req, res) {
@@ -194,20 +171,12 @@ app.post('/do_insert_result', function(req, res) {
 	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
 });
-/*
-curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_get_result
-curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_get_task
-curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_insert_result
-curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_insert_task
-*/
-
 
 app.post("/do_sensor_update", function(req, res) {
 	var the_body = req.body;
 	
 	bays[the_body.bayNumber] = the_body.isFull;
 	debugLog("Recieved Sensor update from bay "+ the_body.bayNumber+" " +the_body.isFull);
-
 });
 
 
@@ -215,9 +184,7 @@ function printIPs()
 {
 	var list =  tokenRing.getRing();
 	var list2 = tokenRing.getRoleList(1);
-	console.log(list+" "+list2);
-
-	//setTimeout( printIPs , 8000 );
+	//console.log(list+" "+list2);
 }
 
 app.set('port', process.env.PORT || 3000);
