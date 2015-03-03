@@ -35,7 +35,18 @@ function getBagIP()
 	if (bag.length == 1)
 	{
 		Bag_IP = bag[0];
+		console.log("Bag IP " + Bag_IP);
 	}
+	else if (bag.length == 0)
+	{
+		setTimeout(getBagIP, 1000);
+	}
+	else if (bag.length > 1)
+	{
+		console.log("Problem!! More than 1 bag IP exists.");
+	}
+
+	sensorUpdate();
 }
 
 var isFull = false;
@@ -62,6 +73,5 @@ function sensorUpdate()
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("I am bay "+ whichBay);
-	console.log("Bag IP " + Bag_IP);
-	sensorUpdate();
+	setTimeout(getBagIP, 1000);
 });
