@@ -263,11 +263,15 @@ function getBagIP()
 {
 	var bag = [];
 	bag = tokenRing.getRoleList(1);
-	if (bag.length != 1)
+	if (bag.length > 1)
 	{
 		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
 	}
-	else
+	else if (bag.length == 0)
+	{
+		setTimeout(getBagIP, 2000);
+	}
+	else if (bag.length == 1)
 	{
 		Bag_IP = bag[0];
 		log2.insertLine(0, "Bag_IP is " + Bag_IP);
