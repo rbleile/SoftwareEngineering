@@ -18,6 +18,9 @@ bays[0] = true;
 bays[1] = true; //init bays full
 bays[2] = true;
 
+screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
+    return process.exit(0);
+});
 
 //screen.append(log);
 function debugLog( msg ) 
@@ -48,7 +51,7 @@ var box = blessed.box({
     }
     }
 });
-
+/*
 var logTasks = blessed.scrollabletext({
     parent: screen,
     mouse: true,
@@ -90,7 +93,7 @@ var logResults = blessed.scrollabletext({
     align: 'left',
     tags: true
 });
-
+*/
 
 var tasks = [];
 var results = [];
@@ -98,12 +101,12 @@ var results = [];
 app.post('/do_insert_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
-	var task = { id : the_body,  bayNumber : the_body.bayNumber}
+	var task = { id : the_body.uniqID,  bayNumber : the_body.bayNumber}
 	tasks.push(task);
 
 	debugLog( "Task Length: " + tasks.length );
 
-	var resString =  "task inserted at bay "+JSON.stringify(task);
+	var resString =  "task inserted at bay "+ JSON.stringify(task.bayNumber);
 	debugLog(resString);
 	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
