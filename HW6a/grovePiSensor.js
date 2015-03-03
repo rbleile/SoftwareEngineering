@@ -289,26 +289,28 @@ var options = {
   //args: ['value1', 'value2', 'value3']
 };
 var isFull =false;
-app.get('/do_get_dist', function (req, res){
+app.post('/do_sensor', function (req, res){
+	console.log("In do Sensor"); 
 	var the_body = req.query;
-//	var isFull = false;
 	PythonShell.run('one_ultra.py', options, function (err, results) {
 	if (err) throw err;
 	  // results is an array consisting of messages collected during execution 
 	  console.log('results: %j', results);
-	  if(results[0] < 50) isFull = true;
-          console.log("is full : " + isFull + " "+results[0]);	
+	  if( parseInt(results[0]) < 50 ) isFull = true;
+          else isFull = false;  
+	console.log("is full : " + isFull + " "+results[0]+" "+parseInt(results[0]));	
 	});
 	res.json({"isFull" : isFull});
+        var temp  = isFull;
+	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : temp }
+	console.log("after " + isFull);
+	generalPOST( HOST_IP, '/do_sensor_response', post_data );
 
-	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull }
-
-	generalPOST( HOST_IP, '/do_sensor_responce', post_data )
 });
 
 
 http.createServer(app).listen(app.get('port'), function(){
-//	debugLog("Express server listening on port " + app.get('port'));
+	console.log("Express server listening on port " + app.get('port'));
 	discover();
-//	debugLog( "Discovery Complete" );
+	console.log( "Discovery Complete" );
 });

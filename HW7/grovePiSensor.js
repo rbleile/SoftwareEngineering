@@ -42,14 +42,18 @@ function sensorUpdate()
 		if (err) throw err;
 		// results is an array consisting of messages collected during execution 
 		console.log('results: %j', results);
-		if(results[0] < 50) isFull = true;
+		if(parseInt(results[0]) < 50) 
+		{
+			isFull = true;
+		}
+		else { isFull = false; }
 	    	console.log("is full : " + isFull + " "+results[0]);	
 	});
 
 	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull }
 	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', post_data );
 	setTimeout ( sensorUpdate , 3000 );
-});
+}
 
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
