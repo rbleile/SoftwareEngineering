@@ -185,7 +185,6 @@ screen.render();
 /********* END BUTTON ***********/
 
 var count = 0;
-var pendingResultsIn = 0;
 
 function addtaskFunctionality()
 {
@@ -211,12 +210,26 @@ function addtaskFunctionality()
 			response1 = "";
 			var post_data = { id : count, bayNumber : baynum };
 			tokenRing.generalPOST(Bag_IP, '/do_insert_task', post_data);
-			pendingResultsIn++;
 			count++;
+			defaultmenu();
 		}
 	}, 100);
 	screen.render();
+
+
 }
+
+app.post('/do_return_result', function(req, res) {
+	var the_body = req.body;
+	if (the_body.isValid == true)
+	{
+		log2.insertLine(0, "In result: " + JSON.stringify(the_body));
+	}
+	else if (the_body.isValid == false)
+	{
+		log2.insertLine(0, "In result: not valid");
+	}
+});
 
 function inresultFunctionality()
 {
@@ -233,6 +246,8 @@ function inresultFunctionality()
 	tokenRing.generalPOST(Bag_IP, '/do_get_result', post_data);
 
 	screen.render();
+
+	defaultmenu();
 }
 
 function debugLog( msg ) 
