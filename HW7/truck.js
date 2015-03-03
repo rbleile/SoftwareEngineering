@@ -90,7 +90,7 @@ var doneButton = blessed.box({
     hoverEffects: {
         bg: 'red'
     },
-    hidden: false 
+    hidden: true 
 });
 doneButton.on('click', function(data) {
 	setActionComplete();
