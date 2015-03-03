@@ -191,7 +191,7 @@ function getBagIP()
 	else
 	{
 		Bag_IP = bag[0];
-		log2.insertLine("Bag_IP is " + Bag_IP);
+		log.insertLine("Bag_IP is " + Bag_IP);
 	}
 }
 
