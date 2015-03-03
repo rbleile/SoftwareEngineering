@@ -286,8 +286,6 @@ function defaultmenu()
 	inresultButton.style.fg = "white";
 	inresultButton.hidden = false;
 
-	getBagIP();
-
 	screen.render();
 }
 
@@ -296,6 +294,8 @@ function printIPs()
     var list1 =  tokenRing.getRing();
     var list2 = tokenRing.getRoleList(0);
     if (debug) debugLog(list1 + " " + list2);
+
+	getBagIP();
 
 	defaultmenu();
 }
