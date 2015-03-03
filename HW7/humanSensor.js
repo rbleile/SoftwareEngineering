@@ -16,20 +16,6 @@ tokenRing.setRole(3);
 
 var Bag_IP;
 
-function getBagIP()
-{
-	var bag = [];
-	bag = tokenRing.getRoleList(1);
-	if (bag.length != 1)
-	{
-		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
-	}
-	else
-	{
-		Bag_IP = bag[0];
-		log2.insertLine("Bag_IP is " + Bag_IP);
-	}
-}
 
 
 
@@ -192,6 +178,22 @@ app.set('port', process.env.PORT || 3000);
 
 // Render the screen.
 screen.render();
+
+function getBagIP()
+{
+	var bag = [];
+	bag = tokenRing.getRoleList(1);
+	if (bag.length != 1)
+	{
+		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
+	}
+	else
+	{
+		Bag_IP = bag[0];
+		log2.insertLine("Bag_IP is " + Bag_IP);
+	}
+}
+
 
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
