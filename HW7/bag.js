@@ -167,7 +167,15 @@ app.post('/do_insert_result', function(req, res) {
 	res.json(res_data);
 });
 
-
+function printIPs()
+{
+	var list =  tokenRing.getRing();
+	for( var i = 0; i < list.length; i++)
+	{
+		console.log(list[0]);
+	}
+	setTimeout( printIPs , 1000 );
+}
 
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
@@ -175,5 +183,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	//discover();
 	//debugLog( "Discovery Complete." );
 	//debugLog("Waiting to print IPs...");
-	//setTimeout( printIPs , 10000 );
+	setTimeout( printIPs , 1000 );
 });

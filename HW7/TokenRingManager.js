@@ -110,7 +110,43 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 
 
+app.post('/do_discover', function(req, res) {
+  var the_body = req.body;  //see connect package above
+  console.log( "Discovery received: " + JSON.stringify( the_body) );
 
+  tokenRing.addRingMember(the_body.ip);
+
+  var i = parseInt(the_body.role);
+
+  console.log( "recieved role: " + i );
+
+  switch (i){
+    case 0:
+      HOST_IP = the_body.ip;
+      break;
+    case 1:
+      TRUCK_IP = the_body.ip;
+      break;
+    case 2:
+      GoPiGo_IP = the_body.ip;
+      break;
+    case 3:
+      Grove_Sensor_IP = the_body.ip;
+      break;
+    case 4:
+      Human_Sensor_IP = the_body.ip;
+      break;
+    case 5:
+      Human_Sensor2_IP = the_body.ip;
+      break;
+    default:
+      console.log( "which not Special type" + the_body.role ); 
+  }
+
+  var post_data = { ip : getMyIP(), role: node_functionality };    
+
+  res.json( post_data );
+});
 
 function PostDiscover(ip_address)
 {
@@ -141,6 +177,8 @@ function PostDiscover(ip_address)
     });
 
     res.on('end', function(){
+      console.log(responseString);
+      
       var resultObject = JSON.parse(responseString);
       console.log(resultObject);
       addRingMember(resultObject.ip);
