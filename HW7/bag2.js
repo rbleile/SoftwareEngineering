@@ -100,6 +100,9 @@ app.post('/do_insert_task', function(req, res) {
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
 	var task = { id : the_body,  bayNumber : the_body.bayNumber}
 	tasks.push(task);
+
+	debugLog( "Task Length: " + tasks.length );
+
 	var resString =  "task inserted at bay "+JSON.stringify(task);
 	debugLog(resString);
 	var res_data = { result : resString, id : task.id };    
@@ -110,6 +113,8 @@ app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "received task request: " + JSON.stringify( the_body) );
 	var validTaskIdx = -1;
+
+	debugLog( "Tasks" + JSON.stringify( tasks ) );
 
 	//check to see if any task have a bay number that can be entered
 	for(var i = 0; i < tasks.length; i++)
