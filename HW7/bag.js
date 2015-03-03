@@ -168,6 +168,15 @@ app.post('/do_insert_result', function(req, res) {
 	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
 });
+/*
+curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_get_result
+curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_get_task
+curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_insert_result
+curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' http://localhost:3000/do_insert_task
+*/
+
+
+
 
 function printIPs()
 {
