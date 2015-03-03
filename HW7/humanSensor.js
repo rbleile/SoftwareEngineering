@@ -137,7 +137,7 @@ var isFullButton = blessed.box({
 function sendCommandResposne(isFull)
 {
 	debugLog("HUMAN has updated sensor data. Initiating response to master control BAG.");
-	debugLog("HUMAM :  update sensor when situtation has changed.");
+	debugLog("HUMAM :  update sensor when situtation has changed." +Bag_IP);
 	//isFullButton.setContent("");
 	//isEmptyButton.setContent("");
 	//isFullButton.hidden = true;
