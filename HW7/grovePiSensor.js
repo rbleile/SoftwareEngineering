@@ -54,7 +54,4 @@ function sensorUpdate()
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	sensorUpdate();
-//	debugLog("Express server listening on port " + app.get('port'));
-//	discover();
-//	debugLog( "Discovery Complete" );
 });
