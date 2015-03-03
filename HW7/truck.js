@@ -13,7 +13,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
-tokenRing.debugMessages(false);
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -72,13 +71,13 @@ var doneButton = blessed.box({
         fg: 'white'
     },
     fg: 'white',
-    bg: 'red',
+    bg: 'green',
     content: '{center}D = Action Completed{/center}',
     tags: true,
     hoverEffects: {
         bg: 'red'
     },
-    hidden: true 
+    hidden: false 
 });
 doneButton.on('click', function(data) {
 	setActionComplete();
@@ -87,9 +86,6 @@ screen.key(['d', 'D'], function(ch, key) {
 	setActionComplete();
 });
 
-screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
-    return process.exit(0);
-});
 
 var entranceButton1 = blessed.box({
     parent: screen,
@@ -142,6 +138,11 @@ entranceButton2.on('click', function(data) {
 screen.key(['2'], function(ch, key) {
 	setEntranceDoor( 2 );
 });
+screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
+    return process.exit(0);
+});
+screen.render();
+
 
 var entrance = 1;
 var entrance_set = false;
@@ -151,8 +152,6 @@ function setEntranceDoor( door )
 	entrance = door;
 	entrance_set = true;
 }
-
-screen.render();
 /********* END BUTTON ***********/
 
 
@@ -551,12 +550,12 @@ function initializeTruck()
 
 	getBagIP();
 
-	var responceCheck1 = setInterval( function() {
-		if(bag_found)
-		{
-			clearInterval( responceCheck1 );
-		} 
-	});
+	// var responceCheck1 = setInterval( function() {
+	// 	if(bag_found)
+	// 	{
+	// 		clearInterval( responceCheck1 );
+	// 	} 
+	// });
 
 	getTRUCKIPs();	
 
@@ -568,6 +567,6 @@ app.set('port', process.env.PORT || 3000);
 
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	setTimeout( initializeTruck, 5000 );
+	setTimeout( initializeTruck, 2000 );
 	debugLog("Five Seconds for discovery");
 });
