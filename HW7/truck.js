@@ -162,12 +162,6 @@ function setEntranceDoor( door )
 {
 	entrance = door;
 	entrance_set = true;
-
-	entranceButton1.hidden = true;
-	entranceButton2.hidden = true;
-	
-	screen.render();
-
 }
 /********* END BUTTON ***********/
 
@@ -209,6 +203,12 @@ function getTRUCKIPs()
 
 /*********    MovePI    **********/
 
+function unsetEntranceButton()
+{
+	entranceButton1.hidden = true;	
+	entranceButton2.hidden = true;	
+	screen.render();
+}
 function getEntrancePoint()
 {
 	doneButton.hidden = true;
@@ -334,6 +334,7 @@ function MovePI()
 
 	var responseCheck1 = setInterval(function() {
 		if ( entrance_set ) {
+			unsetEntranceButton();
 			debugLog( "Entrance set" );
 			entrance_set = false;
 			clearInterval( responseCheck1 );
@@ -567,8 +568,6 @@ function debugLog( msg )
 
 function displayButton()
 {
-	entranceButton1.hidden = true;
-	entranceButton2.hidden = true;
 	doneButton.setContent( "{center}D = Action Completed{/center}");
 	doneButton.style.bg = "green";
 	doneButton.style.fg = "white";
