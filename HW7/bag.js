@@ -195,6 +195,13 @@ curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' h
 */
 
 
+app.post("/do_sensor_update", function(req, res) {
+	var the_body = req.body;
+	
+	bays[theBody.bayNumber] = the_body.isFull;
+
+
+});
 
 
 function printIPs()
