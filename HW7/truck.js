@@ -18,7 +18,7 @@ var debug = true;
 /********* Globals ***********/
 var actionComplete = false;
 var Bag_IP = 0;
-var bag_found = true;
+var bag_found = false;
 var entrance = 1;
 var entrance_set = false;
 var TRUCK_IPs = [];
@@ -173,7 +173,8 @@ function getBagIP()
 	bag = tokenRing.getRoleList(1);
 	if (bag.length != 1)
 	{
-		if( bag.length > 1 ){
+		if( bag.length > 1 )
+		{
 			if (debug) debugLog("Problem!! More than one bag exists.");
 		}
 	}
