@@ -13,6 +13,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var screen = blessed.screen();
 
 tokenRing.setRole(3);
+
+var Bag_IP;
+
+function getBagIP()
+{
+	var bag = [];
+	bag = tokenRing.getRoleList(1);
+	if (bag.length != 1)
+	{
+		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
+	}
+	else
+	{
+		Bag_IP = bag[0];
+		log2.insertLine("Bag_IP is " + Bag_IP);
+	}
+}
+
+
+
 var bay_Number = 1; 
 var log = blessed.scrollabletext({
     parent: screen,
@@ -116,14 +136,15 @@ var isFullButton = blessed.box({
 
 function sendCommandResposne(isFull)
 {
-	debugLog("HUMAN has responded. Initiating response to master control BAG.");
+	debugLog("HUMAN has updated sensor data. Initiating response to master control BAG.");
+	debugLog("HUMAM :  update sensor when situtation has changed.");
 	//isFullButton.setContent("");
 	//isEmptyButton.setContent("");
 	//isFullButton.hidden = true;
 	//isEmptyButton.hidden = true;
 	screen.render();
 	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull , bayNumber : bay_Number};
-	tokenRing.generalPOST(HOST_IP, '/do_sensor_update', sresponse);
+	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', sresponse);
 }
 
 isEmptyButton.on('click', function(data) {
