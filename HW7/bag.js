@@ -11,6 +11,7 @@ tokenRing.setRole(1);
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
 var screen = blessed.screen();
 
 var bays = [];
@@ -18,79 +19,132 @@ bays[0] = true;
 bays[1] = true; //init bays full
 bays[2] = true;
 
+screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
+    return process.exit(0);
+});
 
 //screen.append(log);
 function debugLog( msg ) 
 {
-	//log.insertLine(0, msg);
-	console.log(msg);
+	logEvents.insertLine(0, msg);
 	screen.render();
 	return;
 }
 
-var box = blessed.box({
-    parent: screen,
-    top: '0%',
-    left: 'left',
-    width: '100%',
-    height: '10%',
-    content: '{center}BAG - BAG - BAG{/center}',
-    tags: true,
-    border: {
-    type: 'line',
-    fg: 'white'
-    },
-    style: {
-    fg: 'white',
-    bg: 'black',
-    border: {
-        fg: '#f0f0f0'
-    }
-    }
-});
-
-var logTasks = blessed.scrollabletext({
-    parent: screen,
+var logEvents = blessed.scrollabletext({
     mouse: true,
     keys: true,
     vi: true,
     border: {
-    type: 'line',
-    fg: '#00ff00'
+    	type: 'line',
+    	fg: '#00ff00'
     },
     scrollbar: {
-    fg: 'blue',
-    ch: '|'
+    	fg: 'blue',
+    	ch: '|'
     },
-    width: '50%',
-    height: '40%',
-    top: '10%',
+    width: '60%',
+    height: '50%',
+    top: '50%',
     left: '0%',
     align: 'left',
-    tags: true
+    tags: true,
 });
 
-var logResults = blessed.scrollabletext({
-    parent: screen,
+
+var logTasks = blessed.scrollabletext({
     mouse: true,
     keys: true,
     vi: true,
     border: {
-    type: 'line',
-    fg: '#00ff00'
+    	type: 'line',
+    	fg: '#00ff00'
     },
     scrollbar: {
-    fg: 'blue',
-    ch: '|'
+    	fg: 'blue',
+    	ch: '|'
     },
-    width: '50%',
-    height: '40%',
-    top: '10%',
-    left: '50%',
+    width: '40%',
+    height: '25%',
+    top: '50%',
+    left: '60%',
     align: 'left',
-    tags: true
+    tags: true,
 });
 
+
+var logResults = blessed.scrollabletext({
+	top: '75%',
+	left: '60%',
+	width: '40%',
+	height: '25%',
+	//content: '',
+	tags: false,
+	censor: true,
+	inputOnFocus: true,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		bold: true,
+		border: {
+			fg: 'blue',
+			bold: true,
+			underline: false
+		}
+	},
+});
+/*
+var passwordBox = blessed.textbox({
+	top: '80%',
+	left: '10%',
+	width: '80%',
+	height: '20%',
+	//content: '',
+	tags: false,
+	censor: true,
+	inputOnFocus: true,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		bold: true,
+		border: {
+			fg: 'blue',
+			bold: true,
+			underline: false
+		}
+	},
+});
+*/
+
+/*
+
+logResults.setLabel({
+	text: 'Unread Results',
+	side: 'left'
+});
+logTasks.setLabel({
+	text: 'Pending Tasks',
+	side: 'left'
+});
+
+*/
+
+logEvents.setLabel({
+	text: 'Event Log',
+	side: 'left'
+});
+
+screen.append(logResults);
+screen.append(logTasks);
+screen.append(logEvents);
 
 var tasks = new Array();
 var results = new Array();
