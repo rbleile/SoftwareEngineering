@@ -354,6 +354,8 @@ http.createServer(app).listen(app.get('port'), function(){
 function setRole(role)
 {
     node_functionality= role;
+    var idx = getMyIPIndex();
+    ringRoles[idx] = role;
 }
 
 function getRoleList(roleId)
