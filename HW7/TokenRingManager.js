@@ -141,36 +141,34 @@ function PostDiscover(ip_address)
     });
 
     res.on('end', function(){
-      console.log(responseString);
-      
-      //var resultObject = JSON.parse(responseString);
-    //   console.log(resultObject);
-    //   addRingMember(resultObject.ip);
+      var resultObject = JSON.parse(responseString);
+      console.log(resultObject);
+      addRingMember(resultObject.ip);
 
-    // var i = parseInt(resultObject.role);
+    var i = parseInt(resultObject.role);
 
-    // switch (i){
-    //   case 0:
-    //     HOST_IP = resultObject.ip;
-    //     break;
-    //   case 1:
-    //     TRUCK_IP = resultObject.ip;
-    //     break;
-    //   case 2:
-    //     GoPiGo_IP = resultObject.ip;
-    //     break;
-    //   case 3:
-    //     Grove_Sensor_IP = resultObject.ip;
-    //     break;
-    //   case 4:
-    //     Human_Sensor_IP = resultObject.ip;
-    //     break;
-    //   case 5:
-    //     Human_Sensor2_IP = resultObject.ip;
-    //     break;
-    //   default:
-    //     console.log( "Undefined role type" + resultObject.role );  
-    // }
+    switch (i){
+      case 0:
+        HOST_IP = resultObject.ip;
+        break;
+      case 1:
+        TRUCK_IP = resultObject.ip;
+        break;
+      case 2:
+        GoPiGo_IP = resultObject.ip;
+        break;
+      case 3:
+        Grove_Sensor_IP = resultObject.ip;
+        break;
+      case 4:
+        Human_Sensor_IP = resultObject.ip;
+        break;
+      case 5:
+        Human_Sensor2_IP = resultObject.ip;
+        break;
+      default:
+        console.log( "Undefined role type" + resultObject.role );  
+    }
     });
   });
 
