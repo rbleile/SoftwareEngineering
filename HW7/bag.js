@@ -217,7 +217,7 @@ function printIPs()
 	var list2 = tokenRing.getRoleList(1);
 	console.log(list+" "+list2);
 
-	setTimeout( printIPs , 8000 );
+	//setTimeout( printIPs , 8000 );
 }
 
 app.set('port', process.env.PORT || 3000);
