@@ -18,6 +18,9 @@ bays[0] = true;
 bays[1] = true; //init bays full
 bays[2] = true;
 
+
+
+
 // var log = blessed.scrollabletext({
 //     parent: screen,
 //     //mouse: true,
@@ -130,7 +133,7 @@ app.post('/do_get_task', function(req, res) {
 	var validTaskIdx = -1;
 
 	//check to see if any task have a bay number that can be entered
-	for(var int i = 0; i < tasks.length; i++)
+	for(var i = 0; i < tasks.length; i++)
 	{
 		var bay = tasks[i].bayNumber - 1;
 		if(!bays[bay]) // bay can be entered
