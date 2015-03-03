@@ -37,8 +37,12 @@ app.post('/do_keepalive', function(req, res) {
  * General function to replace separate functions for all different types of
  * posts, e.g. winner, election
  */
-function generalPOST ( genHost, genPath, post_data, err, res )
+function generalPOST ( genHost, genPath, post_data,portNum, err, res )
 {
+  if( typeof(portNum) == 'undefined' )
+  {
+    portNum = '3000';
+  }
   // check if arg param err does not exist
   if (typeof(err) != "function")
   {
@@ -69,7 +73,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
   var post_options = {
     host: genHost,
-    port: tokeRingPort,
+    port: portNum,
     path: genPath,
     method: 'POST',
     headers: headers
@@ -191,7 +195,7 @@ function keepAlive()
     var post_data = { myIP : i, role: node_functionality };
     if (listIPs[i] != getMyIP())
     {
-      generalPOST ( listIPs[i], '/do_keepalive', post_data );
+      generalPOST ( listIPs[i], '/do_keepalive', post_data, tokeRingPort );
     }
   }
   
@@ -378,6 +382,7 @@ function getRoleList(roleId)
 
 
 module.exports = {
+  generalPOST : generalPOST,
   setRole : setRole,
   getRoleList : getRoleList,
   debugMessages : debugMessages,

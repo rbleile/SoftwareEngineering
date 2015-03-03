@@ -6,14 +6,17 @@ var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
 
-tokenRing.setRole(1);
+tokenRing.setRole(0);
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 var screen = blessed.screen();
 
-
+var bays = [];
+bays[0] = true;
+bays[1] = true; //init bays full
+bays[2] = true;
 
 // var log = blessed.scrollabletext({
 //     parent: screen,
@@ -124,10 +127,22 @@ app.post('/do_insert_task', function(req, res) {
 app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "received task request: " + JSON.stringify( the_body) );
-	
-	if(tasks.length > 0)
+	var validTaskIdx = -1;
+	for(var int i = 0; i < tasks.length; i++)
 	{
-		var task = tasks.pop();
+		var bay = tasks[i].bayNumber - 1;
+		if(!bays[bay]) // bay can be entered
+		{
+			validTaskIdx = i;
+			break;
+		}
+	}
+
+
+	if(validTaskIdx != -1)
+	{
+		var task = tasks[validTaskIdx];
+		tasks.splice(validTaskIdx, 1);
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 
 		res.json(trueResponse);	
