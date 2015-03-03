@@ -579,6 +579,10 @@ app.post( '/do_return_task', function( req, res ){
 
 	var body = req.body;
 
+    res.json(req.body);
+
+	debugLog( "isValid: " + body.isValid );
+
 	if( body.isValid )
 	{
 		var task_id = body.id;
