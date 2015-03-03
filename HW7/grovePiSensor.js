@@ -14,6 +14,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
 
+var myArgs = process.argv.slice(2);
+if( !myArgs[0] ) myArgs[0] = -1;
+var whichBay = myArgs[0];
+
 var options = {
   mode: 'text',
   pythonPath: '/usr/bin/python',
@@ -50,12 +54,13 @@ function sensorUpdate()
 	    	console.log("is full : " + isFull + " "+results[0]);	
 	});
 
-	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull }
+	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull , "bayNumber" : whichBay };
 	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', post_data );
 	setTimeout ( sensorUpdate , 10000 );
 }
 
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
+	debugLog("I am bay "+ whichBay);
 	sensorUpdate();
 });
