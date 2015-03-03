@@ -157,7 +157,7 @@ function PostDiscover(ip_address)
 function discover() 
 {
 
-  console.log("Starting Discovery");
+  //console.log("Starting Discovery");
   //limit the scanning range
   var start_ip = 100;
   var end_ip   = 120;
@@ -169,7 +169,7 @@ function discover()
 
   //put it back together without the last part
   var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
-  console.log("Base ip address : " +  base_add);
+  //console.log("Base ip address : " +  base_add);
 
   for(var i = start_ip; i < end_ip; i++)
   {      
@@ -228,7 +228,7 @@ function debugMessages(on)
   }
   else
   {
-    console.log("debugMessages(boolean) must be passed a boolean if you expect to set it.");
+    //console.log("debugMessages(boolean) must be passed a boolean if you expect to set it.");
   }
 }
 
@@ -335,7 +335,7 @@ function isMember(ip_address)
 
 app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
-  console.log( "Discovery received: " + JSON.stringify( the_body) );
+  //console.log( "Discovery received: " + JSON.stringify( the_body) );
 
   var role = parseInt(the_body.role);
   addRingMember(the_body.ip, role);
@@ -348,7 +348,7 @@ app.post('/do_discover', function(req, res) {
 
 app.set('port', process.env.PORT || tokeRingPortNum);
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+  //console.log("Express server listening on port " + app.get('port'));
   discover();
   //debugLog( "Discovery Complete." );
   //debugLog("Waiting to print IPs...");

@@ -92,8 +92,8 @@ var logResults = blessed.scrollabletext({
 });
 
 
-var tasks = new Array();
-var results = new Array();
+var tasks = [];
+var results = [];
 
 app.post('/do_insert_task', function(req, res) {
 	var the_body = req.body;  
