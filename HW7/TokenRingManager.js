@@ -406,7 +406,7 @@ function setRole(role)
 
 
 module.exports = {
-  setRole : setRole
+  setRole : setRole,
   debugMessages : debugMessages,
   getMyIP : getMyIP,
   getMyIPIndex : getMyIPIndex,
