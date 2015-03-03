@@ -16,10 +16,12 @@ tokenRing.setRole(3);
 
 var Bag_IP;
 
+var myArgs = process.argv.slice(2);
+if( !myArgs[0] ) myArgs[0] = -1;
+var whichBay = myArgs[0];
 
 
-
-var bay_Number = 1; 
+//var bay_Number = 1; 
 var log = blessed.scrollabletext({
     parent: screen,
     mouse: true,
@@ -129,7 +131,7 @@ function sendCommandResposne(isFull)
 	//isFullButton.hidden = true;
 	//isEmptyButton.hidden = true;
 	screen.render();
-	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull , bayNumber : bay_Number};
+	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull , bayNumber : whichBay};
 	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', sresponse);
 }
 
@@ -200,7 +202,7 @@ function getBagIP()
 
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	debugLog("I am bay "+bay_Number);
+	debugLog("I am bay "+ whichBay);
 
 	setTimeout(getBagIP, 1000);
 });
