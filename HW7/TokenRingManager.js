@@ -133,7 +133,7 @@ function PostDiscover(ip_address)
 
     res.on('end', function(){
       var resultObject = JSON.parse(responseString);
-      console.log(resultObject);
+     // console.log(resultObject);
 
       var role = parseInt(resultObject.role);
       addRingMember(resultObject.ip,role);
@@ -371,7 +371,7 @@ function getRoleList(roleId)
 
   for(var i = 0; i < num; i++)
   {
-    console.log("role " + ringRoles[i] );
+    //console.log("role " + ringRoles[i] );
     if(ringRoles[i] == roleId)
     {
       roleList.push(tokenRing[i]);
