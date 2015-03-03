@@ -19,7 +19,7 @@ var tokeRingPortNum=2999;
 var myIP;
 var tokenRing = [];
 var ringRoles = [];
-var debug = true;
+var debug = false;
 //find ip address
 var ifaces = os.networkInterfaces();
 
