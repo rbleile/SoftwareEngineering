@@ -162,6 +162,12 @@ function setEntranceDoor( door )
 {
 	entrance = door;
 	entrance_set = true;
+
+	entranceButton1.hidden = true;
+	entranceButton2.hidden = true;
+	
+	screen.render();
+
 }
 /********* END BUTTON ***********/
 
