@@ -113,8 +113,9 @@ app.post('/do_insert_task', function(req, res) {
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
 	var task = { id : the_body,  bayNumber : the_body.bayNumber}
 	tasks.push(task);
-	var resString =  "task inserted at bay "+task;
-	var res_data = { result : resStrig, id : task.id };    
+	var resString =  "task inserted at bay "+JSON.stringify(task);
+	debugLog(resString);
+	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
 });
 
@@ -122,16 +123,17 @@ app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "received task request: " + JSON.stringify( the_body) );
 	
-	if(task.length > 0)
+	if(tasks.length > 0)
 	{
 		var task = tasks.pop();
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
+
 		res.json(trueResponse);	
 	}
 	else
 	{
 		var falseResponse = { isValid : false };
-		debugLog("Returing false" +falseResponse);
+		debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
 	}
 	
@@ -143,15 +145,15 @@ app.post('/do_get_result', function(req, res) {
 	
 	if(results.length > 0)
 	{
-		var result = results.pop();
+		var task = results.pop();
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
-		debugLog("Returning result "+trueResponse);
+		debugLog("Returning result "+JSON.stringify(trueResponse));
 		res.json(trueResponse);	
 	}
 	else
 	{
 		var falseResponse = { isValid : false };
-		debugLog("Returing false" +falseResponse);
+		debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
 	}
 	
@@ -161,9 +163,9 @@ app.post('/do_insert_result', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Result received: " + JSON.stringify( the_body) );
 	var task = { id : the_body,  bayNumber : the_body.bayNumber}
-	result.push(task);
-	var resString =  "Result inserted "+task;
-	var res_data = { result : resStrig, id : task.id };    
+	results.push(task);
+	var resString =  "Result inserted "+JSON.stringify(task);
+	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
 });
 
