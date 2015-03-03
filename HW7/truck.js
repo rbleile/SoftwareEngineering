@@ -331,7 +331,6 @@ function MovePI()
 			debugLog( "Entrance set" );
 			entrance_set = false;
 			clearInterval( responseCheck1 );
-			displayButton();
 			debugLog( "Entrance: " + entrance );
 
 			getWorkFromBag();
