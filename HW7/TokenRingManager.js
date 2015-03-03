@@ -42,6 +42,7 @@ function generalPOST ( genHost, genPath, post_data,portNum, err, res )
   if( typeof(portNum) == 'undefined' )
   {
     portNum = '3000';
+    console.log("Using default port");
   }
   // check if arg param err does not exist
   if (typeof(err) != "function")

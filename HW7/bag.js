@@ -202,7 +202,7 @@ app.post("/do_sensor_update", function(req, res) {
 	var the_body = req.body;
 	
 	bays[theBody.bayNumber] = the_body.isFull;
-
+	debugLog("Recieved Sensor update from bay "+ the_body.bayNumber+" " +the_body.isFull);
 
 });
 
@@ -213,7 +213,7 @@ function printIPs()
 	var list2 = tokenRing.getRoleList(1);
 	console.log(list+" "+list2);
 
-	setTimeout( printIPs , 1000 );
+	setTimeout( printIPs , 8000 );
 }
 
 app.set('port', process.env.PORT || 3000);
@@ -222,5 +222,5 @@ http.createServer(app).listen(app.get('port'), function(){
 	//discover();
 	//debugLog( "Discovery Complete." );
 	//debugLog("Waiting to print IPs...");
-	setTimeout( printIPs , 1000 );
+	setTimeout( printIPs , 8000 );
 });
