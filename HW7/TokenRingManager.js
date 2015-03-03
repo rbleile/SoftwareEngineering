@@ -18,28 +18,14 @@ var tokeRingPort='2999';
 var tokeRingPortNum=2999;
 var myIP;
 var tokenRing = [];
+var ringRoles = [];
 var debug = true;
 //find ip address
 var ifaces = os.networkInterfaces();
 
-var node_functionality =0; //i dont think we evem need this. 
+var node_functionality =-1; 
 // Input 0
-var HOST_IP;
 
-//Input 1
-var TRUCK_IP;
-
-//Input 2
-var GoPiGo_IP;
-
-//Input 3
-var Grove_Sensor_IP;
-
-//Input 4
-var Human_Sensor_IP;
-
-//Input 5
-var Human_Sensor2_IP;
 
 app.post('/do_keepalive', function(req, res) {
   res.json(req.body);
@@ -143,32 +129,13 @@ function PostDiscover(ip_address)
     res.on('end', function(){
       var resultObject = JSON.parse(responseString);
       console.log(resultObject);
-      addRingMember(resultObject.ip);
 
-    var i = parseInt(resultObject.role);
+      var role = parseInt(resultObject.role);
+      addRingMember(resultObject.ip,role);
 
-    switch (i){
-      case 0:
-        HOST_IP = resultObject.ip;
-        break;
-      case 1:
-        TRUCK_IP = resultObject.ip;
-        break;
-      case 2:
-        GoPiGo_IP = resultObject.ip;
-        break;
-      case 3:
-        Grove_Sensor_IP = resultObject.ip;
-        break;
-      case 4:
-        Human_Sensor_IP = resultObject.ip;
-        break;
-      case 5:
-        Human_Sensor2_IP = resultObject.ip;
-        break;
-      default:
-        console.log( "Undefined role type" + resultObject.role );  
-    }
+    
+
+    
     });
   });
 
@@ -211,7 +178,7 @@ function discover()
 
   setTimeout( keepAlive, keepAliveTimeout);
 }
-/***********End Discovery***********************/
+
 
 
 /* Function to check if other devices are there. */
@@ -230,10 +197,6 @@ function keepAlive()
   
   setTimeout( keepAlive, keepAliveTimeout );
 }
-
-
-
-
 
 //scan NICs
 Object.keys(ifaces).forEach(function (ifname) {
@@ -284,13 +247,22 @@ function getNeighborIP()
   return tokenRing[ getNeighborIndex() ];
 }
 
-function addRingMember(ip_address)
+function addRingMember(ip_address, role)
 {
   if(tokenRing.indexOf(ip_address) == -1) 
   {
+
     tokenRing[tokenRing.length] = ip_address;
+    if (typeof role === 'undefined')
+    {
+      ringRoles[ringRoles.length] = -1; //undefined role
+    }
+    else
+    {
+      ringRoles[ringRoles.length] = role;
+    }
     if(debug) console.log("New node at " + ip_address);
-    tokenRing.sort();
+    
   }
   else
   {
@@ -298,6 +270,7 @@ function addRingMember(ip_address)
   }
 
   if(debug) console.log("Current group : " + tokenRing);
+  if(debug) console.log("Current roles : " + ringRoles);
 }
 
 /* general remove IP addresses for non-token ring case */
@@ -305,9 +278,11 @@ function removeRingMember(ip_address)
 {
   if(tokenRing.indexOf(ip_address) != -1) 
   {
-	tokenRing.splice(tokenRing.indexOf(ip_address), 1);
+    var index = tokenRing.indexOf(ip_address);
+	  tokenRing.splice(index, 1);
+    ringRoles.splice(index, 1);
     if(debug) console.log("Removing node at " + ip_address);
-    tokenRing.sort();
+
   }
   else
   {
@@ -323,7 +298,10 @@ function removeRingNeigbor()
 
   if( getMyIPIndex != getNeighborIndex() )
   {
-    tokenRing.splice(getNeighborIndex(), 1);
+     var index = tokenRing.indexOf(ip_address);
+      tokenRing.splice(index, 1);
+      ringRoles.splice(index, 1);
+      if(debug) console.log("Removing node at " + ip_address);
   } 
   else
   {
@@ -354,34 +332,8 @@ app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
   console.log( "Discovery received: " + JSON.stringify( the_body) );
 
-  addRingMember(the_body.ip);
-
-  var i = parseInt(the_body.role);
-
-  console.log( "recieved role: " + i );
-
-  switch (i){
-    case 0:
-      HOST_IP = the_body.ip;
-      break;
-    case 1:
-      TRUCK_IP = the_body.ip;
-      break;
-    case 2:
-      GoPiGo_IP = the_body.ip;
-      break;
-    case 3:
-      Grove_Sensor_IP = the_body.ip;
-      break;
-    case 4:
-      Human_Sensor_IP = the_body.ip;
-      break;
-    case 5:
-      Human_Sensor2_IP = the_body.ip;
-      break;
-    default:
-      console.log( "which not Special type" + the_body.role ); 
-  }
+  var role = parseInt(the_body.role);
+  addRingMember(the_body.ip, role);
 
   var post_data = { ip : getMyIP(), role: node_functionality };    
 
@@ -404,9 +356,27 @@ function setRole(role)
     node_functionality= role;
 }
 
+function getRoleList(roleId)
+{
+  var roleList = [];
+
+  var num = tokenRing.length;
+
+  for(var i = 0; i < num; i++)
+  {
+    if(ringRoles[i] == roleId)
+    {
+      roleList.push(tokenRing[i]);
+    }
+  } 
+
+  return roleList;
+}
+
 
 module.exports = {
   setRole : setRole,
+  getRoleList : getRoleList,
   debugMessages : debugMessages,
   getMyIP : getMyIP,
   getMyIPIndex : getMyIPIndex,
