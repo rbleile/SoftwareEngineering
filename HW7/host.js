@@ -109,7 +109,7 @@ var inputBox1 = blessed.textbox({
 	},  
 }); 
 inputBox1.setLabel({
-	text: 'Enter bay number: ',
+	text: 'Enter bay number (1, 2 or 3): ',
 	side: 'left'
 });
 inputBox1.on('submit', function() {
