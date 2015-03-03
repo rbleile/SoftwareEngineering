@@ -42,7 +42,7 @@ function generalPOST ( genHost, genPath, post_data,portNum, err, res )
   if( typeof(portNum) == 'undefined' )
   {
     portNum = '3000';
-    console.log("Using default port");
+    //console.log("Using default port");
   }
   // check if arg param err does not exist
   if (typeof(err) != "function")
@@ -133,7 +133,7 @@ function PostDiscover(ip_address)
 
     res.on('end', function(){
       var resultObject = JSON.parse(responseString);
-      console.log(resultObject);
+     // console.log(resultObject);
 
       var role = parseInt(resultObject.role);
       addRingMember(resultObject.ip,role);
@@ -294,7 +294,7 @@ function removeRingMember(ip_address)
     if(debug) console.log("DNE: "+ ip_address);
   }
 
-  if(true) console.log("Current group : " + tokenRing);
+  if(debug) console.log("Current group : " + tokenRing);
 }
 
 /* remove neighbor IP addresses in token ring */
@@ -371,7 +371,7 @@ function getRoleList(roleId)
 
   for(var i = 0; i < num; i++)
   {
-    console.log("role " + ringRoles[i] );
+    //console.log("role " + ringRoles[i] );
     if(ringRoles[i] == roleId)
     {
       roleList.push(tokenRing[i]);
