@@ -227,27 +227,27 @@ app.post('/do_return_result', function(req, res) {
 	}
 	else if (the_body.isValid == false)
 	{
-		log2.insertLine(0, "In result: not valid");
+		log2.insertLine(0, "In result: " + JSON.stringify(the_body));
 	}
+
+	defaultmenu();
 });
 
 function inresultFunctionality()
 {
+	inresultButton.style.bg = "red";
+	inresultButton.style.fg = "white";
+	inresultButton.hidden = false;
+
 	addtaskButton.setContent("");
 	addtaskButton.style.bg = "black";
 	addtaskButton.style.fg = "black";
 	addtaskButton.hidden = true;
 
-	inresultButton.style.bg = "red";
-	inresultButton.style.fg = "white";
-	inresultButton.hidden = false;
-
 	var post_data = { ip : tokenRing.getMyIP() };
 	tokenRing.generalPOST(Bag_IP, '/do_get_result', post_data);
 
 	screen.render();
-
-	defaultmenu();
 }
 
 function debugLog( msg ) 
@@ -267,14 +267,14 @@ function getBagIP()
 	{
 		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
 	}
-	else if (bag.length == 0)
-	{
-		setTimeout(getBagIP, 2000);
-	}
 	else if (bag.length == 1)
 	{
 		Bag_IP = bag[0];
-		log2.insertLine(0, "Bag_IP is " + Bag_IP);
+		debugLog("Bag_IP is " + Bag_IP);
+	}
+	else if (bag.length == 0)
+	{
+		setTimeout(getBagIP, 2000);
 	}
 }
 

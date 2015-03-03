@@ -88,8 +88,8 @@ var isEmptyButton = blessed.box({
 	type: 'line',
 	fg: '#ff0000'
     },
-    fg: '#ffffff',
-    bg: '#ff0000',
+    fg: 'white',
+    bg: 'green',
     content: '{center}Bay is Empty{/center}',
     tags: true,
     hoverEffects: {
@@ -110,8 +110,8 @@ var isFullButton = blessed.box({
 	type: 'line',
 	fg: '#ffffff'
     },
-    fg: '#ffffff',
-    bg: '#228822',
+    fg: 'white',
+    bg: 'red',
     content: '{center}Bay is Full{/center}',
     tags: true,
     hoverEffects: {
@@ -185,7 +185,7 @@ function getBagIP()
 	bag = tokenRing.getRoleList(1);
 	if (bag.length != 1)
 	{
-		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
+		debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
 		setTimeout(getBagIP, 1000);
 	}
 	else
