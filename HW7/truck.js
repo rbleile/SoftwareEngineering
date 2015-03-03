@@ -6,39 +6,14 @@ var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
 
+tokenRing.setRole( 2 );
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
 tokenRing.debugMessages(false);
-
-var myArgs = process.argv.slice(2);
-
-if( !myArgs[0] ) myArgs[0] = -1;
-
-var node_functionality = myArgs[0];
-
-// Input 0
-var HOST_IP;
-
-//Input 1
-var TRUCK_IP;
-
-//Input 2
-var GoPiGo_IP;
-
-//Input 3
-var Grove_Sensor_IP;
-
-//Input 4
-var Human_Sensor_IP;
-
-//Input 5
-var Human_Sensor2_IP;
-
-//Input 6
-var Bag_IP
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -70,7 +45,7 @@ var box = blessed.box({
     left: 'left',
     width: '100%',
     height: '20%',
-    content: '{center}TRUCK - TRUCK - TRUCK{/center}',
+    content: '{center} HUMAN  - CONTROLLED - TRUCK - PI {/center}',
     tags: true,
     border: {
     type: 'line',
@@ -94,43 +69,424 @@ var doneButton = blessed.box({
     left: '0%',
     border: {
         type: 'line',
-        fg: '#ffffff'
+        fg: 'white'
     },
-    fg: '#ffffff',
-    bg: '#228822',
+    fg: 'white',
+    bg: 'red',
     content: '{center}D = Action Completed{/center}',
     tags: true,
     hoverEffects: {
-        bg: 'green'
+        bg: 'red'
     },
     hidden: true 
 });
 doneButton.on('click', function(data) {
-    doneFunctionality();
+	setActionComplete();
 });
 screen.key(['d', 'D'], function(ch, key) {
-    doneFunctionality();
+	setActionComplete();
 });
 
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-doneButton.focus();
+var entranceButton1 = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '20%',
+    width: '30%',
+    left: '0%',
+    border: {
+        type: 'line',
+        fg: 'yellow'
+    },
+    fg: 'black',
+    bg: 'yellow',
+    content: '{center} Enter Door 1 {/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'red'
+    },
+    hidden: true 
+});
+entranceButton1.on('click', function(data) {
+	setEntranceDoor( 1 );
+});
+screen.key(['1'], function(ch, key) {
+	setEntranceDoor( 1 );
+});
+
+var entranceButton2 = blessed.box({
+    parent: screen,
+    top: '80%',
+    height: '20%',
+    width: '30%',
+    left: '50%',
+    border: {
+        type: 'line',
+        fg: 'yellow'
+    },
+    fg: 'black',
+    bg: 'yellow',
+    content: '{center} Enter Door 2 {/center}',
+    tags: true,
+    hoverEffects: {
+        bg: 'red'
+    },
+    hidden: true 
+});
+entranceButton2.on('click', function(data) {
+	setEntranceDoor( 2 );
+});
+screen.key(['2'], function(ch, key) {
+	setEntranceDoor( 2 );
+});
+
+var entrance = 1;
+var entrance_set = false;
+
+function setEntranceDoor( door )
+{
+	entrance = door;
+	entrance_set = true;
+}
+
 screen.render();
 /********* END BUTTON ***********/
 
-function doneFunctionality()
+
+/********* Get Bag IP **********/
+
+var Bag_IP;
+var bag_found = false;
+
+function getBagIP()
 {
-	doneButton.setContent('');
-	doneButton.style.fg = "black";
-	doneButton.style.bg = "black";
+	debugLog( "Getting Bag IP" );
+	var bag = [];
+	bag = tokenRing.getRoleList(1);
+	if (bag.length != 1)
+	{
+		if( bag.length > 1 ){
+			if (debug) debugLog("Problem!! More than one bag exists.");
+		}
+		else
+		{
+			setTimeout( getBagIP, 1000 );
+		}
+	}
+	else
+	{
+		Bag_IP = bag[0];
+		log.insertLine("Bag_IP is " + Bag_IP);
+		bag_found = true;
+	}
+}
+
+/********* END Bag IP **********/
+
+/********* Get TRUCK IPs **********/
+
+var TRUCK_IPs = [];
+
+function getTRUCKIPs()
+{
+	TRUCK_IPs = tokenRing.getRoleList(2);
+	
+	debugLog("TRUCK_IPs are " + JSON.stringify( TRUCK_IPs) );
+
+}
+
+/********* END TRUCK IPs **********/
+
+/*********    MovePI    **********/
+
+function getEntrancePoint()
+{
 	doneButton.hidden = true;
 	screen.render();
+	
+	entranceButton1.hidden = false;	
+	entranceButton2.hidden = false;	
 
-	var post_data = { myIP : tokenRing.getMyIP() };
-	//if (debug) debugLog ("HOST_IP: " + HOST_IP);
-	generalPOST(HOST_IP, '/action_completed', post_data);
+	screen.render();
+
+	var responseCheck1 = setInterval(function() {
+		if ( entrance_set ) {
+			debugLog( "Entrance set" );
+			clearInterval( responseCheck1 );
+			setTimeout( displayButton, 10 );
+	}});
+}
+
+function MovePI()
+{
+	getEntrancePoint();
+
+	entrance_set = false;
+
+	debugLog( "Entrance: " + entrance );
+
+	
+	releaseShotgun();
+
+/*
+	var bay = getWorkFromBag();
+
+	switch( bay )
+	{
+		case 0:
+			if( entrance == 0 )
+			{
+				doSubroutine(0);
+			}
+			else
+			{
+				doSubroutine(1);
+			}
+			break;
+		case 1:
+			if( entrance == 0 )
+			{
+				doSubroutine(2);
+			}
+			else
+			{
+				doSubroutine(3);
+			}
+			break;
+		case 2:
+			if( entrance == 0 )
+			{
+				doSubroutine(4);
+			}
+			else
+			{
+				doSubroutine(5);
+			}
+			break;
+		case default:
+			if( debug ) debugLog( "Timeing out move" );
+			setTimeout( Move, 1000 );
+			break;
+	}
+*/
+}
+/********* END MovePI **********/
+
+/********* SHUTGUN **********/
+
+function callShotGun()
+{
+	reqResource();
+}
+
+//Enumerate possible states
+var GAP_STATE = 0;
+var REQUEST_STATE = 1;
+var WORK_STATE = 2;
+
+//Define which state currently in
+var STATE = GAP_STATE;
+
+//Time stamp tracking
+var highestTS = 0;
+var myTS = 0;
+
+//Shotgun lists
+var ReqDeferred = [];
+var PendingReplies = [];
+
+function reqResource()
+{
+	STATE = REQUEST_STATE;
+
+	highestTS++;
+	myTS = highestTS;
+
+	var theRing = TRUCK_IPs; 
+
+	if( theRing.length == 1 && theRing[0] == tokenRing.getMyIP())
+	{
+		setWORKState();
+	}
+	else
+	{
+		for (var i = 0; i < theRing.length; i++)
+		{
+			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
+			if (theRing[i] != tokenRing.getMyIP())
+			{
+				tokenRing.generalPOST(theRing[i], '/process_resource_request', post_data); 
+				PendingReplies.push(theRing[i]);
+			}  
+		}
+	}
+}
+
+function getNextRequestDeferred()
+{
+	if (ReqDeferred.length < 1)
+		return -1;
+	else
+		return ReqDeferred.splice(0,1);
+}
+
+function processReq(ID, timestamp)
+{
+	switch(STATE) {
+		case GAP_STATE:
+			inGapState(ID,timestamp);
+			break;
+		case REQUEST_STATE:
+			inRequestState(ID, timestamp);
+			break;
+		case WORK_STATE:
+			inWorkState(ID,timestamp);
+			break;
+		default:
+			if(debug) debugLog("Not valid state");
+	}
+}
+
+function setWORKState()
+{
+	STATE = WORK_STATE;
+	if(debug) debugLog ( "resource_approved...working");
+	MovePI();
+}
+
+function inGapState(ID,timestamp)
+{
+	if (timestamp > highestTS)
+	{
+		highestTS = timestamp;
+    	if(debug) debugLog("request in gap state new timestamp");
+	}
+
+	var post_data = { myIP : tokenRing.getMyIP() }; 
+	tokenRing.generalPOST(ID, '/resource_approved', post_data); 
+}
+
+function inRequestState(ID,timestamp)
+{
+	if (timestamp > highestTS)
+	{
+		highestTS = timestamp;
+		ReqDeferred.push(ID);
+		if(debug) debugLog("request in request state new timestamp");
+	}
+	else if (timestamp == highestTS)
+	{
+		if(debug) debugLog("Tiebreaker");
+		if (ID > tokenRing.getMyIP())
+		{
+			ReqDeferred.push(ID);
+		}
+		else
+		{
+			var post_data = { myIP : tokenRing.getMyIP() }; 
+			tokenRing.generalPOST(ID, '/resource_approved', post_data); 
+		}
+	}	
+	else
+	{
+		var post_data = { myIP : tokenRing.getMyIP() }; 
+		tokenRing.generalPOST(ID, '/resource_approved', post_data);	
+	}
+}
+
+function inWorkState(ID,timestamp)
+{
+	ReqDeferred.push(ID);
+
+	if (timestamp > highestTS)
+	{
+		highestTS = timestamp;
+	}
+	else if (timestamp == highestTS)
+	{
+		if(debug) debugLog("BAD inWorkState: timestamp == highestTS");
+	}
+	else
+	{
+		if(debug) debugLog("BAD inWorkState: timestamp < highestTS");
+	}
+}
+
+app.post('/process_resource_request', function(req, res) {
+	var the_body = req.body;  
+
+	if(debug) debugLog ( "process_resource_request " + JSON.stringify( the_body) );
+
+	processReq(the_body.myIP, the_body.myTS);
+
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
+
+
+function processApproval(IP)
+{
+	if (STATE == REQUEST_STATE && PendingReplies.indexOf(IP) != -1)
+	{
+		PendingReplies.splice(PendingReplies.indexOf(IP),1);
+		if(debug) debugLog("remaining replies: " + PendingReplies);
+		if (PendingReplies.length == 0)
+		{
+			setWORKState();
+		}
+	}
+	else 
+	{ 
+		if(debug) debugLog ( "I never requested, shouldn't be approving. Node down.");
+	}
+}
+
+app.post('/resource_approved', function(req, res) {
+	var the_body = req.body;  
+	if(debug) debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
+	
+	processApproval(the_body.myIP);
+
+	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
+});
+
+function gapState()
+{
+	STATE = GAP_STATE;
+	screen.render();
+}
+
+function releaseShotgun()
+{
+	gapState();
+	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
+	var numRequests = ReqDeferred.length;
+	for (var i = 0; i < numRequests; i++)
+	{
+		var nextPendingRequest = getNextRequestDeferred();
+		var post_data = { myIP : tokenRing.getMyIP() };
+	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
+		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
+	}
+
+	callShotGun();
+}
+
+/********* END SHOTGUN **********/
+
+
+var actionComplete = false;
+
+function setActionComplete()
+{
+	doneButton.style.fg = "white";
+	doneButton.style.bg = "red";
+	doneButton.hidden = false;
+	screen.render();
+
+	actionComplete = true;
 }
 
 function debugLog( msg ) 
@@ -140,249 +496,18 @@ function debugLog( msg )
 	return;
 }
 
-app.set('port', process.env.PORT || 3000);
-
-//curl -H "Content-Type: application/json" -d '{"ip" : "192.168.1.101"}' http://localhost:3000/do_discover
-// handle discovery requests
-app.post('/do_discover', function(req, res) {
-	var the_body = req.body;  //see connect package above
-	if(debug) debugLog ( "Discovery received: " + JSON.stringify( the_body) );
-
-	tokenRing.addRingMember(the_body.ip);
-
-	var i = parseInt(the_body.role);
-
-	debugLog( "recieved role: " + i );
-
-	switch (i){
-		case 0:
-			HOST_IP = the_body.ip;
-			break;
-		case 1:
-			TRUCK_IP = the_body.ip;
-			break;
-		case 2:
-			GoPiGo_IP = the_body.ip;
-			break;
-		case 3:
-			Grove_Sensor_IP = the_body.ip;
-			break;
-		case 4:
-			Human_Sensor_IP = the_body.ip;
-			break;
-		case 5:
-			Human_Sensor2_IP = the_body.ip;
-			break;
-		default:
-			if(debug) debugLog( "which not Special type" + the_body.role );	
-	}
-
-	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
-
-	res.json( post_data );
-});
-
-function PostDiscover(ip_address)
-{
-	var post_data = { ip : tokenRing.getMyIP(), role: node_functionality };    
-        
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: ip_address,
-		port: '3000',
-		path: '/do_discover',
-		method: 'POST',
-		headers: headers
-	};
-
-	var post_request = http.request(post_options, function(res){
-		res.setEncoding('utf-8');
-    
-		var responseString = '';
-
-		res.on('data', function(data){
-			responseString += data;
-		});
-
-		res.on('end', function(){
-			var resultObject = JSON.parse(responseString);
-			debugLog(resultObject);
-			tokenRing.addRingMember(resultObject.ip);
-
-		var i = parseInt(resultObject.role);
-
-		//debugLog( "Role responce: " + resultObject.role );
-		if (debug) debugLog("Received: " + JSON.stringify( resultObject ));
-
-		switch (i){
-			case 0:
-				HOST_IP = resultObject.ip;
-				break;
-			case 1:
-				TRUCK_IP = resultObject.ip;
-				break;
-			case 2:
-				GoPiGo_IP = resultObject.ip;
-				break;
-			case 3:
-				Grove_Sensor_IP = resultObject.ip;
-				break;
-			case 4:
-				Human_Sensor_IP = resultObject.ip;
-				break;
-			case 5:
-				Human_Sensor2_IP = resultObject.ip;
-				break;
-			default:
-				if(debug) debugLog( "which not Special type" + resultObject.role );	
-		}
-
-		});
-	});
-
-	post_request.on('error', function(e) {
-		// no one is home, do nothing
-		//if(debug) debugLog('no one at this address: ' + e.message);
-	});
-
-	post_request.write(dataString);
-	post_request.end();
-}
-var keepAliveTimeout = 1000;
-
-function discover() 
-{
-	box.style.bg = 'red';
-    log.focus();
-    screen.render();
-
-    if(debug) debugLog("Starting Discovery");
-	//limit the scanning range
-	var start_ip = 100;
-	var end_ip   = 120;
-   
-	//we are assuming a subnet mask of 255.255.255.0
-
-	//break it up to extract what we need 
-	var ip_add = tokenRing.getMyIP().split(".");
-
-	//put it back together without the last part
-	var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
-	if(debug) debugLog("Base ip address : " +  base_add);
-
-	for(var i = start_ip; i < end_ip; i++)
-	{      
-		var ip = base_add + i.toString();
-
-		if(!tokenRing.isMember(ip))
-		{
-			PostDiscover(ip);
-		}
-	}
-
-	setTimeout( keepAlive, keepAliveTimeout);
-}
-/***********End Discovery***********************/
-
-
-/* Function to check if other devices are there. */
-function keepAlive()
-{
-	//debugLog("Calling keepalive " );
-	var listIPs = tokenRing.getRing();
-	for( var i = 0; i < listIPs.length; i++) 
-	{
-		var post_data = { myIP : i };
-		if (listIPs[i] != tokenRing.getMyIP())
-		{
-			generalPOST ( listIPs[i], '/do_keepalive', post_data );
-		}
-	}
-	
-	setTimeout( keepAlive, keepAliveTimeout );
-}
-
-/*
- * General function to replace separate functions for all different types of
- * posts, e.g. winner, election
- */
-function generalPOST ( genHost, genPath, post_data, err, res )
-{
-	// check if arg param err does not exist
-	if (typeof(err) != "function")
-	{
-		err = function(e) 
-		{
-			if(debug) debugLog("Lost connection to " + genHost + "removing from ring");
-
-			tokenRing.removeRingMember(genHost);
-
-			//processApproval(genHost);
-
-			if(debug) debugLog("generalPOST err called "+ e);
-		};
-	}
-
-	// check if arg param res does not exist
-	if (typeof(res) != "function")
-	{
-		res = function(r) {} ;
-	}
-
-	var dataString = JSON.stringify( post_data );
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Content-Length': dataString.length
-	};
-
-	var post_options = {
-		host: genHost,
-		port: '3000',
-		path: genPath,
-		method: 'POST',
-		headers: headers
-	};
-
-	var post_request = http.request(post_options, function(res){
-		res.setEncoding('utf-8');
-		
-		var responseString = '';
-
-		res.on('data', function(data){
-			responseString += data;
-		});
-
-		res.on('end', function(){
-			//var resultObject = JSON.parse(responseString);
-		});
-	});
-	
-	post_request.on('error', err );
-	post_request.write(dataString);
-	post_request.end();
-}
-
-app.post('/do_keepalive', function(req, res) {
-	res.json(req.body);
-	var the_body = req.body;  //see connect package above
-});
-
 
 function displayButton()
 {
+	entranceButton1.hidden = true;
+	entranceButton2.hidden = true;
 	doneButton.setContent( "{center}D = Action Completed{/center}");
 	doneButton.style.bg = "green";
 	doneButton.style.fg = "white";
-	doneButton.hidden = false;
 	screen.render();
 }
+
+
 app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed );
@@ -419,8 +544,30 @@ app.post('/action_readsensor', function(req, res) {
 // Render the screen.
 screen.render();
 
+function initializeTruck()
+{
+
+	debugLog( "Initalizing Truck PI"  );
+
+	getBagIP();
+
+	var responceCheck1 = setInterval( function() {
+		if(bag_found)
+		{
+			clearInterval( responceCheck1 );
+		} 
+	});
+
+	getTRUCKIPs();	
+
+	if(debug) debugLog( "Calling Shotgun" );
+	callShotGun();
+}
+
+app.set('port', process.env.PORT || 3000);
+
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	discover();
-	debugLog( "Discovery Complete" );
+	setTimeout( initializeTruck, 5000 );
+	debugLog("Five Seconds for discovery");
 });
