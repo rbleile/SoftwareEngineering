@@ -37,6 +37,9 @@ var Human_Sensor_IP;
 //Input 5
 var Human_Sensor2_IP;
 
+//Input 6
+var Bag_IP;
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -89,7 +92,7 @@ var box = blessed.box({
     left: 'left',
     width: '100%',
     height: '10%',
-    content: '{center}HOST - HOST - HOST{/center}',
+    content: '{center}SUPERVISOR - SUPERVISOR - SUPERVISOR {/center}',
     tags: true,
     border: {
     type: 'line',
@@ -105,8 +108,6 @@ var box = blessed.box({
 });
 
 var response1 = "";
-var response2 = "";
-var response3 = "";
 var inputBox1 = blessed.textbox({
 	parent: screen,
 	top: '80%',
@@ -133,12 +134,6 @@ var inputBox1 = blessed.textbox({
 		}   
 	},  
 }); 
-/*
-inputBox1.setLabel({
-	text: 'Enter direction:',
-	side: 'left'
-}); 
-*/
 inputBox1.on('submit', function() {
 	response1 = inputBox1.value;
 	debugLog("Response1 entered: " + response1);
@@ -151,95 +146,9 @@ inputBox1.on('submit', function() {
 }); 
 screen.append(inputBox1);
 
-var inputBox2 = blessed.textbox({
-	top: '80%',
-	left: '0%',
-	width: '50%',
-	height: '15%',
-	content: '',
-	tags: false,
-	hidden: true,
-	censor: false,
-	inputOnFocus: true,
-	border: {
-		type: 'line',
-		fg: 'white'
-	},  
-	style: {
-		fg: 'white',
-		bg: 'blue',
-		bold: true,
-		border: {
-			fg: 'blue',
-			bold: true,
-			underline: false
-		}   
-	},  
-}); 
-inputBox2.on('submit', function() {
-	response2 = inputBox2.value;
-	debugLog("Response2 entered: " + response2);
-	inputBox2.value = "";
-	//debugLog("inputbox2 value: " + inputBox2.value);
-	log.focus();
-	inputBox2.hide();
-	//screen.remove(inputBox);
-	screen.render();
-}); 
-/*
-inputBox2.setLabel({
-	text: 'Enter distance: ',
-	side: 'left'
-}); 
-*/
-
-var inputBox3 = blessed.textbox({
-	top: '80%',
-	left: '0%',
-	width: '50%',
-	height: '15%',
-	content: '',
-	tags: false,
-	hidden: true,
-	censor: false,
-	inputOnFocus: true,
-	border: {
-		type: 'line',
-		fg: 'white'
-	},  
-	style: {
-		fg: 'white',
-		bg: 'blue',
-		bold: true,
-		border: {
-			fg: 'blue',
-			bold: true,
-			underline: false
-		}   
-	},  
-}); 
-inputBox3.on('submit', function() {
-	response3 = inputBox3.value;
-	debugLog("Response3 entered: " + response3);
-	inputBox3.value = "";
-	//debugLog("inputbox3 value: " + inputBox3.value);
-	log.focus();
-	inputBox3.hide();
-	//screen.remove(inputBox);
-	screen.render();
-}); 
-/*
-inputBox3.setLabel({
-	text: 'Enter speed: ',
-	side: 'left'
-}); 
-*/
-
-screen.append(inputBox2);
-screen.append(inputBox3);
 
 /********* BUTTON CODE *********/
-var moveButton = blessed.box({
+var addtaskButton = blessed.box({
     parent: screen,
     top: '10%',
     height: '10%',
@@ -251,21 +160,22 @@ var moveButton = blessed.box({
     },
     fg: '#ffffff',
     bg: '#228822',
-    content: '{center}M = Move{/center}',
+    content: '{center}A = Add Task{/center}',
     tags: true,
     hoverEffects: {
         bg: 'green'
     },
     hidden: true 
 });
-moveButton.on('click', function(data) {
-    moveFunctionality();
+addtaskButton.on('click', function(data) {
+    addtaskFunctionality();
 });
-screen.key(['m', 'M'], function(ch, key) {
-    moveFunctionality();
+screen.key(['a', 'A'], function(ch, key) {
+    addtaskFunctionality();
 });
 
-var turninplaceButton = blessed.box({
+/*
+var go_robot1Button = blessed.box({
     parent: screen,
     top: '20%',
     height: '10%',
@@ -316,124 +226,12 @@ turnsensorButton.on('click', function(data) {
 screen.key(['t', 'T'], function(ch, key) {
     turnsensorFunctionality();
 });
+*/
 
-var readsensorButton = blessed.box({
-    parent: screen,
-    top: '40%',
-    height: '10%',
-    width: '50%',
-    left: '0%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}R = ReadSensor{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: true
-});
-turninplaceButton.on('click', function(data) {
-    readsensorFunctionality();
-});
-screen.key(['r', 'R'], function(ch, key) {
-    readsensorFunctionality();
-});
-
-var scanbaysButton = blessed.box({
-    parent: screen,
-    top: '60%',
-    height: '10%',
-    width: '50%',
-    left: '0%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}X = ScanBays{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: true
-});
-moveButton.on('click', function(data) {
-    scanbaysFunctionality();
-});
-screen.key(['x', 'X'], function(ch, key) {
-    scanbaysFunctionality();
-});
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-var bay1Button = blessed.box({
-	parent: screen,
-    top: '70%',
-    height: '10%',
-    width: '15%',
-    left: '0%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}Bay1{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: true
-});
-var bay2Button = blessed.box({
-	parent: screen,
-    top: '70%',
-    height: '10%',
-    width: '15%',
-    left: '15%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}Bay2{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: true
-});
-var bay3Button = blessed.box({
-	parent: screen,
-    top: '70%',
-    height: '10%',
-    width: '15%',
-    left: '30%',
-    border: {
-        type: 'line',
-        fg: '#ffffff'
-    },
-    fg: '#ffffff',
-    bg: '#228822',
-    content: '{center}Bay3{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'green'
-    },
-    hidden: true
-});
-//moveButton.focus();
-//turninplaceButton.focus();
-//turnsensorButton.focus();
-//readsensorButton.focus();
-//scanbaysButton.focus();
 screen.render();
 /********* END BUTTON ***********/
 
@@ -441,6 +239,7 @@ var grove_sensor = true;
 var human_sensor = true;
 var human2_sensor = true;
 
+/*
 function scanbaysFunctionality()
 {
 	scanbaysButton.style.fg = "white";
@@ -521,78 +320,38 @@ function baycolor(fields)
 
 	screen.render();
 }
+*/
 
-function moveFunctionality()
+var count = 0;
+var pendingResultsIn = 0;
+
+function addtaskFunctionality()
 {
-	moveButton.style.bg = "red";
-	moveButton.style.fg = "white";
-	moveButton.hidden = false;
+	addtaskButton.style.bg = "red";
+	addtaskButton.style.fg = "white";
+	addtaskButton.hidden = false;
 	
-	turninplaceButton.setContent("");
-	turninplaceButton.style.bg = "black";
-	turninplaceButton.style.fg = "black";
-	turninplaceButton.hidden = true;
-
-	turnsensorButton.setContent("");
-	turnsensorButton.style.bg = "black";
-	turnsensorButton.style.fg = "black";
-	turnsensorButton.hidden = true;
-
-	readsensorButton.setContent("");
-	readsensorButton.style.bg = "black";
-	readsensorButton.style.fg = "black";
-	readsensorButton.hidden = true;
-
 	inputBox1.hidden = false;
 	inputBox1.focus();
-	//log.insertLine(1, msg);
-	//debugLog("Enter direction (fwd or bwd)");
-	log2.insertLine(0,"Enter direction (fwd or bwd).");
-	var direction = "";
-	var distance = "";
-	var speed = "";
+	//debugLog("Enter degrees (pos or neg)");
+	log2.insertLine(0, "Enter bay number (1, 2, or 3).");
+	var baynum = "";
 	var _responseCheck1 = setInterval(function() {
 		if (response1) {
 			clearInterval(_responseCheck1);
-			inputBox1.setContent("");
-			direction = response1;
+			//inputBox1.setContent("");
+			baynum = response1;
 			response1 = "";
-		
-			inputBox2.hidden = false;
-			inputBox2.focus();
-			//debugLog("Enter distance (in inches)");
-			log2.insertLine(0, "Enter distance (in inches).");
-			screen.render();
-			var _responseCheck2 = setInterval(function() {
-				if (response2) {
-					clearInterval(_responseCheck2);
-					inputBox2.setContent("");
-					distance = response2;
-					response2 = "";
-
-					inputBox3.hidden = false;
-					inputBox3.focus();
-					//debugLog("Enter speed (0 to 10)");
-					log2.insertLine(0, "Enter speed (0 to 10).");
-					screen.render();
-					var _responseCheck3 = setInterval(function() {
-						if (response3) {
-							clearInterval(_responseCheck3);
-							inputBox3.setContent("");
-							speed = response3;
-							response3 = "";
-
-							var post_data = { myIP : tokenRing.getMyIP() , command : "Move" , inpdistance : distance, inpdirection : direction , inpspeed : speed };
-							generalPOST(TRUCK_IP, '/action_move', post_data);
-						}
-					}, 100);
-				}
-			}, 100);
+			var post_data = { counter : count, bayNum : baynum };
+			generalPOST(Bag_IP, '/do_insert_task', post_data);
+			pendingResultsIn++;
+			count++;
 		}
 	}, 100);
-	screen.render();
 }
 
+	
+/*
 function turninplaceFunctionality()
 {
 	moveButton.setContent("");
@@ -704,6 +463,9 @@ app.post('/do_resultsreadsensor', function(req, res) {
 	var the_body = req.body;
 	log2.insertLine(0,"Object is " + the_body.objdistance + " inches away.");	
 });
+*/
+
+
 
 function debugLog( msg ) 
 {
@@ -742,6 +504,9 @@ app.post('/do_discover', function(req, res) {
 			break;
 		case 5:
 			Human_Sensor2_IP = the_body.ip;
+			break;
+		case 6:
+			Bag_IP = the_body.ip;
 			break;
 		default:
 			if(debug) debugLog( "which not Special type" + the_body.role );	
@@ -805,6 +570,9 @@ function PostDiscover(ip_address)
 				break;
 			case 5:
 				Human_Sensor2_IP = resultObject.ip;
+				break;
+			case 6:
+				Bag_IP = resultObject.ip;
 				break;
 			default:
 				if(debug) debugLog( "Role not special type" + resultObject.role );	
@@ -939,11 +707,12 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
 function defaultmenu()
 {
-	moveButton.setContent("{center}M = Move{/center}");
-	moveButton.style.bg = "green";
-	moveButton.style.fg = "white";
-	moveButton.hidden = false;
+	addtaskButton.setContent("{center}A = Add Task{/center}");
+	addtaskButton.style.bg = "green";
+	addtaskButton.style.fg = "white";
+	addtaskButton.hidden = false;
 
+	/*
 	turninplaceButton.setContent("{center}P = TurnInPlace{/center}");
 	turninplaceButton.style.bg = "green";
 	turninplaceButton.style.fg = "white";
@@ -978,6 +747,7 @@ function defaultmenu()
 	bay3Button.style.bg = "white";
 	bay3Button.style.fg = "black";
 	bay3Button.hidden = false;
+	*/
 
 	screen.render();
 }
@@ -990,6 +760,7 @@ function printIPs()
 	if (debug) debugLog("GroveSensor_IP = " + Grove_Sensor_IP);
 	if (debug) debugLog("Human_Sensor_IP = " + Human_Sensor_IP);
 	if (debug) debugLog("Human_Sensor2_IP = " + Human_Sensor2_IP);
+	if (debug) debugLog("Bag_IP = " + Bag_IP);
 
 	defaultmenu();
 }
@@ -1006,7 +777,6 @@ app.post('/action_completed', function(req, res) {
     res.json(req.body);
 	defaultmenu();
 });
-
 
 // Render the screen.
 screen.render();

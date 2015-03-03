@@ -37,6 +37,9 @@ var Human_Sensor_IP;
 //Input 5
 var Human_Sensor2_IP;
 
+//Input 6
+var Bag_IP
+
 // Create a screen object.
 var screen = blessed.screen();
 
