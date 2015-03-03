@@ -56,7 +56,7 @@ function sensorUpdate()
 
 	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull , "bayNumber" : whichBay };
 	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', post_data );
-	setTimeout ( sensorUpdate , 10000 );
+	setTimeout ( sensorUpdate , 3000 );
 }
 
 app.set('port', process.env.PORT || 3000);
