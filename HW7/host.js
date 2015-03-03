@@ -291,8 +291,5 @@ screen.render();
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	//discover();
-	//debugLog( "Discovery Complete." );
-	//debugLog("Waiting to print IPs...");
-	setTimeout( printIPs , 3000 );
+	setTimeout( printIPs , 1000 );
 });
