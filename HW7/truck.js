@@ -295,7 +295,7 @@ function subRoutine_1()
 
 					var bayClear = true;
 
-					var callback3 = setInterval(function(){
+					var callBack3 = setInterval(function(){
 						//queryBagBay();	
 
 
