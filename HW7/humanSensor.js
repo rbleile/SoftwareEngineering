@@ -36,7 +36,7 @@ var log = blessed.scrollabletext({
 	ch: '|'
     },
     width: '100%',
-    height: '40%',
+    height: '60%',
     top: '20%',
     left: 'left',
     align: 'left',
