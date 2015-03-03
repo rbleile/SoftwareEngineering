@@ -151,12 +151,14 @@ app.post('/do_get_task', function(req, res) {
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 
 		res.json(trueResponse);	
+		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
 	}
 	else
 	{
 		var falseResponse = { isValid : false };
 		debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
+		tokenRing.generalPOST(the_body.ip, "/do_return_task",falseResponse);
 	}
 	
 });
@@ -171,12 +173,15 @@ app.post('/do_get_result', function(req, res) {
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 		debugLog("Returning result "+JSON.stringify(trueResponse));
 		res.json(trueResponse);	
+		tokenRing.generalPOST(the_body.ip, "/do_return_result",falseResponse);
 	}
 	else
 	{
 		var falseResponse = { isValid : false };
 		debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
+
+		tokenRing.generalPOST(the_body.ip, "/do_return_result",falseResponse);
 	}
 	
 });
