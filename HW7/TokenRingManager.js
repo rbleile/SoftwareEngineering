@@ -1,14 +1,50 @@
 /*
   NodeJS Token Ring Manager Module (TRMM)
 */
-
+var http = require('http');
+var express = require('express');
+var connect = require("connect");
 var os   = require('os');
+var connect = require("connect");
+var blessed = require('blessed');
+var bodyParser = require('body-parser');
+var app = express();
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
+var keepAliveTimeout = 1000;
+var tokeRingPort='2999';
+var tokeRingPortNum=2999;
 var myIP;
 var tokenRing = [];
 var debug = false;
 //find ip address
 var ifaces = os.networkInterfaces();
+
+var node_functionality =0; //i dont think we evem need this. 
+// Input 0
+var HOST_IP;
+
+//Input 1
+var TRUCK_IP;
+
+//Input 2
+var GoPiGo_IP;
+
+//Input 3
+var Grove_Sensor_IP;
+
+//Input 4
+var Human_Sensor_IP;
+
+//Input 5
+var Human_Sensor2_IP;
+
+app.post('/do_keepalive', function(req, res) {
+  res.json(req.body);
+  var the_body = req.body;  //see connect package above
+});
 
 
 /*
@@ -24,7 +60,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
     {
       if(debug) debugLog("Lost connection to " + genHost + "removing from ring");
 
-      //tokenRing.removeRingMember(genHost);
+        removeRingMember(genHost);
 
 //      processApproval(genHost);
 
@@ -47,7 +83,7 @@ function generalPOST ( genHost, genPath, post_data, err, res )
 
   var post_options = {
     host: genHost,
-    port: '3000',
+    port: tokeRingPort,
     path: genPath,
     method: 'POST',
     headers: headers
@@ -71,6 +107,131 @@ function generalPOST ( genHost, genPath, post_data, err, res )
   post_request.write(dataString);
   post_request.end();
 }
+
+
+
+
+
+function PostDiscover(ip_address)
+{
+  var post_data = { ip : getMyIP(), role: node_functionality };    
+        
+  var dataString = JSON.stringify( post_data );
+
+  var headers = {
+    'Content-Type': 'application/json',
+    'Content-Length': dataString.length
+  };
+
+  var post_options = {
+    host: ip_address,
+    port: tokeRingPort,
+    path: '/do_discover',
+    method: 'POST',
+    headers: headers
+  };
+
+  var post_request = http.request(post_options, function(res){
+    res.setEncoding('utf-8');
+    
+    var responseString = '';
+
+    res.on('data', function(data){
+      responseString += data;
+    });
+
+    res.on('end', function(){
+      var resultObject = JSON.parse(responseString);
+      console.log(resultObject);
+      addRingMember(resultObject.ip);
+
+    var i = parseInt(resultObject.role);
+
+    switch (i){
+      case 0:
+        HOST_IP = resultObject.ip;
+        break;
+      case 1:
+        TRUCK_IP = resultObject.ip;
+        break;
+      case 2:
+        GoPiGo_IP = resultObject.ip;
+        break;
+      case 3:
+        Grove_Sensor_IP = resultObject.ip;
+        break;
+      case 4:
+        Human_Sensor_IP = resultObject.ip;
+        break;
+      case 5:
+        Human_Sensor2_IP = resultObject.ip;
+        break;
+      default:
+        console.log( "Undefined role type" + resultObject.role );  
+    }
+    });
+  });
+
+  post_request.on('error', function(e) {
+    // no one is home, do nothing
+    //if(debug) debugLog('no one at this address: ' + e.message);
+  });
+
+  post_request.write(dataString);
+  post_request.end();
+}
+
+
+function discover() 
+{
+
+  console.log("Starting Discovery");
+  //limit the scanning range
+  var start_ip = 100;
+  var end_ip   = 120;
+   
+  //we are assuming a subnet mask of 255.255.255.0
+
+  //break it up to extract what we need 
+  var ip_add = getMyIP().split(".");
+
+  //put it back together without the last part
+  var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
+  console.log("Base ip address : " +  base_add);
+
+  for(var i = start_ip; i < end_ip; i++)
+  {      
+    var ip = base_add + i.toString();
+
+    if(!isMember(ip))
+    {
+      PostDiscover(ip);
+    }
+  }
+
+  setTimeout( keepAlive, keepAliveTimeout);
+}
+/***********End Discovery***********************/
+
+
+/* Function to check if other devices are there. */
+function keepAlive()
+{
+  //debugLog("Calling keepalive " );
+  var listIPs = tokenRing;
+  for( var i = 0; i < listIPs.length; i++) 
+  {
+    var post_data = { myIP : i, role: node_functionality };
+    if (listIPs[i] != getMyIP())
+    {
+      generalPOST ( listIPs[i], '/do_keepalive', post_data );
+    }
+  }
+  
+  setTimeout( keepAlive, keepAliveTimeout );
+}
+
+
 
 
 
@@ -188,6 +349,17 @@ function isMember(ip_address)
   if(tokenRing.indexOf(ip_address) == -1) return false;
   else return true;
 }
+
+
+app.set('port', process.env.PORT || tokeRingPortNum);
+http.createServer(app).listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
+  discover();
+  //debugLog( "Discovery Complete." );
+  //debugLog("Waiting to print IPs...");
+  //setTimeout( printIPs , 10000 );
+});
+
 
 module.exports = {
   debugMessages : debugMessages,
