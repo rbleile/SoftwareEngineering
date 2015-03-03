@@ -118,6 +118,8 @@ app.post('/do_get_task', function(req, res) {
 	var validTaskIdx = -1;
 
 	debugLog( "Tasks" + JSON.stringify( tasks ) );
+	debugLog( "Task size: " + tasks.length );
+	debugLog("Bays: " + JSON.stringify( bays ) );
 
 	//check to see if any task have a bay number that can be entered
 	for(var i = 0; i < tasks.length; i++)
