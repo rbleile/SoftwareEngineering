@@ -14,6 +14,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
 
+
+/********* Globals ***********/
+var actionComplete = false;
+var Bag_IP = 0;
+var bag_found = true;
+var entrance = 1;
+var entrance_set = false;
+var TRUCK_IPs = [];
+var bayClear = false;
+var count = 0;
+/********* END Globals ***********/
+
+
 // Create a screen object.
 var screen = blessed.screen();
 
@@ -144,8 +157,6 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 screen.render();
 
 
-var entrance = 1;
-var entrance_set = false;
 
 function setEntranceDoor( door )
 {
@@ -154,15 +165,10 @@ function setEntranceDoor( door )
 }
 /********* END BUTTON ***********/
 
-
 /********* Get Bag IP **********/
-
-var Bag_IP;
-var bag_found = false;
 
 function getBagIP()
 {
-	debugLog( "Getting Bag IP" );
 	var bag = [];
 	bag = tokenRing.getRoleList(1);
 	if (bag.length != 1)
@@ -170,15 +176,11 @@ function getBagIP()
 		if( bag.length > 1 ){
 			if (debug) debugLog("Problem!! More than one bag exists.");
 		}
-		else
-		{
-			setTimeout( getBagIP, 1000 );
-		}
 	}
 	else
 	{
 		Bag_IP = bag[0];
-		log.insertLine(0, "Bag_IP is " + Bag_IP);
+		debugLog("Bag_IP is " + Bag_IP);
 		bag_found = true;
 	}
 }
@@ -187,13 +189,12 @@ function getBagIP()
 
 /********* Get TRUCK IPs **********/
 
-var TRUCK_IPs = [];
 
 function getTRUCKIPs()
 {
 	TRUCK_IPs = tokenRing.getRoleList(2);
 	
-	debugLog("TRUCK_IPs are " + JSON.stringify( TRUCK_IPs) );
+	if( debug) debugLog("TRUCK_IPs are " + JSON.stringify( TRUCK_IPs) );
 
 }
 
@@ -204,73 +205,134 @@ function getTRUCKIPs()
 function getEntrancePoint()
 {
 	doneButton.hidden = true;
-	screen.render();
 	
 	entranceButton1.hidden = false;	
 	entranceButton2.hidden = false;	
 
 	screen.render();
-
-	var responseCheck1 = setInterval(function() {
-		if ( entrance_set ) {
-			debugLog( "Entrance set" );
-			clearInterval( responseCheck1 );
-			setTimeout( displayButton, 10 );
-	}});
 }
 
-function MovePI()
+function getWorkFromBag()
 {
-	getEntrancePoint();
+	var post_data = { "ip" : tokenRing.getMyIP() };
+	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );	
+}
 
-	entrance_set = false;
 
-	debugLog( "Entrance: " + entrance );
 
-	
-	releaseShotgun();
-
+function subroutine( bay )
+{
+	subRoutine_1();
 /*
-	var bay = getWorkFromBag();
-
-	switch( bay )
+	switch( bay+3*entrance )
 	{
 		case 0:
 			if( entrance == 0 )
 			{
-				doSubroutine(0);
+				subRoutine_1();
 			}
 			else
 			{
-				doSubroutine(1);
 			}
 			break;
 		case 1:
 			if( entrance == 0 )
 			{
-				doSubroutine(2);
 			}
 			else
 			{
-				doSubroutine(3);
 			}
 			break;
 		case 2:
 			if( entrance == 0 )
 			{
-				doSubroutine(4);
 			}
 			else
 			{
-				doSubroutine(5);
 			}
 			break;
 		case default:
-			if( debug ) debugLog( "Timeing out move" );
-			setTimeout( Move, 1000 );
+			if( debug ) debugLog( "Defualt case bay should not be hit" );
 			break;
 	}
 */
+}
+function subRoutine_1()
+{
+
+	debugLog( "subRoutine 1" );
+
+	var post_data1 = { inpdirection: 1, inpdistance: 10, inpspeed: 7 };
+
+	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
+
+	debugLog( "subRoutine 1 posted" );
+
+	var callBack1 = setInterval(function(){
+		debugLog( "getting action: " + actionComplete );
+		if( actionComplete )
+		{
+			actionComplete = false;
+			clearInterval( callBack1 );
+
+			var post_data2 = { inpdegrees: 90 }; 
+
+			tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data2 );
+
+			var callBack2 = setInterval( function()
+			{
+				if( actionComplete )
+				{
+					actionComplete = false;
+					clearInterval( callBack2 );	
+
+					var callback3 = setInterval(function(){
+						queryBagBay();	
+
+						if( bayClear)
+						{	
+							clearInterval( callBack3 );
+							bayClear = false;	
+
+							var post_data1 = { inpdirection: 0, inpdistance: 10, inpspeed: 7 };
+
+							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
+
+							var callBack4 = setInterval( function()
+							{
+								if( actionComplete )
+								{
+									actionComplete = false;
+									clearInterval( callBack4 );
+
+									releaseShotgun();
+
+								}
+							}, 100 );
+						}
+					}, 100)
+				}
+			}, 100 );
+		}
+	}, 100);
+
+}
+
+
+function MovePI()
+{
+	getEntrancePoint();
+
+	var responseCheck1 = setInterval(function() {
+		if ( entrance_set ) {
+			debugLog( "Entrance set" );
+			entrance_set = false;
+			clearInterval( responseCheck1 );
+			displayButton();
+			debugLog( "Entrance: " + entrance );
+
+			getWorkFromBag();
+	}}, 100);
 }
 /********* END MovePI **********/
 
@@ -476,7 +538,6 @@ function releaseShotgun()
 /********* END SHOTGUN **********/
 
 
-var actionComplete = false;
 
 function setActionComplete()
 {
@@ -503,15 +564,39 @@ function displayButton()
 	doneButton.setContent( "{center}D = Action Completed{/center}");
 	doneButton.style.bg = "green";
 	doneButton.style.fg = "white";
+	doneButton.hidden = false;
 	screen.render();
 }
 
+app.post( '/do_return_task', function( req, res ){
+
+	var body = req.body;
+
+	if( body.isValid )
+	{
+		var task_id = body.id;
+		var bay_num = body.bayNumber; 
+
+		subroutine( bay_num );
+
+	}
+	else
+	{
+		debugLog( "Waiting for work" );
+		setTimeout( getWorkFromBag, 1000 );
+	}
+
+});
 
 app.post('/action_move', function(req, res) {
+	debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed );
+    if(debug) debugLog ("Run Command: Move( " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 	 displayButton();
+
+	actionComplete = true;	
+
 });
 
 app.post('/action_turninplace', function(req, res) {
@@ -528,7 +613,6 @@ app.post('/action_turnsensor', function(req, res) {
     displayButton();
 });
 
-var count = 0;
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: " + the_body.command);
@@ -540,33 +624,36 @@ app.post('/action_readsensor', function(req, res) {
     displayButton();
 });
 
-// Render the screen.
-screen.render();
-
 function initializeTruck()
 {
 
-	debugLog( "Initalizing Truck PI"  );
+	debugLog( "Initalizing Truck PI" );
 
-	getBagIP();
 
-	// var responceCheck1 = setInterval( function() {
-	// 	if(bag_found)
-	// 	{
-	// 		clearInterval( responceCheck1 );
-	// 	} 
-	// });
+	if( debug) debugLog( "Getting Bag IP" );
 
-	getTRUCKIPs();	
+	var responceCheck1 = setInterval( function() {
+		if(bag_found)
+		{
+			clearInterval( responceCheck1 );
+			getTRUCKIPs();	
 
-	if(debug) debugLog( "Calling Shotgun" );
-	callShotGun();
+			if(debug) debugLog( "Calling Shotgun" );
+			callShotGun();
+		} 
+		else
+		{
+			getBagIP();
+		}
+	}, 500);
 }
+
+screen.render();
 
 app.set('port', process.env.PORT || 3000);
 
 http.createServer(app).listen(app.get('port'), function(){
-	debugLog("Express server listening on port " + app.get('port'));
-	setTimeout( initializeTruck, 2000 );
+	debugLog("Express server listening on port ");
 	debugLog("Five Seconds for discovery");
+	setTimeout( initializeTruck, 5000 );
 });
