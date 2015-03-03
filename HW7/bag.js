@@ -183,8 +183,8 @@ curl -H "Content-Type: application/json" -d '{"id" : "1",  "bayNumber" : "0"}' h
 function printIPs()
 {
 	var list =  tokenRing.getRing();
-	
-	console.log(list);
+	var list2 = tokenRing.getRoleList(1);
+	console.log(list+" "+list2);
 
 	setTimeout( printIPs , 1000 );
 }

@@ -44,13 +44,13 @@ function generalPOST ( genHost, genPath, post_data, err, res )
   {
     err = function(e) 
     {
-      if(debug) debugLog("Lost connection to " + genHost + "removing from ring");
+      if(debug) console.log("Lost connection to " + genHost + "removing from ring");
 
         removeRingMember(genHost);
 
 //      processApproval(genHost);
 
-      if(debug) debugLog("generalPOST err called "+ e);
+      if(debug) console.log("generalPOST err called "+ e);
     };
   }
 
@@ -364,6 +364,7 @@ function getRoleList(roleId)
 
   for(var i = 0; i < num; i++)
   {
+    console.log("role " + ringRoles[i] );
     if(ringRoles[i] == roleId)
     {
       roleList.push(tokenRing[i]);
