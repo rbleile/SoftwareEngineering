@@ -205,7 +205,7 @@ function addtaskFunctionality()
 	var _responseCheck1 = setInterval(function() {
 		if (response1) {
 			clearInterval(_responseCheck1);
-			//inputBox1.setContent("");
+			inputBox1.setContent("");
 			baynum = response1;
 			response1 = "";
 			var post_data = { id : count, bayNumber : baynum };
@@ -270,7 +270,7 @@ function getBagIP()
 	else
 	{
 		Bag_IP = bag[0];
-		log2.insertLine("Bag_IP is " + Bag_IP);
+		log2.insertLine(0, "Bag_IP is " + Bag_IP);
 	}
 }
 
