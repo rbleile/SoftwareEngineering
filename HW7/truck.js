@@ -293,10 +293,11 @@ function subRoutine_1()
 					actionComplete = false;
 					clearInterval( callBack2 );	
 
+					var bayClear = true;
+
 					var callback3 = setInterval(function(){
 						//queryBagBay();	
 
-						bayClear = true;
 
 						if( bayClear)
 						{	
