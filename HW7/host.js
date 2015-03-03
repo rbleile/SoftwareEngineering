@@ -208,7 +208,7 @@ function addtaskFunctionality()
 			inputBox1.setContent("");
 			baynum = response1;
 			response1 = "";
-			var post_data = { "uniqID" : count, "bayNumber" : baynum };
+			var post_data = { "id" : count, "bayNumber" : baynum };
 			tokenRing.generalPOST(Bag_IP, '/do_insert_task', post_data);
 			count++;
 			defaultmenu();
