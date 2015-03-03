@@ -186,6 +186,7 @@ function getBagIP()
 	if (bag.length != 1)
 	{
 		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
+		setTimeout(getBagIP, 1000);
 	}
 	else
 	{
@@ -195,7 +196,11 @@ function getBagIP()
 }
 
 
+
+
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	debugLog("I am bay "+bay_Number);
+
+	setTimeout(getBagIP, 1000);
 });
