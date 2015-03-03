@@ -399,8 +399,14 @@ http.createServer(app).listen(app.get('port'), function(){
 
 });
 
+function setRole(role)
+{
+    node_functionality= role;
+}
+
 
 module.exports = {
+  setRole : setRole
   debugMessages : debugMessages,
   getMyIP : getMyIP,
   getMyIPIndex : getMyIPIndex,

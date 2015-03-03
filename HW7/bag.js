@@ -6,6 +6,8 @@ var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
 
+tokenRing.setRole(1);
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -182,7 +184,7 @@ function printIPs()
 {
 	var list =  tokenRing.getRing();
 	
-		console.log(list);
+	console.log(list);
 
 	setTimeout( printIPs , 1000 );
 }
