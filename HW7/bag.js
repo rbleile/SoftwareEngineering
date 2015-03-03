@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
 
-tokenRing.setRole(0);
+tokenRing.setRole(1);
 
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
@@ -128,6 +128,8 @@ app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "received task request: " + JSON.stringify( the_body) );
 	var validTaskIdx = -1;
+
+	//check to see if any task have a bay number that can be entered
 	for(var int i = 0; i < tasks.length; i++)
 	{
 		var bay = tasks[i].bayNumber - 1;
