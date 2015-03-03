@@ -149,7 +149,6 @@ app.post('/do_get_task', function(req, res) {
 		var task = tasks[validTaskIdx];
 		tasks.splice(validTaskIdx, 1);
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
-
 		res.json(trueResponse);	
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
 	}
