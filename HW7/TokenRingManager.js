@@ -18,7 +18,7 @@ var tokeRingPort='2999';
 var tokeRingPortNum=2999;
 var myIP;
 var tokenRing = [];
-var debug = false;
+var debug = true;
 //find ip address
 var ifaces = os.networkInterfaces();
 
@@ -314,7 +314,7 @@ function removeRingMember(ip_address)
     if(debug) console.log("DNE: "+ ip_address);
   }
 
-  if(debug) console.log("Current group : " + tokenRing);
+  if(true) console.log("Current group : " + tokenRing);
 }
 
 /* remove neighbor IP addresses in token ring */
@@ -396,6 +396,7 @@ http.createServer(app).listen(app.get('port'), function(){
   //debugLog( "Discovery Complete." );
   //debugLog("Waiting to print IPs...");
   //setTimeout( printIPs , 10000 );
+
 });
 
 

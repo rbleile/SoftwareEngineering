@@ -170,10 +170,9 @@ app.post('/do_insert_result', function(req, res) {
 function printIPs()
 {
 	var list =  tokenRing.getRing();
-	for( var i = 0; i < list.length; i++)
-	{
-		console.log(list[0]);
-	}
+	
+		console.log(list);
+
 	setTimeout( printIPs , 1000 );
 }
 
