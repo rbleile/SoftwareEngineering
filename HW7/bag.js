@@ -380,7 +380,7 @@ app.post('/do_get_result', function(req, res) {
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 		debugLog("Returning result "+JSON.stringify(trueResponse));
 		res.json(trueResponse);	
-		tokenRing.generalPOST(the_body.ip, "/do_return_result",falseResponse);
+		tokenRing.generalPOST(the_body.ip, "/do_return_result",trueResponse);
 	}
 	else
 	{
