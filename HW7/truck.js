@@ -94,7 +94,7 @@ var doneButton = blessed.box({
     fg: 'white',
     bg: 'green',
     content: '{center}D = Action Completed{/center}',
-    hidden: true 
+    hidden: true, 
     tags: true
 });
 doneButton.on('click', function(data) {
@@ -114,7 +114,7 @@ var entranceButton1 = blessed.box({
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 1 {/center}',
-    tags: true
+    tags: true,
     hidden: true 
 });
 entranceButton1.on('click', function(data) {
@@ -133,7 +133,7 @@ var entranceButton2 = blessed.box({
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 2 {/center}',
-    tags: true
+    tags: true,
     hidden: true 
 });
 entranceButton2.on('click', function(data) {
