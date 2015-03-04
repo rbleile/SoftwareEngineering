@@ -65,7 +65,7 @@ var logTasks = blessed.scrollabletext({
     height: '50%',
     top: '0%',
     left: '64%',
-	tags: false,
+	tags: true,
 	censor: false,
 	inputOnFocus: false,
 	border: {
@@ -87,7 +87,7 @@ var logResults = blessed.scrollabletext({
 	left: '64%',
 	width: '36%',
 	height: '50%',
-	tags: false,
+	tags: true,
 	censor: false,
 	inputOnFocus: false,
 	border: {
@@ -240,29 +240,39 @@ screen.render();
 
 function refreshDisplay() {
 
-	debugLog("Refreshing the display...");
-
 	var bay1TaskCount = 0;
 	var bay2TaskCount = 0;
 	var bay3TaskCount = 0;
+	var bay1Risk = "";
+	var bay2Risk = "";
+	var bay3Risk = "";
 
-	var pendingTasks = "Total == " + tasks.length + "\n";
-	for (var i = 0; i < tasks.length; i++)
+	var pendingTasks = "Total = {bold}" + tasks.length + "{/bold}\n";
+	for (var i = 0; i < tasks.length; i++) {
 		pendingTasks += "[" + tasks[i].id + "] @ Bay " + tasks[i].bayNumber + "\n";
+		if (tasks[i].bayNumber == 1) bay1TaskCount++;
+		if (tasks[i].bayNumber == 2) bay2TaskCount++;
+		if (tasks[i].bayNumber == 3) bay3TaskCount++;
+	};
 
-	var pendingResults = "Total == " + results.length + "\n";
-	for (var i = 0; i < results.length; i++)
+	var pendingResults = "Total = {bold}" + results.length + "{/bold}\n";
+	for (var i = 0; i < results.length; i++) {
 		pendingResults += "[" + results[i].id + "] @ Bay " + results[i].bayNumber + "\n";
+	};
 
-	bay1Work.setContent("...");
-	bay2Work.setContent("...");
-	bay3Work.setContent("...");
+	bay1Work.setContent("" + bay1TaskCount);
+	bay2Work.setContent("" + bay2TaskCount);
+	bay3Work.setContent("" + bay3TaskCount);
 
-	bay1Sensor.setContent("...");
-	bay2Sensor.setContent("...");
-	bay3Sensor.setContent("...");
+	if (bays[0]) bay1Risk = "/ X X \\\nDANGER!\n\\ X X /"; else bay1Risk = "--------\n  SAFE  \n--------";
+	if (bays[1]) bay2Risk = "/ X X \\\nDANGER!\n\\ X X /"; else bay2Risk = "--------\n  SAFE  \n--------";
+	if (bays[2]) bay3Risk = "/ X X \\\nDANGER!\n\\ X X /"; else bay3Risk = "--------\n  SAFE  \n--------";
 
-	bay2Sensor.hidden = !bay2Sensor.hidden;
+	bay1Sensor.setContent(bay1Risk);
+	bay2Sensor.setContent(bay2Risk);
+	bay3Sensor.setContent(bay3Risk);
+	logTasks.setContent(pendingTasks);
+	logResults.setContent(pendingResults);
 
 	screen.render();
 
