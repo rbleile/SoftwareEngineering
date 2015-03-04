@@ -295,21 +295,49 @@ function debugLog( msg )
 var tasks = new Array();
 var results = new Array();
 
+
 app.post('/do_insert_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
-	var task = { id : the_body,  bayNumber : the_body.bayNumber}
+	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
 	tasks.push(task);
-	var resString =  "task inserted at bay "+JSON.stringify(task);
+
+	debugLog( "Task Length: " + tasks.length );
+
+	var resString =  "task inserted at bay "+ JSON.stringify(task.bayNumber);
 	debugLog(resString);
 	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
+refreshDisplay();
+});
+
+app.post('/do_insert_result', function(req, res) {
+	var the_body = req.body;  
+	debugLog ( "Result received: " + JSON.stringify( the_body) );
+	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
+	results.push(task);
+	var resString =  "Result inserted "+JSON.stringify(task);
+	var res_data = { result : resString, id : task.id };    
+	res.json(res_data);
+refreshDisplay();
+});
+
+app.post('/do_get_bays', function(req, res){
+
+	var the_body = req.body;  
+	res.json(the_body);
+
+	tokenRing.generalPOST( the_body.ip, '/do_recievedBays', bays );
 });
 
 app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "received task request: " + JSON.stringify( the_body) );
 	var validTaskIdx = -1;
+
+	debugLog( "Tasks" + JSON.stringify( tasks ) );
+	debugLog( "Task size: " + tasks.length );
+	debugLog("Bays: " + JSON.stringify( bays ) );
 
 	//check to see if any task have a bay number that can be entered
 	for(var i = 0; i < tasks.length; i++)
@@ -337,6 +365,7 @@ app.post('/do_get_task', function(req, res) {
 		res.json(falseResponse);
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",falseResponse);
 	}
+refreshDisplay();
 });
 
 app.post('/do_get_result', function(req, res) {
@@ -359,6 +388,7 @@ app.post('/do_get_result', function(req, res) {
 
 		tokenRing.generalPOST(the_body.ip, "/do_return_result",falseResponse);
 	}
+refreshDisplay();
 	
 });
 
@@ -377,6 +407,7 @@ app.post("/do_sensor_update", function(req, res) {
 	
 	bays[the_body.bayNumber] = the_body.isFull;
 	debugLog("Recieved Sensor update from bay "+ the_body.bayNumber+" " +the_body.isFull);
+refreshDisplay();
 });
 
 
@@ -390,8 +421,5 @@ function printIPs()
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	//discover();
-	//debugLog( "Discovery Complete." );
-	//debugLog("Waiting to print IPs...");
 	setTimeout( printIPs , 8000 );
 });
