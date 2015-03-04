@@ -32,6 +32,7 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 });
 
 screen.key(['r', 'R'], function(ch, key) {
+	debugLog("Refreshing. [My IP:" + tokenRing.getMyIP() + "]");
     return refreshDisplay();
 });
 
@@ -243,8 +244,6 @@ bay3Sensor.setLabel({ text: '[SENSOR:3]', side: 'left' })
 screen.render();
 
 function refreshDisplay() {
-
-	debugLog("Refreshing the display...");
     
 	var bay1TaskCount = 0;
 	var bay2TaskCount = 0;
@@ -270,9 +269,29 @@ function refreshDisplay() {
 	bay2Work.setContent("" + bay2TaskCount);
 	bay3Work.setContent("" + bay3TaskCount);
 
-	if (bays[0]) bay1Risk = "/ X X \\\nDANGER!\n\\ X X /"; else bay1Risk = "--------\n  SAFE  \n--------";
-	if (bays[1]) bay2Risk = "/ X X \\\nDANGER!\n\\ X X /"; else bay2Risk = "--------\n  SAFE  \n--------";
-	if (bays[2]) bay3Risk = "/ X X \\\nDANGER!\n\\ X X /"; else bay3Risk = "--------\n  SAFE  \n--------";
+	if (bays[0]) {
+		bay1Risk = "/ X X \\\nDANGER!\n\\ X X /";
+		bay1Sensor.style = { fg: 'white', bg: 'red', bold: true };
+	} else {
+		bay1Risk = "--------\n  SAFE  \n--------";
+		bay1Sensor.style = { fg: 'white', bg: 'green', bold: true };
+	}
+
+	if (bays[1]) {
+		bay2Risk = "/ X X \\\nDANGER!\n\\ X X /";
+		bay2Sensor.style = { fg: 'white', bg: 'red', bold: true };
+	} else {
+		bay2Risk = "--------\n  SAFE  \n--------";
+		bay2Sensor.style = { fg: 'white', bg: 'green', bold: true };
+	}
+
+	if (bays[2]) {
+		bay3Risk = "/ X X \\\nDANGER!\n\\ X X /";
+		bay3Sensor.style = { fg: 'white', bg: 'red', bold: true };
+	} else {
+		bay3Risk = "--------\n  SAFE  \n--------";
+		bay3Sensor.style = { fg: 'white', bg: 'green', bold: true };
+	}
 
 	bay1Sensor.setContent(bay1Risk);
 	bay2Sensor.setContent(bay2Risk);
@@ -400,7 +419,7 @@ app.post("/do_sensor_update", function(req, res) {
 	var the_body = req.body;
 	
 	bays[the_body.bayNumber] = the_body.isFull;
-	debugLog("Recieved Sensor update from bay "+ ( the_body.bayNumber + 1 ) + " " +the_body.isFull);
+	debugLog("Recieved Sensor update from bay "+ ( parseInt(the_body.bayNumber) + 1 ) + " " +the_body.isFull);
 refreshDisplay();
 });
 
