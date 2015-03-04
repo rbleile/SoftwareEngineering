@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
+var tasks = [];
+var results = [];
 var bays = [];
 bays[0] = true;
 bays[1] = true; //init bays full
@@ -298,10 +300,6 @@ function debugLog( msg )
  **************************************************/
 
 
-var tasks = new Array();
-var results = new Array();
-
-
 app.post('/do_insert_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
@@ -396,16 +394,6 @@ app.post('/do_get_result', function(req, res) {
 	}
 refreshDisplay();
 	
-});
-
-app.post('/do_insert_result', function(req, res) {
-	var the_body = req.body;  
-	debugLog ( "Result received: " + JSON.stringify( the_body) );
-	var task = { id : the_body,  bayNumber : the_body.bayNumber}
-	results.push(task);
-	var resString =  "Result inserted "+JSON.stringify(task);
-	var res_data = { result : resString, id : task.id };    
-	res.json(res_data);
 });
 
 app.post("/do_sensor_update", function(req, res) {
