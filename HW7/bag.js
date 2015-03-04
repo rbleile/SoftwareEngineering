@@ -400,7 +400,7 @@ app.post("/do_sensor_update", function(req, res) {
 	var the_body = req.body;
 	
 	bays[the_body.bayNumber] = the_body.isFull;
-	debugLog("Recieved Sensor update from bay "+ the_body.bayNumber+" " +the_body.isFull);
+	debugLog("Recieved Sensor update from bay "+ ( the_body.bayNumber + 1 ) + " " +the_body.isFull);
 refreshDisplay();
 });
 
