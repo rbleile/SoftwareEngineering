@@ -112,8 +112,8 @@ var logResults = blessed.scrollabletext({
 var bay1Sensor = blessed.box({
     width: '20%',
     height: '20%',
-    top: '0',
-    left: '0',
+    top: '0%',
+    left: '0%',
     align: 'center',
     valign: 'middle',
    	content: 'SENSOR[1]',
@@ -128,7 +128,7 @@ var bay1Sensor = blessed.box({
 var bay2Sensor = blessed.box({
     width: '20%',
     height: '20%',
-    top: '0',
+    top: '0%',
     left: '22%',
     align: 'center',
     valign: 'middle',
@@ -144,7 +144,7 @@ var bay2Sensor = blessed.box({
 var bay3Sensor = blessed.box({
     width: '20%',
     height: '20%',
-    top: '0',
+    top: '0%',
     left: '44%',
     align: 'center',
     valign: 'middle',
@@ -162,7 +162,7 @@ var bay1Work = blessed.scrollabletext({
     width: '20%',
     height: '20%',
     top: '25%',
-    left: '0',
+    left: '0%',
     align: 'center',
     valign: 'middle',
    	content: 'WORK(1)',
@@ -224,7 +224,6 @@ screen.append(bay1Work);
 screen.append(bay2Work);
 screen.append(bay3Work);
 
-/*
 logEvents.setLabel({ text: '{  EVENT LOG  }', side: 'left' });
 logTasks.setLabel({ text: '{  PENDING TASKS  }', side: 'left' });
 logResults.setLabel({ text: '{  UNREAD RESULTS  }', side: 'left' });
@@ -236,7 +235,6 @@ bay3Work.setLabel({ text: '[WORK:3]', side: 'right' });
 bay1Sensor.setLabel({ text: '[SENSOR:1]', side: 'left' })
 bay2Sensor.setLabel({ text: '[SENSOR:2]', side: 'left' })
 bay3Sensor.setLabel({ text: '[SENSOR:3]', side: 'left' })
-*/
 
 screen.render();
 
