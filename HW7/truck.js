@@ -153,6 +153,11 @@ screen.append( doneButton );
 
 screen.render();
 
+function hideDone()
+{
+	doneButton.setContent("{center}D = Action Completed{/center}");
+	doneButton.hidden = true;	
+}
 function setEntranceDoor( door )
 {
 	entrance = door;
@@ -359,7 +364,9 @@ function subRoutine( task, DB, Db, rot )
 															actionComplete = false;
 															clearInterval( callBack7 );
 
+															hideDone();
 															debugLog( "Releasing Shotgun" );
+															
 															releaseShotgun();
 														}
 													}, 500 );
