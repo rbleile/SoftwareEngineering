@@ -304,14 +304,15 @@ function subRoutine_1( task )
 
 			var callBack2 = setInterval( function()
 			{
+				debugLog( "getting action: " + actionComplete );
 				if( actionComplete )
 				{
 					actionComplete = false;
 					clearInterval( callBack2 );
 
 					var callBack3 = setInterval(function(){
-
-						if( bayClear)
+						debugLog( "bayClear: " + bayClear );
+						if( bayClear )
 						{	
 							clearInterval( callBack3 );
 							bayClear = false;	
@@ -322,6 +323,7 @@ function subRoutine_1( task )
 
 							var callBack4 = setInterval( function()
 							{
+								debugLog( "getting action: " + actionComplete );
 								if( actionComplete )
 								{
 									actionComplete = false;
@@ -335,6 +337,7 @@ function subRoutine_1( task )
 
 									var callBack5 = setInterval( function()
 									{
+										debugLog( "getting action: " + actionComplete );
 										if( actionComplete )
 										{
 											actionComplete = false;
@@ -346,6 +349,7 @@ function subRoutine_1( task )
 
 											var callBack6 = setInterval( function()
 											{
+												debugLog( "getting action: " + actionComplete );
 												if( actionComplete )
 												{
 													actionComplete = false;
@@ -357,6 +361,7 @@ function subRoutine_1( task )
 
 													var callBack7 = setInterval( function()
 													{
+														debugLog( "getting action: " + actionComplete );
 														if( actionComplete )
 														{
 															actionComplete = false;
@@ -365,13 +370,13 @@ function subRoutine_1( task )
 															releaseShotgun();
 
 														}
-													}, 100 );
+													}, 500 );
 												}
-											}, 100 );
+											}, 500 );
 										}
-									}, 100 );
+									}, 500 );
 								}
-							}, 100 );
+							}, 500 );
 						}
 						else
 						{
@@ -380,9 +385,9 @@ function subRoutine_1( task )
 						}
 					}, 500)
 				}
-			}, 100 );
+			}, 500 );
 		}
-	}, 100);
+	}, 500);
 
 }
 
@@ -686,21 +691,21 @@ app.post('/action_move', function(req, res) {
 
 app.post('/action_turninplace', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdegrees + " degrees");
+    if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_turnsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdegrees + " degrees");
+    if(debug) debugLog ("Run Command: turnsens " + the_body.inpdegrees + " degrees");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command);
+    if(debug) debugLog ("Run Command: readsens");
 	//log2.insertLine(0, "Object is " + JSON.stringify(the_body.inpdistance) + " inches away" );
     res.json(req.body);
 	count++;
