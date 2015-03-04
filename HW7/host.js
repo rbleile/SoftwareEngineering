@@ -177,6 +177,10 @@ screen.key(['r', 'R'], function(ch, key) {
     inresultFunctionality();
 });
 
+screen.key(['w', 'W'], function(ch, key) {
+    defaultmenu();
+});
+
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
@@ -244,10 +248,10 @@ function inresultFunctionality()
 	addtaskButton.style.fg = "black";
 	addtaskButton.hidden = true;
 
+	screen.render();
+
 	var post_data = { ip : tokenRing.getMyIP() };
 	tokenRing.generalPOST(Bag_IP, '/do_get_result', post_data);
-
-	screen.render();
 }
 
 function debugLog( msg ) 
