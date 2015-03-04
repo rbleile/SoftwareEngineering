@@ -244,6 +244,8 @@ function subroutine( bay )
 
 	var task_data = { id : task_id, bayNumber : bay_num };
 
+	debugLog( "Task_data: " + JSON.stringify( task_data ) );
+
 	switch( bay-1 )
 	{
 		case 0:
