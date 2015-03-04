@@ -29,11 +29,11 @@ def main():
 		""")
 		ans = raw_input("Selection (1-6): ")
 		if ans == "1":
-			import move
+			os.system("move.py 1 10 6")
 		elif ans == "2":	
-			import turninplace
+			os.system("turninplace.py")
 		elif ans == "3":
-			import turnsensor
+			os.system("turnsensor.py")
 		elif ans == "4":
 			print("Distance from Object (in cm): " + str(ReadSensor()))
 		elif ans == "5":
