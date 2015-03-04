@@ -244,7 +244,7 @@ function subroutine( bay )
 
 	var task_data = { id : task_id, bayNumber : bay_num };
 
-	switch( bay )
+	switch( bay-1 )
 	{
 		case 0:
 			if( entrance == 0 )
