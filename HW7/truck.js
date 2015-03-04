@@ -86,23 +86,16 @@ var box = blessed.box({
 
 /********* BUTTON CODE *********/
 var doneButton = blessed.box({
-    parent: screen,
     top: '80%',
     height: '20%',
     width: '50%',
     left: '0%',
-    border: {
-        type: 'line',
-        fg: 'white'
-    },
+    border: false,
     fg: 'white',
     bg: 'green',
     content: '{center}D = Action Completed{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'red'
-    },
-    hidden: true 
+    hidden: true, 
+    tags: true
 });
 doneButton.on('click', function(data) {
 	setActionComplete();
@@ -113,22 +106,15 @@ screen.key(['d', 'D'], function(ch, key) {
 
 
 var entranceButton1 = blessed.box({
-    parent: screen,
     top: '80%',
     height: '20%',
     width: '30%',
     left: '0%',
-    border: {
-        type: 'line',
-        fg: 'yellow'
-    },
+    border: false,
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 1 {/center}',
     tags: true,
-    hoverEffects: {
-        bg: 'red'
-    },
     hidden: true 
 });
 entranceButton1.on('click', function(data) {
@@ -139,22 +125,15 @@ screen.key(['1'], function(ch, key) {
 });
 
 var entranceButton2 = blessed.box({
-    parent: screen,
     top: '80%',
     height: '20%',
     width: '30%',
     left: '50%',
-    border: {
-        type: 'line',
-        fg: 'yellow'
-    },
+    border: false,
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 2 {/center}',
     tags: true,
-    hoverEffects: {
-        bg: 'red'
-    },
     hidden: true 
 });
 entranceButton2.on('click', function(data) {
@@ -166,15 +145,21 @@ screen.key(['2'], function(ch, key) {
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
+
+
+screen.append( entranceButton1 );
+screen.append( entranceButton2 );
+screen.append( doneButton );
+
 screen.render();
-
-
 
 function setEntranceDoor( door )
 {
 	entrance = door;
 	entrance_set = true;
 
+	entranceButton1.setContent("{center} Enter Door 1 {/center}");
+	entranceButton2.setContent("{center} Enter Door 2 {/center}");
 	entranceButton1.hidden = true;
 	entranceButton2.hidden = true;
 
@@ -221,16 +206,14 @@ function getTRUCKIPs()
 
 /*********    MovePI    **********/
 
-function unsetEntranceButton()
-{
-	entranceButton1.hidden = true;	
-	entranceButton2.hidden = true;	
-	screen.render();
-}
 function getEntrancePoint()
 {
-	doneButton.hidden = true;
+    
+	doneButton.setContent("{center}D = Action Completed{/center}");
+	doneButton.hidden = true;	
 	
+	entranceButton1.setContent("{center} Enter Door 1 {/center}");
+	entranceButton2.setContent("{center} Enter Door 2 {/center}");
 	entranceButton1.hidden = false;	
 	entranceButton2.hidden = false;	
 
@@ -292,15 +275,15 @@ function subroutine( bay )
 function subRoutine( task, DB, Db, rot )
 {
 
-	debugLog( "subRoutine 1" );
+	//debugLog( "subRoutine 1" );
 
 	var post_data1 = { inpdirection: 1, inpdistance: DB, inpspeed: 7 };
 
 	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
 
-	debugLog( "subRoutine 1 posted" );
+	//debugLog( "subRoutine 1 posted" );
 
-	debugLog( "getting action: " + actionComplete );
+	//debugLog( "getting action: " + actionComplete );
 	var callBack1 = setInterval(function(){
 		if( actionComplete )
 		{
@@ -311,7 +294,7 @@ function subRoutine( task, DB, Db, rot )
 
 			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
 
-			debugLog( "getting action: " + actionComplete );
+			////debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
 			{
 				if( actionComplete )
@@ -319,7 +302,7 @@ function subRoutine( task, DB, Db, rot )
 					actionComplete = false;
 					clearInterval( callBack2 );
 
-						debugLog( "bayClear: " + bayClear );
+						//debugLog( "bayClear: " + bayClear );
 					var callBack3 = setInterval(function(){
 						if( bayClear )
 						{	
@@ -330,7 +313,7 @@ function subRoutine( task, DB, Db, rot )
 
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
-								debugLog( "getting action: " + actionComplete );
+								//debugLog( "getting action: " + actionComplete );
 							var callBack4 = setInterval( function()
 							{
 								if( actionComplete )
@@ -344,7 +327,7 @@ function subRoutine( task, DB, Db, rot )
 
 									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
-										debugLog( "getting action: " + actionComplete );
+										//debugLog( "getting action: " + actionComplete );
 									var callBack5 = setInterval( function()
 									{
 										if( actionComplete )
@@ -356,7 +339,7 @@ function subRoutine( task, DB, Db, rot )
 
 											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
 
-												debugLog( "getting action: " + actionComplete );
+												//debugLog( "getting action: " + actionComplete );
 											var callBack6 = setInterval( function()
 											{
 												if( actionComplete )
@@ -368,7 +351,7 @@ function subRoutine( task, DB, Db, rot )
 
 													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
 
-														debugLog( "getting action: " + actionComplete );
+														//debugLog( "getting action: " + actionComplete );
 													var callBack7 = setInterval( function()
 													{
 														if( actionComplete )
@@ -389,7 +372,7 @@ function subRoutine( task, DB, Db, rot )
 						}
 						else
 						{
-							debugLog( "get Bays"  );
+							//debugLog( "get Bays"  );
 							var post_data_bays = { ip: tokenRing.getMyIP() };
 							tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
 						}
@@ -407,7 +390,6 @@ function MovePI()
 
 	var responseCheck1 = setInterval(function() {
 		if ( entrance_set ) {
-			unsetEntranceButton();
 			debugLog( "Entrance set" );
 			entrance_set = false;
 			clearInterval( responseCheck1 );
@@ -750,8 +732,6 @@ function initializeTruck()
 		}
 	}, 500);
 }
-
-screen.render();
 
 app.set('port', process.env.PORT || 3000);
 
