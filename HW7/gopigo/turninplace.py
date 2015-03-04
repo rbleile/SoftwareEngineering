@@ -1,3 +1,8 @@
+import sys, getopt, time
+from gopigo import *
+
+DistancePerPulse = 0.4361
+
 # +degrees turn left, -degrees turn right
 def TurnInPlace(degrees):
 	#enable_encoders()
@@ -12,9 +17,8 @@ def TurnInPlace(degrees):
 		enc_tgt(1,1,numPulses)
 		right_rot()
 
-def main():
-	inpRobotDegrees = int(raw_input("\nDegrees (positive number for left, negative number for right): "))
-	TurnInPlace(inpRobotDegrees)
+def main(deg):
+	TurnInPlace(deg)
 
 if __name__=="__main__":
-	main()
+	main(int(arg1))

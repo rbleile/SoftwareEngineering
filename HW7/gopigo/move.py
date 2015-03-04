@@ -1,15 +1,13 @@
-#------ GoPiGo Wheels ------#
-#Diameter: 2.5in
-#Radius: 1.25in
-#Circumference: (2)(pi)(r) = (2)(pi)(1.25in) = 2.5(3.14) = 7.85 
-#Encoder Pulse:	18 times per revolution
-#Distance Moved per Pulse: circumference/18 = (2.5(pi))/(18) = 0.1389(pi) = 0.4361 in
+import sys, getopt, time
+from gopigo import *
+
+DistancePerPulse = 0.4361
 
 # direction is true if forward, false if backward
 # distance is in inches
 # speed is fixed range 0..10
 def Move(direction, distance, speed):
-	print("\nIn Move() function")
+	#print("\nIn Move() function")
 
 	#enable_encoders()
 
@@ -29,11 +27,8 @@ def Move(direction, distance, speed):
 		print enc_tgt(1,1,numPulses)
 		bwd()
 
-def main():
-	inpDirection = int(raw_input("\nDirection (1 for fwd, 0 for bwd): "))
-	inpDistance = float(raw_input("Distance (in inches): "))
-	inpSpeed = int(raw_input("Speed (0-10): "))
-	Move(inpDirection, inpDistance, inpSpeed)
+def main(dir, dist, speed):
+	Move(dir, dist, speed)
 
 if __name__=="__main__":
-	main()
+	main(int(arg1), float(arg2), int(arg3))

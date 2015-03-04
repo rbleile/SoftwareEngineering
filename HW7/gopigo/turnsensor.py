@@ -1,3 +1,8 @@
+import sys, getopt, time
+from gopigo import *
+
+DistancePerPulse = 0.4361
+
 # +degrees turn left, -degrees turn right
 # Cannot turn beyond 180 degree freedom of action
 def TurnSensor(degrees):
@@ -9,9 +14,8 @@ def TurnSensor(degrees):
 		time.sleep(0.5)
 		disable_servo()
 
-def main():
-	inpSensorDegrees = int(raw_input("\nDegrees (20-150): "))
-	TurnSensor(inpSensorDegrees)
+def main(deg):
+	TurnSensor(deg)
 
 if __name__=="__main__":
-	main()
+	main(int(arg1))
