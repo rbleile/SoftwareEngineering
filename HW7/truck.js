@@ -22,8 +22,20 @@ var bag_found = false;
 var entrance = 1;
 var entrance_set = false;
 var TRUCK_IPs = [];
+var bays = [];
+var task_id = -1;
+var bay_num = -1;
 var bayClear = false;
 var count = 0;
+
+var D1B1 = 3;
+var D1B2 = 6;
+var D1B3 = 9;
+var D2B1 = 9;
+var D2B2 = 6;
+var D2B3 = 3;
+
+var Dbay = 5;
 /********* END Globals ***********/
 
 
@@ -162,6 +174,12 @@ function setEntranceDoor( door )
 {
 	entrance = door;
 	entrance_set = true;
+
+	entranceButton1.hidden = true;
+	entranceButton2.hidden = true;
+
+	screen.render();
+
 }
 /********* END BUTTON ***********/
 
@@ -225,108 +243,163 @@ function getWorkFromBag()
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );	
 }
 
-
-
 function subroutine( bay )
 {
-	subRoutine_1();
-/*
-	switch( bay+3*entrance )
+
+	var task_data = { id : task_id, bayNumber : bay_num };
+
+	debugLog( "Task_data: " + JSON.stringify( task_data ) );
+
+	switch( bay-1 )
 	{
 		case 0:
-			if( entrance == 0 )
+			if( entrance == 1 )
 			{
-				subRoutine_1();
+				subRoutine( task_data, D1B1, Dbay, 1 );
 			}
 			else
 			{
+				subRoutine( task_data, D2B1, Dbay, -1 );
 			}
 			break;
 		case 1:
-			if( entrance == 0 )
+			if( entrance == 1 )
 			{
+				subRoutine( task_data, D1B2, Dbay, 1 );
 			}
 			else
 			{
+				subRoutine( task_data, D2B2, Dbay, -1 );
 			}
 			break;
 		case 2:
-			if( entrance == 0 )
+			if( entrance == 1 )
 			{
+				subRoutine( task_data, D1B3, Dbay, 1 );
 			}
 			else
 			{
+				subRoutine( task_data, D2B3, Dbay, -1 );
 			}
 			break;
-		case default:
-			if( debug ) debugLog( "Defualt case bay should not be hit" );
+		default:
+			if( debug ) debugLog( "Default case bay should not be hit" );
 			break;
 	}
-*/
 }
-function subRoutine_1()
+
+
+function subRoutine( task, DB, Db, rot )
 {
 
 	debugLog( "subRoutine 1" );
 
-	var post_data1 = { inpdirection: 1, inpdistance: 10, inpspeed: 7 };
+	var post_data1 = { inpdirection: 1, inpdistance: DB, inpspeed: 7 };
 
 	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
 
 	debugLog( "subRoutine 1 posted" );
 
+	debugLog( "getting action: " + actionComplete );
 	var callBack1 = setInterval(function(){
-		debugLog( "getting action: " + actionComplete );
 		if( actionComplete )
 		{
 			actionComplete = false;
 			clearInterval( callBack1 );
 
-			var post_data2 = { inpdegrees: 90 }; 
+			var post_data2 = { inpdegrees: rot*90 }; 
 
-			tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data2 );
+			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
 
+			debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
 			{
 				if( actionComplete )
 				{
 					actionComplete = false;
-					clearInterval( callBack2 );	
+					clearInterval( callBack2 );
 
-					var callback3 = setInterval(function(){
-						//queryBagBay();	
-
-						bayClear = true;
-
-						if( bayClear)
+						debugLog( "bayClear: " + bayClear );
+					var callBack3 = setInterval(function(){
+						if( bayClear )
 						{	
 							clearInterval( callBack3 );
 							bayClear = false;	
 
-							var post_data1 = { inpdirection: 0, inpdistance: 10, inpspeed: 7 };
+							var post_data3 = { inpdirection: 0, inpdistance: Db, inpspeed: 7 };
 
-							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
+							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
+								debugLog( "getting action: " + actionComplete );
 							var callBack4 = setInterval( function()
 							{
 								if( actionComplete )
 								{
 									actionComplete = false;
 									clearInterval( callBack4 );
+			
+									tokenRing.generalPOST( Bag_IP, '/do_insert_result', task );
+									
+									var post_data4 = { inpdirection: 1, inpdistance: Db, inpspeed: 7 };
 
-									releaseShotgun();
+									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
+										debugLog( "getting action: " + actionComplete );
+									var callBack5 = setInterval( function()
+									{
+										if( actionComplete )
+										{
+											actionComplete = false;
+											clearInterval( callBack5 );
+
+											var post_data5 = { inpdegrees: rot*90 }; 
+
+											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
+
+												debugLog( "getting action: " + actionComplete );
+											var callBack6 = setInterval( function()
+											{
+												if( actionComplete )
+												{
+													actionComplete = false;
+													clearInterval( callBack6 );
+
+													var post_data6 = { inpdirection: 0, inpdistance: DB, inpspeed: 7 };
+
+													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
+
+														debugLog( "getting action: " + actionComplete );
+													var callBack7 = setInterval( function()
+													{
+														if( actionComplete )
+														{
+															actionComplete = false;
+															clearInterval( callBack7 );
+
+															debugLog( "Releasing Shotgun" );
+															releaseShotgun();
+														}
+													}, 500 );
+												}
+											}, 500 );
+										}
+									}, 500 );
 								}
-							}, 100 );
+							}, 500 );
 						}
-					}, 100)
+						else
+						{
+							debugLog( "get Bays"  );
+							var post_data_bays = { ip: tokenRing.getMyIP() };
+							tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
+						}
+					}, 500)
 				}
-			}, 100 );
+			}, 500 );
 		}
-	}, 100);
+	}, 500);
 
 }
-
 
 function MovePI()
 {
@@ -550,9 +623,12 @@ function releaseShotgun()
 
 function setActionComplete()
 {
+
+	debugLog( "Setting Action Complete" );
+
 	doneButton.style.fg = "white";
 	doneButton.style.bg = "red";
-	doneButton.hidden = false;
+	doneButton.hidden = true;
 	screen.render();
 
 	actionComplete = true;
@@ -585,8 +661,8 @@ app.post( '/do_return_task', function( req, res ){
 
 	if( body.isValid )
 	{
-		var task_id = body.id;
-		var bay_num = body.bayNumber; 
+		task_id = body.id;
+		bay_num = body.bayNumber; 
 
 		subroutine( bay_num );
 
@@ -599,6 +675,23 @@ app.post( '/do_return_task', function( req, res ){
 
 });
 
+app.post('/do_recievedBays', function(req, res){
+
+	var the_body = req.body;  
+	res.json(the_body);
+	
+	bays = the_body;
+
+	debugLog( "Bays: " );
+	debugLog( JSON.stringify( bays ) );
+
+	if( !bays[bay_num-1] )
+	{
+		bayClear = true;
+	}
+
+});
+
 app.post('/action_move', function(req, res) {
 	debugLog( "moving" );
     var the_body = req.body;  //see connect package above
@@ -606,27 +699,26 @@ app.post('/action_move', function(req, res) {
     res.json(req.body);
 	 displayButton();
 
-	actionComplete = true;	
-
 });
 
 app.post('/action_turninplace', function(req, res) {
+	debugLog( "Rotating" );
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdegrees + " degrees");
+    if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_turnsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command + " " + the_body.inpdegrees + " degrees");
+    if(debug) debugLog ("Run Command: turnsens " + the_body.inpdegrees + " degrees");
     res.json(req.body);
     displayButton();
 });
 
 app.post('/action_readsensor', function(req, res) {
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: " + the_body.command);
+    if(debug) debugLog ("Run Command: readsens");
 	//log2.insertLine(0, "Object is " + JSON.stringify(the_body.inpdistance) + " inches away" );
     res.json(req.body);
 	count++;

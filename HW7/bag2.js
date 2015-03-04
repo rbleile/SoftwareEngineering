@@ -18,6 +18,9 @@ bays[0] = true;
 bays[1] = true; //init bays full
 bays[2] = true;
 
+screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
+    return process.exit(0);
+});
 
 //screen.append(log);
 function debugLog( msg ) 
@@ -48,7 +51,7 @@ var box = blessed.box({
     }
     }
 });
-
+/*
 var logTasks = blessed.scrollabletext({
     parent: screen,
     mouse: true,
@@ -90,23 +93,41 @@ var logResults = blessed.scrollabletext({
     align: 'left',
     tags: true
 });
+*/
 
-
-var tasks = new Array();
-var results = new Array();
+var tasks = [];
+var results = [];
 
 app.post('/do_insert_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
-	var task = { id : the_body,  bayNumber : the_body.bayNumber}
+	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
 	tasks.push(task);
 
 	debugLog( "Task Length: " + tasks.length );
 
-	var resString =  "task inserted at bay "+JSON.stringify(task);
+	var resString =  "task inserted at bay "+ JSON.stringify(task.bayNumber);
 	debugLog(resString);
 	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
+});
+
+app.post('/do_insert_result', function(req, res) {
+	var the_body = req.body;  
+	debugLog ( "Result received: " + JSON.stringify( the_body) );
+	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
+	results.push(task);
+	var resString =  "Result inserted "+JSON.stringify(task);
+	var res_data = { result : resString, id : task.id };    
+	res.json(res_data);
+});
+
+app.post('/do_get_bays', function(req, res){
+
+	var the_body = req.body;  
+	res.json(the_body);
+
+	tokenRing.generalPOST( the_body.ip, '/do_recievedBays', bays );
 });
 
 app.post('/do_get_task', function(req, res) {
@@ -115,6 +136,8 @@ app.post('/do_get_task', function(req, res) {
 	var validTaskIdx = -1;
 
 	debugLog( "Tasks" + JSON.stringify( tasks ) );
+	debugLog( "Task size: " + tasks.length );
+	debugLog("Bays: " + JSON.stringify( bays ) );
 
 	//check to see if any task have a bay number that can be entered
 	for(var i = 0; i < tasks.length; i++)
@@ -167,15 +190,7 @@ app.post('/do_get_result', function(req, res) {
 	
 });
 
-app.post('/do_insert_result', function(req, res) {
-	var the_body = req.body;  
-	debugLog ( "Result received: " + JSON.stringify( the_body) );
-	var task = { id : the_body,  bayNumber : the_body.bayNumber}
-	results.push(task);
-	var resString =  "Result inserted "+JSON.stringify(task);
-	var res_data = { result : resString, id : task.id };    
-	res.json(res_data);
-});
+
 
 app.post("/do_sensor_update", function(req, res) {
 	var the_body = req.body;

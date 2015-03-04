@@ -9,6 +9,7 @@ var connect = require("connect");
 var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -42,7 +43,7 @@ function generalPOST ( genHost, genPath, post_data,portNum, err, res )
   if( typeof(portNum) == 'undefined' )
   {
     portNum = '3000';
-    //console.log("Using default port");
+    if (debug) console.log("Using default port");
   }
   // check if arg param err does not exist
   if (typeof(err) != "function")
@@ -133,14 +134,10 @@ function PostDiscover(ip_address)
 
     res.on('end', function(){
       var resultObject = JSON.parse(responseString);
-     // console.log(resultObject);
+      if (debug) console.log(resultObject);
 
       var role = parseInt(resultObject.role);
-      addRingMember(resultObject.ip,role);
-
-    
-
-    
+      addRingMember(resultObject.ip,role);    
     });
   });
 
@@ -157,7 +154,7 @@ function PostDiscover(ip_address)
 function discover() 
 {
 
-  console.log("Starting Discovery");
+  if (debug) console.log("Starting Discovery");
   //limit the scanning range
   var start_ip = 100;
   var end_ip   = 120;
@@ -169,7 +166,7 @@ function discover()
 
   //put it back together without the last part
   var base_add = ip_add[0] + "." + ip_add[1] + "." + + ip_add[2] + ".";
-  console.log("Base ip address : " +  base_add);
+  if (debug) console.log("Base ip address : " +  base_add);
 
   for(var i = start_ip; i < end_ip; i++)
   {      
@@ -181,7 +178,7 @@ function discover()
     }
   }
 
-  setTimeout( keepAlive, keepAliveTimeout);
+  setTimeout(keepAlive, keepAliveTimeout);
 }
 
 
@@ -189,7 +186,7 @@ function discover()
 /* Function to check if other devices are there. */
 function keepAlive()
 {
-  //debugLog("Calling keepalive " );
+  //if (debug) debugLog("Calling keepalive " );
   var listIPs = tokenRing;
   for( var i = 0; i < listIPs.length; i++) 
   {
@@ -228,7 +225,7 @@ function debugMessages(on)
   }
   else
   {
-    console.log("debugMessages(boolean) must be passed a boolean if you expect to set it.");
+    if (debug) console.log("debugMessages(boolean) must be passed a boolean if you expect to set it.");
   }
 }
 
@@ -335,7 +332,7 @@ function isMember(ip_address)
 
 app.post('/do_discover', function(req, res) {
   var the_body = req.body;  //see connect package above
-  console.log( "Discovery received: " + JSON.stringify( the_body) );
+  if (debug) console.log( "Discovery received: " + JSON.stringify( the_body) );
 
   var role = parseInt(the_body.role);
   addRingMember(the_body.ip, role);
@@ -348,7 +345,7 @@ app.post('/do_discover', function(req, res) {
 
 app.set('port', process.env.PORT || tokeRingPortNum);
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+  if (debug) console.log("Express server listening on port " + app.get('port'));
   discover();
   //debugLog( "Discovery Complete." );
   //debugLog("Waiting to print IPs...");

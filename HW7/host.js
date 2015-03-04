@@ -109,7 +109,7 @@ var inputBox1 = blessed.textbox({
 	},  
 }); 
 inputBox1.setLabel({
-	text: 'Enter bay number: ',
+	text: 'Enter bay number (1, 2 or 3): ',
 	side: 'left'
 });
 inputBox1.on('submit', function() {
@@ -208,7 +208,7 @@ function addtaskFunctionality()
 			inputBox1.setContent("");
 			baynum = response1;
 			response1 = "";
-			var post_data = { id : count, bayNumber : baynum };
+			var post_data = { "id" : count, "bayNumber" : baynum };
 			tokenRing.generalPOST(Bag_IP, '/do_insert_task', post_data);
 			count++;
 			defaultmenu();

@@ -64,7 +64,7 @@ var box = blessed.box({
     left: 'left',
     width: '100%',
     height: '20%',
-    content: '',
+    content: '{center} HUMAN - SENSOR - HUMAN - SENSOR{/center}',
     tags: true,
     border: {
 	type: 'line',
