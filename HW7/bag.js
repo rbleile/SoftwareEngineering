@@ -224,6 +224,7 @@ screen.append(bay1Work);
 screen.append(bay2Work);
 screen.append(bay3Work);
 
+/*
 logEvents.setLabel({ text: '{  EVENT LOG  }', side: 'left' });
 logTasks.setLabel({ text: '{  PENDING TASKS  }', side: 'left' });
 logResults.setLabel({ text: '{  UNREAD RESULTS  }', side: 'left' });
@@ -235,7 +236,8 @@ bay3Work.setLabel({ text: '[WORK:3]', side: 'right' });
 bay1Sensor.setLabel({ text: '[SENSOR:1]', side: 'left' })
 bay2Sensor.setLabel({ text: '[SENSOR:2]', side: 'left' })
 bay3Sensor.setLabel({ text: '[SENSOR:3]', side: 'left' })
- 
+*/
+
 screen.render();
 
 function refreshDisplay() {
