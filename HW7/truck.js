@@ -291,8 +291,8 @@ function subRoutine_1( task )
 
 	debugLog( "subRoutine 1 posted" );
 
+	debugLog( "getting action: " + actionComplete );
 	var callBack1 = setInterval(function(){
-		debugLog( "getting action: " + actionComplete );
 		if( actionComplete )
 		{
 			actionComplete = false;
@@ -687,16 +687,14 @@ app.post('/action_move', function(req, res) {
     res.json(req.body);
 	 displayButton();
 
-	actionComplete = true;	
-
 });
 
 app.post('/action_turninplace', function(req, res) {
+	debugLog( "rotating" );
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
     displayButton();
-	actionComplete = true;	
 });
 
 app.post('/action_turnsensor', function(req, res) {
