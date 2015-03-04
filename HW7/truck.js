@@ -291,8 +291,8 @@ function subRoutine_1( task )
 
 	debugLog( "subRoutine 1 posted" );
 
+	debugLog( "getting action: " + actionComplete );
 	var callBack1 = setInterval(function(){
-		debugLog( "getting action: " + actionComplete );
 		if( actionComplete )
 		{
 			actionComplete = false;
@@ -300,18 +300,18 @@ function subRoutine_1( task )
 
 			var post_data2 = { inpdegrees: 90 }; 
 
-			tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data2 );
+			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
 
+			debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
 			{
-				debugLog( "getting action: " + actionComplete );
 				if( actionComplete )
 				{
 					actionComplete = false;
 					clearInterval( callBack2 );
 
-					var callBack3 = setInterval(function(){
 						debugLog( "bayClear: " + bayClear );
+					var callBack3 = setInterval(function(){
 						if( bayClear )
 						{	
 							clearInterval( callBack3 );
@@ -321,9 +321,9 @@ function subRoutine_1( task )
 
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
+								debugLog( "getting action: " + actionComplete );
 							var callBack4 = setInterval( function()
 							{
-								debugLog( "getting action: " + actionComplete );
 								if( actionComplete )
 								{
 									actionComplete = false;
@@ -335,9 +335,9 @@ function subRoutine_1( task )
 
 									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
+										debugLog( "getting action: " + actionComplete );
 									var callBack5 = setInterval( function()
 									{
-										debugLog( "getting action: " + actionComplete );
 										if( actionComplete )
 										{
 											actionComplete = false;
@@ -345,11 +345,11 @@ function subRoutine_1( task )
 
 											var post_data5 = { inpdegrees: 90 }; 
 
-											tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data5 );
+											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
 
+												debugLog( "getting action: " + actionComplete );
 											var callBack6 = setInterval( function()
 											{
-												debugLog( "getting action: " + actionComplete );
 												if( actionComplete )
 												{
 													actionComplete = false;
@@ -359,14 +359,15 @@ function subRoutine_1( task )
 
 													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
 
+														debugLog( "getting action: " + actionComplete );
 													var callBack7 = setInterval( function()
 													{
-														debugLog( "getting action: " + actionComplete );
 														if( actionComplete )
 														{
 															actionComplete = false;
 															clearInterval( callBack7 );
 
+															debugLog( "Releasing Shotgun" );
 															releaseShotgun();
 
 														}
@@ -614,9 +615,12 @@ function releaseShotgun()
 
 function setActionComplete()
 {
+
+	debugLog( "Setting Action Complete" );
+
 	doneButton.style.fg = "white";
 	doneButton.style.bg = "red";
-	doneButton.hidden = false;
+	doneButton.hidden = true;
 	screen.render();
 
 	actionComplete = true;
@@ -687,16 +691,14 @@ app.post('/action_move', function(req, res) {
     res.json(req.body);
 	 displayButton();
 
-	actionComplete = true;	
-
 });
 
 app.post('/action_turninplace', function(req, res) {
+	debugLog( "Rotating" );
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
     displayButton();
-	actionComplete = true;	
 });
 
 app.post('/action_turnsensor', function(req, res) {
