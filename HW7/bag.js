@@ -39,6 +39,8 @@ var logEvents = blessed.scrollabletext({
     height: '50%',
     top: '50%',
     left: '0%',
+    keys: true,
+    vi: true,
 	censor: false,
 	inputOnFocus: false,
 	border: {
@@ -240,7 +242,7 @@ screen.render();
 
 function refreshDisplay() {
 
-    debugLog("Refreshing the display...");
+	debugLog("Refreshing the display...");
     
 	var bay1TaskCount = 0;
 	var bay2TaskCount = 0;
@@ -276,7 +278,7 @@ function refreshDisplay() {
 	logTasks.setContent(pendingTasks);
 	logResults.setContent(pendingResults);
 
-    logEvents.focus();
+	logEvents.focus();
     
 	screen.render();
 
