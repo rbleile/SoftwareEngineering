@@ -359,7 +359,6 @@ function subRoutine( task, DB, Db, rot )
 															actionComplete = false;
 															clearInterval( callBack7 );
 
-															hideDone();
 															debugLog( "Releasing Shotgun" );
 															
 															releaseShotgun();
