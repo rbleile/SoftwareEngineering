@@ -12,139 +12,262 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-var screen = blessed.screen();
 
 var bays = [];
 bays[0] = true;
 bays[1] = true; //init bays full
 bays[2] = true;
 
+
+/**************************************************
+ ****** START : WINDOW CODE ***********************
+ **************************************************/
+
+var screen = blessed.screen();
+
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-//screen.append(log);
+screen.key(['r', 'R'], function(ch, key) {
+    return refreshDisplay();
+});
+
+
+var logEvents = blessed.scrollabletext({
+    width: '64%',
+    height: '50%',
+    top: '50%',
+    left: '0%',
+	censor: false,
+	inputOnFocus: false,
+	border: {
+		type: 'line',
+		fg: 'white'
+	},
+	style: {
+		fg: 'grey',
+		bg: 'black',
+		bold: false,
+		border: {
+			fg: 'white',
+			bg: 'black',
+			bold: true,
+			underline: false
+		}
+	}
+});
+
+
+
+var logTasks = blessed.scrollabletext({
+    width: '36%',
+    height: '50%',
+    top: '0%',
+    left: '64%',
+	tags: false,
+	censor: false,
+	inputOnFocus: false,
+	border: {
+		type: 'line',
+		fg: 'green',
+		bold: true
+	},
+	style: {
+		fg: 'white',
+		bg: '#002200',
+		bold: true,
+	}
+});
+
+
+
+var logResults = blessed.scrollabletext({
+	top: '50%',
+	left: '64%',
+	width: '36%',
+	height: '50%',
+	tags: false,
+	censor: false,
+	inputOnFocus: false,
+	border: {
+		type: 'line',
+		fg: 'blue',
+		bold: true
+	},
+	style: {
+		fg: 'white',
+		bg: 'blue',
+		bold: true
+	}
+});
+
+
+/**********
+ ***  Little boxes...
+ ***/
+
+
+
+var bay1Sensor = blessed.box({
+    width: '20%',
+    height: '20%',
+    top: '0',
+    left: '0',
+    align: 'center',
+    valign: 'middle',
+   	content: 'SENSOR[1]',
+	border: false,
+	style: {
+		fg: 'white',
+		bg: 'red',
+		bold: true
+	}
+});
+
+var bay2Sensor = blessed.box({
+    width: '20%',
+    height: '20%',
+    top: '0',
+    left: '22%',
+    align: 'center',
+    valign: 'middle',
+   	content: 'SENSOR[2]',
+	border: false,
+	style: {
+		fg: 'white',
+		bg: 'red',
+		bold: true
+	}
+});
+
+var bay3Sensor = blessed.box({
+    width: '20%',
+    height: '20%',
+    top: '0',
+    left: '44%',
+    align: 'center',
+    valign: 'middle',
+   	content: 'SENSOR[3]',
+	border: false,
+	style: {
+		fg: 'white',
+		bg: 'red',
+		bold: true
+	}
+});
+
+
+var bay1Work = blessed.scrollabletext({
+    width: '20%',
+    height: '20%',
+    top: '25%',
+    left: '0',
+    align: 'center',
+    valign: 'middle',
+   	content: 'WORK(1)',
+	censor: false,
+	inputOnFocus: false,
+	border: false,
+	style: {
+		fg: 'black',
+		bg: 'white',
+		bold: false
+	}
+});
+
+var bay2Work = blessed.scrollabletext({
+    width: '20%',
+    height: '20%',
+    top: '25%',
+    left: '22%',
+    align: 'center',
+    valign: 'middle',
+   	content: 'WORK(2)',
+	censor: false,
+	inputOnFocus: false,
+	border: false,
+	style: {
+		fg: 'black',
+		bg: 'white',
+		bold: false
+	}
+});
+
+var bay3Work = blessed.scrollabletext({
+    width: '20%',
+    height: '20%',
+    top: '25%',
+    left: '44%',
+    align: 'center',
+    valign: 'middle',
+   	content: 'WORK(3)',
+	censor: false,
+	inputOnFocus: false,
+	border: false,
+	style: {
+		fg: 'black',
+		bg: 'white',
+		bold: false
+	}
+});
+
+/**********/
+
+screen.append(logResults);
+screen.append(logTasks);
+screen.append(logEvents);
+screen.append(bay1Sensor);
+screen.append(bay2Sensor);
+screen.append(bay3Sensor);
+screen.append(bay1Work);
+screen.append(bay2Work);
+screen.append(bay3Work);
+
+logEvents.setLabel({ text: '{  EVENT LOG  }', side: 'left' });
+logTasks.setLabel({ text: '{  PENDING TASKS  }', side: 'left' });
+logResults.setLabel({ text: '{  UNREAD RESULTS  }', side: 'left' });
+ 
+screen.render();
+
+function refreshDisplay() {
+
+	debugLog("Refreshing the display...");
+
+	bay1Work.setContent("...");
+	bay2Work.setContent("...");
+	bay3Work.setContent("...");
+
+	bay1Sensor.setContent("...");
+	bay2Sensor.setContent("...");
+	bay3Sensor.setContent("...");
+
+	var pendingTasks = "Total == " + tasks.length + "\n";
+	for (var i = 0; i < tasks.length; i++)
+		pendingTasks += "[" + tasks[i].id + "] @ Bay " + tasks[i].bayNumber + "\n";
+
+	var pendingResults = "Total == " + results.length + "\n";
+	for (var i = 0; i < results.length; i++)
+		pendingResults += "[" + results[i].id + "] @ Bay " + results[i].bayNumber + "\n";
+
+
+	screen.render();
+
+	return;
+}
+
 function debugLog( msg ) 
 {
+	//log.insertLine(0, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
 	logEvents.insertLine(0, msg);
 	screen.render();
 	return;
 }
 
-var logEvents = blessed.scrollabletext({
-    mouse: true,
-    keys: true,
-    vi: true,
-    border: {
-    	type: 'line',
-    	fg: '#00ff00'
-    },
-    scrollbar: {
-    	fg: 'blue',
-    	ch: '|'
-    },
-    width: '60%',
-    height: '50%',
-    top: '50%',
-    left: '0%',
-    align: 'left',
-    tags: true,
-});
+/**************************************************
+ ****** END : WINDOW CODE *************************
+ **************************************************/
 
-
-var logTasks = blessed.scrollabletext({
-    mouse: true,
-    keys: true,
-    vi: true,
-    border: {
-    	type: 'line',
-    	fg: '#00ff00'
-    },
-    scrollbar: {
-    	fg: 'blue',
-    	ch: '|'
-    },
-    width: '40%',
-    height: '25%',
-    top: '50%',
-    left: '60%',
-    align: 'left',
-    tags: true,
-});
-
-
-var logResults = blessed.scrollabletext({
-	top: '75%',
-	left: '60%',
-	width: '40%',
-	height: '25%',
-	//content: '',
-	tags: false,
-	censor: true,
-	inputOnFocus: true,
-	border: {
-		type: 'line',
-		fg: 'white'
-	},
-	style: {
-		fg: 'white',
-		bg: 'blue',
-		bold: true,
-		border: {
-			fg: 'blue',
-			bold: true,
-			underline: false
-		}
-	},
-});
-/*
-var passwordBox = blessed.textbox({
-	top: '80%',
-	left: '10%',
-	width: '80%',
-	height: '20%',
-	//content: '',
-	tags: false,
-	censor: true,
-	inputOnFocus: true,
-	border: {
-		type: 'line',
-		fg: 'white'
-	},
-	style: {
-		fg: 'white',
-		bg: 'blue',
-		bold: true,
-		border: {
-			fg: 'blue',
-			bold: true,
-			underline: false
-		}
-	},
-});
-*/
-
-/*
-
-logResults.setLabel({
-	text: 'Unread Results',
-	side: 'left'
-});
-logTasks.setLabel({
-	text: 'Pending Tasks',
-	side: 'left'
-});
-
-*/
-
-logEvents.setLabel({
-	text: 'Event Log',
-	side: 'left'
-});
-
-screen.append(logResults);
-screen.append(logTasks);
-screen.append(logEvents);
 
 var tasks = new Array();
 var results = new Array();
