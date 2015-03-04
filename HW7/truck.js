@@ -693,7 +693,7 @@ app.post('/action_move', function(req, res) {
 });
 
 app.post('/action_turninplace', function(req, res) {
-	debugLog( "rotating" );
+	debugLog( "Rotating" );
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
