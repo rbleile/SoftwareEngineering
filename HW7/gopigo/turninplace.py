@@ -21,4 +21,4 @@ def main(deg):
 	TurnInPlace(deg)
 
 if __name__=="__main__":
-	main(int(arg1))
+	main(int(sys.argv[1]))

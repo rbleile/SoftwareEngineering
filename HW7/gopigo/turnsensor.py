@@ -18,4 +18,4 @@ def main(deg):
 	TurnSensor(deg)
 
 if __name__=="__main__":
-	main(int(arg1))
+	main(int(sys.arg[1]))

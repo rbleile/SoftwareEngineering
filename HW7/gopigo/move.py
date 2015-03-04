@@ -31,4 +31,4 @@ def main(dir, dist, speed):
 	Move(dir, dist, speed)
 
 if __name__=="__main__":
-	main(int(arg1), float(arg2), int(arg3))
+	main(int(sys.argv[1]), float(sys.argv[2]), int(sys.argv[3]))
