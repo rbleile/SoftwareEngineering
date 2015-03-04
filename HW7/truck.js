@@ -300,7 +300,7 @@ function subRoutine_1( task )
 
 			var post_data2 = { inpdegrees: 90 }; 
 
-			tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data2 );
+			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
 
 			debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
@@ -345,7 +345,7 @@ function subRoutine_1( task )
 
 											var post_data5 = { inpdegrees: 90 }; 
 
-											tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data5 );
+											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
 
 												debugLog( "getting action: " + actionComplete );
 											var callBack6 = setInterval( function()
@@ -367,6 +367,7 @@ function subRoutine_1( task )
 															actionComplete = false;
 															clearInterval( callBack7 );
 
+															debugLog( "Releasing Shotgun" );
 															releaseShotgun();
 
 														}
