@@ -22,6 +22,9 @@ var bag_found = false;
 var entrance = 1;
 var entrance_set = false;
 var TRUCK_IPs = [];
+var bays = [];
+var task_id = -1;
+var bay_num = -1;
 var bayClear = false;
 var count = 0;
 /********* END Globals ***********/
@@ -229,7 +232,10 @@ function getWorkFromBag()
 
 function subroutine( bay )
 {
-	subRoutine_1();
+
+	var task_data = { id : task_id, bayNumber : bay_num };
+
+	subRoutine_1( task_data  );
 /*
 	switch( bay+3*entrance )
 	{
@@ -264,12 +270,22 @@ function subroutine( bay )
 	}
 */
 }
-function subRoutine_1()
+
+var D1B1 = 10;
+var D1B2 = 10;
+var D1B3 = 10;
+var D2B1 = 10;
+var D2B2 = 10;
+var D2B3 = 10;
+
+var Dbay = 10;
+
+function subRoutine_1( task )
 {
 
 	debugLog( "subRoutine 1" );
 
-	var post_data1 = { inpdirection: 1, inpdistance: 10, inpspeed: 7 };
+	var post_data1 = { inpdirection: 1, inpdistance: D1B1, inpspeed: 7 };
 
 	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
 
@@ -291,22 +307,18 @@ function subRoutine_1()
 				if( actionComplete )
 				{
 					actionComplete = false;
-					clearInterval( callBack2 );	
-
-					var bayClear = true;
+					clearInterval( callBack2 );
 
 					var callBack3 = setInterval(function(){
-						//queryBagBay();	
-
 
 						if( bayClear)
 						{	
 							clearInterval( callBack3 );
 							bayClear = false;	
 
-							var post_data1 = { inpdirection: 0, inpdistance: 10, inpspeed: 7 };
+							var post_data3 = { inpdirection: 0, inpdistance: Dbay, inpspeed: 7 };
 
-							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
+							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
 							var callBack4 = setInterval( function()
 							{
@@ -314,20 +326,65 @@ function subRoutine_1()
 								{
 									actionComplete = false;
 									clearInterval( callBack4 );
+			
+									tokenRing.generalPOST( Bag_IP, '/do_insert_result', task );
+									
+									var post_data4 = { inpdirection: 1, inpdistance: Dbay, inpspeed: 7 };
 
-									releaseShotgun();
+									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
+									var callBack5 = setInterval( function()
+									{
+										if( actionComplete )
+										{
+											actionComplete = false;
+											clearInterval( callBack5 );
+
+											var post_data5 = { inpdegrees: 90 }; 
+
+											tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data5 );
+
+											var callBack6 = setInterval( function()
+											{
+												if( actionComplete )
+												{
+													actionComplete = false;
+													clearInterval( callBack6 );
+
+													var post_data6 = { inpdirection: 0, inpdistance: D1B1, inpspeed: 7 };
+
+													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
+
+													var callBack7 = setInterval( function()
+													{
+														if( actionComplete )
+														{
+															actionComplete = false;
+															clearInterval( callBack7 );
+
+															releaseShotgun();
+
+														}
+													}, 100 );
+												}
+											}, 100 );
+										}
+									}, 100 );
 								}
 							}, 100 );
 						}
-					}, 100)
+						else
+						{
+							var post_data_bays = { ip: tokenRing.getMyIP() };
+							tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
+						}
+					}, 500)
 				}
 			}, 100 );
 		}
 	}, 100);
 
 }
-
 
 function MovePI()
 {
@@ -586,8 +643,8 @@ app.post( '/do_return_task', function( req, res ){
 
 	if( body.isValid )
 	{
-		var task_id = body.id;
-		var bay_num = body.bayNumber; 
+		task_id = body.id;
+		bay_num = body.bayNumber; 
 
 		subroutine( bay_num );
 
@@ -596,6 +653,22 @@ app.post( '/do_return_task', function( req, res ){
 	{
 		debugLog( "Waiting for work" );
 		setTimeout( getWorkFromBag, 1000 );
+	}
+
+});
+
+app.post('/do_recievedBays', function(req, res){
+
+	var the_body = req.body;  
+	res.json(the_body);
+	
+	bays = the_body;
+
+	debugLog( JSON.stringify( bays ) );
+
+	if( !bays[bay_num-1] )
+	{
+		bayClear = true;
 	}
 
 });
