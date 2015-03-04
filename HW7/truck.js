@@ -302,16 +302,16 @@ function subRoutine_1( task )
 
 			tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data2 );
 
+				debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
 			{
-				debugLog( "getting action: " + actionComplete );
 				if( actionComplete )
 				{
 					actionComplete = false;
 					clearInterval( callBack2 );
 
-					var callBack3 = setInterval(function(){
 						debugLog( "bayClear: " + bayClear );
+					var callBack3 = setInterval(function(){
 						if( bayClear )
 						{	
 							clearInterval( callBack3 );
@@ -321,9 +321,9 @@ function subRoutine_1( task )
 
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
+								debugLog( "getting action: " + actionComplete );
 							var callBack4 = setInterval( function()
 							{
-								debugLog( "getting action: " + actionComplete );
 								if( actionComplete )
 								{
 									actionComplete = false;
@@ -335,9 +335,9 @@ function subRoutine_1( task )
 
 									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
+										debugLog( "getting action: " + actionComplete );
 									var callBack5 = setInterval( function()
 									{
-										debugLog( "getting action: " + actionComplete );
 										if( actionComplete )
 										{
 											actionComplete = false;
@@ -347,9 +347,9 @@ function subRoutine_1( task )
 
 											tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data5 );
 
+												debugLog( "getting action: " + actionComplete );
 											var callBack6 = setInterval( function()
 											{
-												debugLog( "getting action: " + actionComplete );
 												if( actionComplete )
 												{
 													actionComplete = false;
@@ -359,9 +359,9 @@ function subRoutine_1( task )
 
 													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
 
+														debugLog( "getting action: " + actionComplete );
 													var callBack7 = setInterval( function()
 													{
-														debugLog( "getting action: " + actionComplete );
 														if( actionComplete )
 														{
 															actionComplete = false;
