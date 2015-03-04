@@ -50,6 +50,7 @@ function getBagIP()
 }
 
 var isFull = false;
+var lastVal = false;
 
 function sensorUpdate()
 {
@@ -65,8 +66,12 @@ function sensorUpdate()
 	    	console.log("is full : " + isFull + " "+results[0]);	
 	});
 
-	var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull , "bayNumber" : whichBay };
-	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', post_data );
+	if (isFull != lastVal)	
+	{
+		lastVal = isFull;
+		var post_data = { "ip": tokenRing.getMyIP(), "isFull" : isFull , "bayNumber" : whichBay };
+		tokenRing.generalPOST(Bag_IP, '/do_sensor_update', post_data );
+	}
 	setTimeout ( sensorUpdate , 1000 );
 }
 

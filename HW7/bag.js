@@ -242,6 +242,8 @@ screen.render();
 
 function refreshDisplay() {
 
+    debugLog("Refreshing the display...");
+    
 	var bay1TaskCount = 0;
 	var bay2TaskCount = 0;
 	var bay3TaskCount = 0;
@@ -276,6 +278,8 @@ function refreshDisplay() {
 	logTasks.setContent(pendingTasks);
 	logResults.setContent(pendingResults);
 
+    logEvents.focus();
+    
 	screen.render();
 
 	return;
