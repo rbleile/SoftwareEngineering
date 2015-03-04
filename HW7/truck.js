@@ -380,6 +380,7 @@ function subRoutine_1( task )
 						}
 						else
 						{
+							debugLog( "get Bays"  );
 							var post_data_bays = { ip: tokenRing.getMyIP() };
 							tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
 						}
@@ -669,6 +670,7 @@ app.post('/do_recievedBays', function(req, res){
 	
 	bays = the_body;
 
+	debugLog( "Bays: " );
 	debugLog( JSON.stringify( bays ) );
 
 	if( !bays[bay_num-1] )
@@ -694,6 +696,7 @@ app.post('/action_turninplace', function(req, res) {
     if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
     displayButton();
+	actionComplete = true;	
 });
 
 app.post('/action_turnsensor', function(req, res) {
