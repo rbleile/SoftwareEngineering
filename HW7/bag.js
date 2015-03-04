@@ -227,6 +227,14 @@ screen.append(bay3Work);
 logEvents.setLabel({ text: '{  EVENT LOG  }', side: 'left' });
 logTasks.setLabel({ text: '{  PENDING TASKS  }', side: 'left' });
 logResults.setLabel({ text: '{  UNREAD RESULTS  }', side: 'left' });
+
+bay1Work.setLabel({ text: '[WORK:1]', side: 'right' });
+bay2Work.setLabel({ text: '[WORK:2]', side: 'right' });
+bay3Work.setLabel({ text: '[WORK:3]', side: 'right' });
+
+bay1Sensor.setLabel({ text: '[SENSOR:1]', side: 'left' })
+bay2Sensor.setLabel({ text: '[SENSOR:2]', side: 'left' })
+bay3Sensor.setLabel({ text: '[SENSOR:3]', side: 'left' })
  
 screen.render();
 
@@ -234,13 +242,9 @@ function refreshDisplay() {
 
 	debugLog("Refreshing the display...");
 
-	bay1Work.setContent("...");
-	bay2Work.setContent("...");
-	bay3Work.setContent("...");
-
-	bay1Sensor.setContent("...");
-	bay2Sensor.setContent("...");
-	bay3Sensor.setContent("...");
+	var bay1TaskCount = 0;
+	var bay2TaskCount = 0;
+	var bay3TaskCount = 0;
 
 	var pendingTasks = "Total == " + tasks.length + "\n";
 	for (var i = 0; i < tasks.length; i++)
@@ -250,6 +254,15 @@ function refreshDisplay() {
 	for (var i = 0; i < results.length; i++)
 		pendingResults += "[" + results[i].id + "] @ Bay " + results[i].bayNumber + "\n";
 
+	bay1Work.setContent("...");
+	bay2Work.setContent("...");
+	bay3Work.setContent("...");
+
+	bay1Sensor.setContent("...");
+	bay2Sensor.setContent("...");
+	bay3Sensor.setContent("...");
+
+	bay2Sensor.hidden = !bay2Sensor.hidden;
 
 	screen.render();
 
