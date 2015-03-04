@@ -276,6 +276,8 @@ function refreshDisplay() {
 	logTasks.setContent(pendingTasks);
 	logResults.setContent(pendingResults);
 
+    logEvents.focus();
+    
 	screen.render();
 
 	return;
