@@ -158,8 +158,8 @@ function setEntranceDoor( door )
 	entrance = door;
 	entrance_set = true;
 
-	entranceButton1.setContent("TEST");
-	entranceButton2.setContent("TEST");
+	entranceButton1.setContent("{center} Enter Door 1 {/center}");
+	entranceButton2.setContent("{center} Enter Door 2 {/center}");
 	entranceButton1.hidden = true;
 	entranceButton2.hidden = true;
 
