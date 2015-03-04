@@ -95,6 +95,7 @@ var doneButton = blessed.box({
     bg: 'green',
     content: '{center}D = Action Completed{/center}',
     hidden: true 
+    tags: true
 });
 doneButton.on('click', function(data) {
 	setActionComplete();
@@ -113,6 +114,7 @@ var entranceButton1 = blessed.box({
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 1 {/center}',
+    tags: true
     hidden: true 
 });
 entranceButton1.on('click', function(data) {
@@ -131,6 +133,7 @@ var entranceButton2 = blessed.box({
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 2 {/center}',
+    tags: true
     hidden: true 
 });
 entranceButton2.on('click', function(data) {
@@ -155,6 +158,8 @@ function setEntranceDoor( door )
 	entrance = door;
 	entrance_set = true;
 
+	entranceButton1.setContent("TEST");
+	entranceButton2.setContent("TEST");
 	entranceButton1.hidden = true;
 	entranceButton2.hidden = true;
 
@@ -207,6 +212,7 @@ function unsetEntranceButton()
 	entranceButton2.hidden = true;	
 	screen.render();
 }
+
 function getEntrancePoint()
 {
 	doneButton.hidden = true;
