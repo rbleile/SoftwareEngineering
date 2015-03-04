@@ -27,6 +27,15 @@ var task_id = -1;
 var bay_num = -1;
 var bayClear = false;
 var count = 0;
+
+var D1B1 = 3;
+var D1B2 = 6;
+var D1B3 = 9;
+var D2B1 = 9;
+var D2B2 = 6;
+var D2B3 = 3;
+
+var Dbay = 5;
 /********* END Globals ***********/
 
 
@@ -235,57 +244,51 @@ function subroutine( bay )
 
 	var task_data = { id : task_id, bayNumber : bay_num };
 
-	subRoutine_1( task_data  );
-/*
-	switch( bay+3*entrance )
+	switch( bay )
 	{
 		case 0:
 			if( entrance == 0 )
 			{
-				subRoutine_1();
+				subRoutine( task_data, D1B1, Dbay, 1 );
 			}
 			else
 			{
+				subRoutine( task_data, D2B1, Dbay, -1 );
 			}
 			break;
 		case 1:
 			if( entrance == 0 )
 			{
+				subRoutine( task_data, D1B2, Dbay, 1 );
 			}
 			else
 			{
+				subRoutine( task_data, D2B2, Dbay, -1 );
 			}
 			break;
 		case 2:
 			if( entrance == 0 )
 			{
+				subRoutine( task_data, D1B3, Dbay, 1 );
 			}
 			else
 			{
+				subRoutine( task_data, D2B3, Dbay, -1 );
 			}
 			break;
 		case default:
-			if( debug ) debugLog( "Defualt case bay should not be hit" );
+			if( debug ) debugLog( "Default case bay should not be hit" );
 			break;
 	}
-*/
 }
 
-var D1B1 = 10;
-var D1B2 = 10;
-var D1B3 = 10;
-var D2B1 = 10;
-var D2B2 = 10;
-var D2B3 = 10;
 
-var Dbay = 10;
-
-function subRoutine_1( task )
+function subRoutine( task, DB, Db, rot )
 {
 
 	debugLog( "subRoutine 1" );
 
-	var post_data1 = { inpdirection: 1, inpdistance: D1B1, inpspeed: 7 };
+	var post_data1 = { inpdirection: 1, inpdistance: DB, inpspeed: 7 };
 
 	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
 
@@ -298,7 +301,7 @@ function subRoutine_1( task )
 			actionComplete = false;
 			clearInterval( callBack1 );
 
-			var post_data2 = { inpdegrees: 90 }; 
+			var post_data2 = { inpdegrees: rot*90 }; 
 
 			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
 
@@ -317,7 +320,7 @@ function subRoutine_1( task )
 							clearInterval( callBack3 );
 							bayClear = false;	
 
-							var post_data3 = { inpdirection: 0, inpdistance: Dbay, inpspeed: 7 };
+							var post_data3 = { inpdirection: 0, inpdistance: Db, inpspeed: 7 };
 
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
@@ -331,7 +334,7 @@ function subRoutine_1( task )
 			
 									tokenRing.generalPOST( Bag_IP, '/do_insert_result', task );
 									
-									var post_data4 = { inpdirection: 1, inpdistance: Dbay, inpspeed: 7 };
+									var post_data4 = { inpdirection: 1, inpdistance: Db, inpspeed: 7 };
 
 									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
@@ -343,7 +346,7 @@ function subRoutine_1( task )
 											actionComplete = false;
 											clearInterval( callBack5 );
 
-											var post_data5 = { inpdegrees: 90 }; 
+											var post_data5 = { inpdegrees: rot*90 }; 
 
 											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
 
@@ -355,7 +358,7 @@ function subRoutine_1( task )
 													actionComplete = false;
 													clearInterval( callBack6 );
 
-													var post_data6 = { inpdirection: 0, inpdistance: D1B1, inpspeed: 7 };
+													var post_data6 = { inpdirection: 0, inpdistance: DB, inpspeed: 7 };
 
 													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
 
@@ -369,7 +372,6 @@ function subRoutine_1( task )
 
 															debugLog( "Releasing Shotgun" );
 															releaseShotgun();
-
 														}
 													}, 500 );
 												}
