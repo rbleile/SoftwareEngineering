@@ -276,7 +276,7 @@ function subroutine( bay )
 				subRoutine( task_data, D2B3, Dbay, -1 );
 			}
 			break;
-		case default:
+		default:
 			if( debug ) debugLog( "Default case bay should not be hit" );
 			break;
 	}
