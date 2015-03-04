@@ -206,17 +206,14 @@ function getTRUCKIPs()
 
 /*********    MovePI    **********/
 
-function unsetEntranceButton()
-{
-	entranceButton1.hidden = true;	
-	entranceButton2.hidden = true;	
-	screen.render();
-}
-
 function getEntrancePoint()
 {
-	doneButton.hidden = true;
+    
+	doneButton.setContent("{center}D = Action Completed{/center}");
+	doneButton.hidden = true;	
 	
+	entranceButton1.setContent("{center} Enter Door 1 {/center}");
+	entranceButton2.setContent("{center} Enter Door 2 {/center}");
 	entranceButton1.hidden = false;	
 	entranceButton2.hidden = false;	
 
@@ -278,15 +275,15 @@ function subroutine( bay )
 function subRoutine( task, DB, Db, rot )
 {
 
-	debugLog( "subRoutine 1" );
+	//debugLog( "subRoutine 1" );
 
 	var post_data1 = { inpdirection: 1, inpdistance: DB, inpspeed: 7 };
 
 	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
 
-	debugLog( "subRoutine 1 posted" );
+	//debugLog( "subRoutine 1 posted" );
 
-	debugLog( "getting action: " + actionComplete );
+	//debugLog( "getting action: " + actionComplete );
 	var callBack1 = setInterval(function(){
 		if( actionComplete )
 		{
@@ -297,7 +294,7 @@ function subRoutine( task, DB, Db, rot )
 
 			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
 
-			debugLog( "getting action: " + actionComplete );
+			////debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
 			{
 				if( actionComplete )
@@ -305,7 +302,7 @@ function subRoutine( task, DB, Db, rot )
 					actionComplete = false;
 					clearInterval( callBack2 );
 
-						debugLog( "bayClear: " + bayClear );
+						//debugLog( "bayClear: " + bayClear );
 					var callBack3 = setInterval(function(){
 						if( bayClear )
 						{	
@@ -316,7 +313,7 @@ function subRoutine( task, DB, Db, rot )
 
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
 
-								debugLog( "getting action: " + actionComplete );
+								//debugLog( "getting action: " + actionComplete );
 							var callBack4 = setInterval( function()
 							{
 								if( actionComplete )
@@ -330,7 +327,7 @@ function subRoutine( task, DB, Db, rot )
 
 									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
 
-										debugLog( "getting action: " + actionComplete );
+										//debugLog( "getting action: " + actionComplete );
 									var callBack5 = setInterval( function()
 									{
 										if( actionComplete )
@@ -342,7 +339,7 @@ function subRoutine( task, DB, Db, rot )
 
 											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
 
-												debugLog( "getting action: " + actionComplete );
+												//debugLog( "getting action: " + actionComplete );
 											var callBack6 = setInterval( function()
 											{
 												if( actionComplete )
@@ -354,7 +351,7 @@ function subRoutine( task, DB, Db, rot )
 
 													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
 
-														debugLog( "getting action: " + actionComplete );
+														//debugLog( "getting action: " + actionComplete );
 													var callBack7 = setInterval( function()
 													{
 														if( actionComplete )
@@ -375,7 +372,7 @@ function subRoutine( task, DB, Db, rot )
 						}
 						else
 						{
-							debugLog( "get Bays"  );
+							//debugLog( "get Bays"  );
 							var post_data_bays = { ip: tokenRing.getMyIP() };
 							tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
 						}
@@ -393,7 +390,6 @@ function MovePI()
 
 	var responseCheck1 = setInterval(function() {
 		if ( entrance_set ) {
-			unsetEntranceButton();
 			debugLog( "Entrance set" );
 			entrance_set = false;
 			clearInterval( responseCheck1 );
