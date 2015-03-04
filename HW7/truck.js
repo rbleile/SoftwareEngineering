@@ -153,11 +153,6 @@ screen.append( doneButton );
 
 screen.render();
 
-function hideDone()
-{
-	doneButton.setContent("{center}D = Action Completed{/center}");
-	doneButton.hidden = true;	
-}
 function setEntranceDoor( door )
 {
 	entrance = door;
@@ -615,9 +610,8 @@ function setActionComplete()
 
 	debugLog( "Setting Action Complete" );
 
-	doneButton.style.fg = "white";
-	doneButton.style.bg = "red";
-	doneButton.hidden = true;
+	doneButton.setContent("{center}D = Action Completed{/center}");
+	doneButton.hidden = true;	
 	screen.render();
 
 	actionComplete = true;
