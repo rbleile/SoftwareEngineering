@@ -302,7 +302,7 @@ function subRoutine_1( task )
 
 			tokenRing.generalPOST( tokenRing.getMyIP(), 'action_turninplace', post_data2 );
 
-				debugLog( "getting action: " + actionComplete );
+			debugLog( "getting action: " + actionComplete );
 			var callBack2 = setInterval( function()
 			{
 				if( actionComplete )
@@ -614,9 +614,12 @@ function releaseShotgun()
 
 function setActionComplete()
 {
+
+	debugLog( "Setting Action Complete" );
+
 	doneButton.style.fg = "white";
 	doneButton.style.bg = "red";
-	doneButton.hidden = false;
+	doneButton.hidden = true;
 	screen.render();
 
 	actionComplete = true;
