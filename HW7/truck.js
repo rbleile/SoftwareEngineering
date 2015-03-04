@@ -86,22 +86,14 @@ var box = blessed.box({
 
 /********* BUTTON CODE *********/
 var doneButton = blessed.box({
-    parent: screen,
     top: '80%',
     height: '20%',
     width: '50%',
     left: '0%',
-    border: {
-        type: 'line',
-        fg: 'white'
-    },
+    border: false,
     fg: 'white',
     bg: 'green',
     content: '{center}D = Action Completed{/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'red'
-    },
     hidden: true 
 });
 doneButton.on('click', function(data) {
@@ -113,22 +105,14 @@ screen.key(['d', 'D'], function(ch, key) {
 
 
 var entranceButton1 = blessed.box({
-    parent: screen,
     top: '80%',
     height: '20%',
     width: '30%',
     left: '0%',
-    border: {
-        type: 'line',
-        fg: 'yellow'
-    },
+    border: false,
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 1 {/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'red'
-    },
     hidden: true 
 });
 entranceButton1.on('click', function(data) {
@@ -139,22 +123,14 @@ screen.key(['1'], function(ch, key) {
 });
 
 var entranceButton2 = blessed.box({
-    parent: screen,
     top: '80%',
     height: '20%',
     width: '30%',
     left: '50%',
-    border: {
-        type: 'line',
-        fg: 'yellow'
-    },
+    border: false,
     fg: 'black',
     bg: 'yellow',
     content: '{center} Enter Door 2 {/center}',
-    tags: true,
-    hoverEffects: {
-        bg: 'red'
-    },
     hidden: true 
 });
 entranceButton2.on('click', function(data) {
@@ -166,9 +142,13 @@ screen.key(['2'], function(ch, key) {
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
+
+
+screen.append( entranceButton1 );
+screen.append( entranceButton2 );
+screen.append( doneButton );
+
 screen.render();
-
-
 
 function setEntranceDoor( door )
 {
@@ -750,8 +730,6 @@ function initializeTruck()
 		}
 	}, 500);
 }
-
-screen.render();
 
 app.set('port', process.env.PORT || 3000);
 
