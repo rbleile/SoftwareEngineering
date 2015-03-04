@@ -237,8 +237,6 @@ function getWorkFromBag()
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );	
 }
 
-
-
 function subroutine( bay )
 {
 
@@ -249,7 +247,7 @@ function subroutine( bay )
 	switch( bay-1 )
 	{
 		case 0:
-			if( entrance == 0 )
+			if( entrance == 1 )
 			{
 				subRoutine( task_data, D1B1, Dbay, 1 );
 			}
@@ -259,7 +257,7 @@ function subroutine( bay )
 			}
 			break;
 		case 1:
-			if( entrance == 0 )
+			if( entrance == 1 )
 			{
 				subRoutine( task_data, D1B2, Dbay, 1 );
 			}
@@ -269,7 +267,7 @@ function subroutine( bay )
 			}
 			break;
 		case 2:
-			if( entrance == 0 )
+			if( entrance == 1 )
 			{
 				subRoutine( task_data, D1B3, Dbay, 1 );
 			}
