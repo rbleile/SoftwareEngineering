@@ -91,7 +91,7 @@
 			border:4px solid rgb(0,0,255);
 			border-radius: 10px;
 			position:absolute;
-			opacity: .5;
+			opacity: .3;
 			top:25;
 			left:25;
 		}
@@ -103,7 +103,7 @@
 			border:4px solid rgb(255,0,0);
 			border-radius: 10px;
 			position:absolute;
-			opacity: .5;
+			opacity: .3;
 			top:25;
 			left:25;
 		}
@@ -115,7 +115,7 @@
 			border:2px solid rgb(0,0,255);
 			border-radius: 5px;
 			position:absolute;
-			opacity: .8;
+			opacity: .3;
 			top:15;
 			left:15;
 		}
@@ -127,7 +127,7 @@
 			border:2px solid rgb(255,0,0);
 			border-radius: 5px;
 			position:absolute;
-			opacity: .8;
+			opacity: .3;
 			top:15;
 			left:15;
 		}
@@ -152,12 +152,14 @@
 			max-width:150px;
 			max-height:150px;
 			float:right;
+			opacity: 1;
 		}
 
 		.signClosed{
 			max-width:150px;
 			max-height:150px;
 			float:right;
+			opacity: 1;
 		}
 
 	</style>
@@ -196,8 +198,8 @@
 							<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
 							<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
 							<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-							<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:75;"></img>
-							<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:75;"></img>
+							<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:75; left:50; max-height:100px; max-width:100px;"></img>
+							<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:75; left:50; max-height:100px; max-width:100px;"></img>
 							<img class="signOpen" src="img/signOpen.png" alt="open sign" style="display:none;"></img>
 							<img class="signClosed" src="img/signClosed.png" alt="closed sign" style="display:none;"></img>
 						</div>
@@ -213,8 +215,8 @@
 							<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
 							<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
 							<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-							<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:75;"></img>
-							<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:75;"></img>
+							<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:75; left:50; max-height:100px; max-width:100px;"></img>
+							<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:75; left:50; max-height:100px; max-width:100px;"></img>
 							<img class="signOpen" src="img/signOpen.png" alt="open sign" style="display:none;"></img>
 							<img class="signClosed" src="img/signClosed.png" alt="closed sign" style="display:none;"></img>
 						</div>
@@ -230,8 +232,8 @@
 							<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
 							<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
 							<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-							<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:75;"></img>
-							<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:75;"></img>
+							<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:75; left:50; max-height:100px; max-width:100px;"></img>
+							<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:75; left:50; max-height:100px; max-width:100px;"></img>
 							<img class="signOpen" src="img/signOpen.png" alt="open sign" style="display:none;"></img>
 							<img class="signClosed" src="img/signClosed.png" alt="closed sign" style="display:none;"></img>
 						</div>
@@ -242,18 +244,17 @@
 				</div>
 
 				<div style="width:150px; float:right">
-
 				<div id="parkingNorth" style="
 											border-top: 4px solid yellow;
 											border-top-right-radius: 10px;
 											border-top-left-radius: 10px;"
 				class="parking">
-						<img class="lockReservedBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
-						<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-						<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
-						<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-						<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none;"></img>
-						<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none;"></img>
+						<img class="lockReservedBlue" src="img/lockBlue.png" alt="blue lock" style="display:none; opacity:.3;"></img>
+						<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none; opacity:.3;"></img>
+						<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none; opacity:.3;"></img>
+						<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none; opacity:.3;"></img>
+						<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:50; left:37;"></img>
+						<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:50; left:37;"></img>
 					</div>
 
 					<div id="bay1Corridor" class="corridor">
@@ -288,20 +289,16 @@
 											border-bottom-right-radius: 10px;
 											border-bottom-left-radius: 10px;"
 					class="parking">
-						<img class="lockReservedBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
-						<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-						<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none;"></img>
-						<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none;"></img>
-						<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none;"></img>
-						<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none;"></img>
+						<img class="lockReservedBlue" src="img/lockBlue.png" alt="blue lock" style="display:none; opacity:.3;"></img>
+						<img class="lockReservedRed" src="img/lockRed.png" alt="red lock" style="display:none; opacity:.3;"></img>
+						<img class="lockBlue" src="img/lockBlue.png" alt="blue lock" style="display:none; opacity:.3;"></img>
+						<img class="lockRed" src="img/lockRed.png" alt="red lock" style="display:none; opacity:.3;"></img>
+						<img class="truckBlue" src="img/truckBlue.svg" alt="blue truck" style="display:none; top:50; left:37;"></img>
+						<img class="truckRed" src="img/truckRed.svg" alt="red truck" style="display:none; top:50; left:37;"></img>
 					</div>
-
 				</div>
-
 			</div
       	</center>
-
-
    	</div>
 
    	<script src="refreshDisplay.js"></script>
