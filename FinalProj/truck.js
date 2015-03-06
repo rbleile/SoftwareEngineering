@@ -404,9 +404,9 @@ function MovePI()
 
 /********* SHUTGUN **********/
 
-function callShotGun()
+function callShotGun(CSnumber)
 {
-	reqResource();
+	reqResource(CSnumber);
 }
 
 //Enumerate possible states
@@ -421,18 +421,18 @@ var STATE = GAP_STATE;
 var highestTS = 0;
 var myTS = 0;
 
-//SL: Need both arrays for each critical section
 //Shotgun lists
-var numCritSections = 6;
 var ReqDeferred = [];
 var PendingReplies = [];
+//Need both arrays for each critical section
+var numCritSections = 6;
 for (var i = 0; i < numCritSections; i++)
 {
 	ReqDeferred[i] = [];
 	PendingReplies[i] = [];
 }
 
-function reqResource()
+function reqResource(CSnumber)
 {
 	STATE = REQUEST_STATE;
 
@@ -453,18 +453,18 @@ function reqResource()
 			if (theRing[i] != tokenRing.getMyIP())
 			{
 				tokenRing.generalPOST(theRing[i], '/process_resource_request', post_data); 
-				PendingReplies.push(theRing[i]);
+				PendingReplies[CSnumber].push(theRing[i]);
 			}  
 		}
 	}
 }
 
-function getNextRequestDeferred()
+function getNextRequestDeferred(CSnumber)
 {
-	if (ReqDeferred.length < 1)
+	if (ReqDeferred[CSnumber].length < 1)
 		return -1;
 	else
-		return ReqDeferred.splice(0,1);
+		return ReqDeferred[CSnumber].splice(0,1);
 }
 
 function processReq(ID, timestamp)
@@ -732,7 +732,10 @@ function initializeTruck()
 			getTRUCKIPs();	
 
 			if(debug) debugLog( "Calling Shotgun" );
-			callShotGun();
+
+			//which CS are you initially requesting?
+			var wantCSnumber = 1;
+			callShotGun(wantCSnumber);
 		} 
 		else
 		{
