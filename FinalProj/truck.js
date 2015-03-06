@@ -36,6 +36,7 @@ var D2B2 = 6;
 var D2B3 = 3;
 
 var Dbay = 5;
+
 /********* END Globals ***********/
 
 
@@ -420,9 +421,16 @@ var STATE = GAP_STATE;
 var highestTS = 0;
 var myTS = 0;
 
+//SL: Need both arrays for each critical section
 //Shotgun lists
+var numCritSections = 6;
 var ReqDeferred = [];
 var PendingReplies = [];
+for (var i = 0; i < numCritSections; i++)
+{
+	ReqDeferred[i] = [];
+	PendingReplies[i] = [];
+}
 
 function reqResource()
 {
