@@ -404,10 +404,14 @@ function MovePI()
 
 /********* SHUTGUN **********/
 
-function callShotGun(CSnumber)
+function callShotGun(whichCS)
 {
-	reqResource(CSnumber);
+	reqResource(whichCS);
 }
+
+//Arbitrary number of critical sections
+var minCritSections = 2;
+var numCritSections = minCritSections + 6 ;
 
 //Enumerate possible states
 var GAP_STATE = 0;
@@ -415,7 +419,10 @@ var REQUEST_STATE = 1;
 var WORK_STATE = 2;
 
 //Define which state currently in
-var STATE = GAP_STATE;
+var STATE = [];
+for(var i = 0; i < numCritSections; i++) {
+    STATE.push(GAP_STATE);
+}
 
 //Time stamp tracking
 var highestTS = 0;
@@ -425,16 +432,15 @@ var myTS = 0;
 var ReqDeferred = [];
 var PendingReplies = [];
 //Need both arrays for each critical section
-var numCritSections = 6;
 for (var i = 0; i < numCritSections; i++)
 {
 	ReqDeferred[i] = [];
 	PendingReplies[i] = [];
 }
 
-function reqResource(CSnumber)
+function reqResource(whichCS)
 {
-	STATE = REQUEST_STATE;
+	STATE[whichCS] = REQUEST_STATE;
 
 	highestTS++;
 	myTS = highestTS;
@@ -449,44 +455,44 @@ function reqResource(CSnumber)
 	{
 		for (var i = 0; i < theRing.length; i++)
 		{
-			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP() }; 
+			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP(), myReqCS : whichCS }; 
 			if (theRing[i] != tokenRing.getMyIP())
 			{
 				tokenRing.generalPOST(theRing[i], '/process_resource_request', post_data); 
-				PendingReplies[CSnumber].push(theRing[i]);
+				PendingReplies[whichCS].push(theRing[i]);
 			}  
 		}
 	}
 }
 
-function getNextRequestDeferred(CSnumber)
+function getNextRequestDeferred(whichCS)
 {
-	if (ReqDeferred[CSnumber].length < 1)
+	if (ReqDeferred[whichCS].length < 1)
 		return -1;
 	else
-		return ReqDeferred[CSnumber].splice(0,1);
+		return ReqDeferred[whichCS].splice(0,1);
 }
 
-function processReq(ID, timestamp)
+function processReq(ID, timestamp, whichCS)
 {
-	switch(STATE) {
+	switch(STATE[whichCS]) {
 		case GAP_STATE:
-			inGapState(ID,timestamp);
+			inGapState(ID,timestamp,whichCS);
 			break;
 		case REQUEST_STATE:
-			inRequestState(ID, timestamp);
+			inRequestState(ID, timestamp,whichCS);
 			break;
 		case WORK_STATE:
-			inWorkState(ID,timestamp);
+			inWorkState(ID,timestamp,whichCS);
 			break;
 		default:
 			if(debug) debugLog("Not valid state");
 	}
 }
 
-function setWORKState()
+function setWORKState(whichCS)
 {
-	STATE = WORK_STATE;
+	STATE[whichCS] = WORK_STATE;
 	if(debug) debugLog ( "resource_approved...working");
 	MovePI();
 }
@@ -503,12 +509,12 @@ function inGapState(ID,timestamp)
 	tokenRing.generalPOST(ID, '/resource_approved', post_data); 
 }
 
-function inRequestState(ID,timestamp)
+function inRequestState(ID,timestamp,whichCS)
 {
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
-		ReqDeferred.push(ID);
+		ReqDeferred[whichCS].push(ID);
 		if(debug) debugLog("request in request state new timestamp");
 	}
 	else if (timestamp == highestTS)
@@ -516,7 +522,7 @@ function inRequestState(ID,timestamp)
 		if(debug) debugLog("Tiebreaker");
 		if (ID > tokenRing.getMyIP())
 		{
-			ReqDeferred.push(ID);
+			ReqDeferred[whichCS].push(ID);
 		}
 		else
 		{
@@ -531,9 +537,9 @@ function inRequestState(ID,timestamp)
 	}
 }
 
-function inWorkState(ID,timestamp)
+function inWorkState(ID,timestamp,whichCS)
 {
-	ReqDeferred.push(ID);
+	ReqDeferred[whichCS].push(ID);
 
 	if (timestamp > highestTS)
 	{
@@ -554,19 +560,19 @@ app.post('/process_resource_request', function(req, res) {
 
 	if(debug) debugLog ( "process_resource_request " + JSON.stringify( the_body) );
 
-	processReq(the_body.myIP, the_body.myTS);
+	processReq(the_body.myIP, the_body.myTS, the_body.myReqCS);
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
 
-function processApproval(IP)
+function processApproval(IP, whichCS)
 {
-	if (STATE == REQUEST_STATE && PendingReplies.indexOf(IP) != -1)
+	if (STATE[whichCS] == REQUEST_STATE && PendingReplies[whichCS].indexOf(IP) != -1)
 	{
-		PendingReplies.splice(PendingReplies.indexOf(IP),1);
-		if(debug) debugLog("remaining replies: " + PendingReplies);
-		if (PendingReplies.length == 0)
+		PendingReplies[whichCS].splice(PendingReplies.indexOf(IP),1);
+		if(debug) debugLog("remaining replies: " + PendingReplies[whichCS]);
+		if (PendingReplies[whichCS].length == 0)
 		{
 			setWORKState();
 		}
@@ -586,26 +592,46 @@ app.post('/resource_approved', function(req, res) {
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
 
-function gapState()
+function gapState(whichCS)
 {
-	STATE = GAP_STATE;
+	STATE[whichCS] = GAP_STATE;
 	screen.render();
 }
 
-function releaseShotgun()
+function releaseShotgun(whichCS)
 {
-	gapState();
-	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred);
-	var numRequests = ReqDeferred.length;
+	gapState(whichCS);
+	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred[whichCS]);
+	var numRequests = ReqDeferred[whichCS].length;
 	for (var i = 0; i < numRequests; i++)
 	{
-		var nextPendingRequest = getNextRequestDeferred();
+		var nextPendingRequest = getNextRequestDeferred(whichCS);
 		var post_data = { myIP : tokenRing.getMyIP() };
 	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
 		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
+	var nextCS;
 
-	callShotGun();
+	switch(whichCS) {
+		case 1:
+			nextCS = 5;
+			break;
+		case 2:
+			nextCS = 6;
+			break;
+		case 3:
+			nextCS = 7
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		default:
+	}
+
+	callShotGun(nextCS);
 }
 
 /********* END SHOTGUN **********/
@@ -662,7 +688,6 @@ app.post( '/do_return_task', function( req, res ){
 		debugLog( "Waiting for work" );
 		setTimeout( getWorkFromBag, 1000 );
 	}
-
 });
 
 app.post('/do_recievedBays', function(req, res){
@@ -734,6 +759,7 @@ function initializeTruck()
 			if(debug) debugLog( "Calling Shotgun" );
 
 			//which CS are you initially requesting?
+			//probably should enable entrance buttons here
 			var wantCSnumber = 1;
 			callShotGun(wantCSnumber);
 		} 
