@@ -27,12 +27,25 @@ var ifaces = os.networkInterfaces();
 var node_functionality =-1; 
 // Input 0
 
+var callBackFunction = undefined;
 
 app.post('/do_keepalive', function(req, res) {
   res.json(req.body);
   var the_body = req.body;  //see connect package above
 });
 
+function failSoHard(ip)
+{
+  if(callBackFunction != undefined)
+  {
+    var idx = tokenRing.indexOf(ip);
+
+    if(ringRoles[idx] == node_functionality)
+    {
+      callBackFunction(ip);
+    }
+  }
+}
 
 /*
  * General function to replace separate functions for all different types of
@@ -52,6 +65,7 @@ function generalPOST ( genHost, genPath, post_data,portNum, err, res )
     {
       if(debug) console.log("Lost connection to " + genHost + "removing from ring");
 
+        failSoHard(genHost);
         removeRingMember(genHost);
 
 //      processApproval(genHost);
@@ -378,8 +392,13 @@ function getRoleList(roleId)
   return roleList;
 }
 
+function registerFailureCallback(callback)
+{
+  callBackFunction = callback;
+}
 
 module.exports = {
+  registerFailureCallback : registerFailureCallback,
   generalPOST : generalPOST,
   setRole : setRole,
   getRoleList : getRoleList,
