@@ -219,6 +219,8 @@ var bay3Work = blessed.scrollabletext({
 
 /**********/
 
+
+
 screen.append(logResults);
 screen.append(logTasks);
 screen.append(logEvents);
@@ -430,6 +432,13 @@ function printIPs()
 	var list2 = tokenRing.getRoleList(1);
 	//console.log(list+" "+list2);
 }
+
+function callback(ip)
+{
+	debugLog(" Test failurecallack "+ ip);
+}
+
+tokenRing.registerFailureCallback(callback);
 
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
