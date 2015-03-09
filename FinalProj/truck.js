@@ -506,7 +506,7 @@ function Rec_Subroutine( LIST )
 					clearInterval( callBack3 );
 					bayClear = false;
 			
-					var post_data = { inpdirection: location, inpdistance: 5, inpspeed: 7 };
+					var post_data = { inpdirection: CS_P, inpdistance: 5, inpspeed: 7 };
 					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
 					debugLog("generalPOST");
 
