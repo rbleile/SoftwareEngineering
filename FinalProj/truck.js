@@ -413,7 +413,7 @@ function GetPath1( task )
 function MoveForward( task )
 {
 
-	debugLog("Move Forward: " + task + " " PATH_LIST );
+	debugLog("Move Forward: " + task + " " Path_List );
 
 	Rec_Subroutine( Path_List );
 
