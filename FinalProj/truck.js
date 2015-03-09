@@ -573,6 +573,7 @@ function reqResource(whichCS)
 
 	if( theRing.length == 1 && theRing[0] == tokenRing.getMyIP())
 	{
+		debugLog( "Setting Work: " + whichCS );
 		setWORKState(whichCS);
 	}
 	else
