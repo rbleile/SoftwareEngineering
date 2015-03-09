@@ -474,6 +474,8 @@ function Rec_Subroutine( LIST )
 	}
 
 	var CS_P = LIST.splice(0,1);
+	debugLog("Spliced CS: " + CS_P);
+	debugLog("After splice: " + LIST);
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[CS_P+2] )
 		{

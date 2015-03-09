@@ -24,9 +24,9 @@ activeTasks[0] = aTaskProperties; //bay 0
 activeTasks[1] = aTaskProperties; //bay 1
 activeTasks[2] = aTaskProperties; //bay 2
 
-bays[0] = true;
-bays[1] = true; //init bays full
-bays[2] = true;
+bays[0] = false;
+bays[1] = false; //init bays full
+bays[2] = false;
 
 
 /**************************************************
