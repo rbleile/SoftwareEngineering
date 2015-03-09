@@ -479,6 +479,7 @@ function Rec_Subroutine( LIST )
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[CS_P+2] )
 		{
+			debugLog("first if statement");
 			if( CS_P < numCriticalLocations)
 			{
 				Critical_Sections[CS_P+2] = false;
@@ -489,21 +490,25 @@ function Rec_Subroutine( LIST )
 
 			if( CS_P >= 3 )
 			{
+				debugLog("setting bay clear");
 				bayClear = true;
 			}
 			
 			var callBack3 = setInterval(function(){
 				if( bayClear )
 				{
+					debugLog("callback3");
 					clearInterval( callBack3 );
 					bayClear = false;
 			
 					var post_data = { inpdirection: location, inpdistance: 5, inpspeed: 7 };
 					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
+					debugLog("generalPOST");
 
 					var callBack2 = setInterval(function(){
 						if( actionComplete )
 						{
+							debugLog("callback2");
 							location = CS_P; //Move Location To Next Step;
 							var post_data = { ip : tokenRing.getMyIP(), "location" : location,  };
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
