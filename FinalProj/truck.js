@@ -459,32 +459,56 @@ function Rec_Subroutine( LIST )
 		return;
 	}
 
-	var CS_P = LIST.splice(0,1) + 2;
+	var CS_P = LIST.splice(0,1);
 	var callBack1 = setInterval(function(){
-		if( Critical_Sections[CS_P] )
+		if( Critical_Sections[CS_P+2] )
 		{
+			if( CS_P < numCriticalLocations)
+			{
+				Critical_Sections[CS_P+2] = false;
+			}
 			clearInterval( callBack1 );
 			
 			var last_Location = location;
-			
-			location = CS_P; //Move Location To Next Step;
-			
-			var post_data = { inpdirection: location, inpdistance: 5, inpspeed: 7 };
-			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
 
-			var callBack2 = setInterval(function(){
-				if( actionComplete )
+			if( CS_P >= 3 )
+			{
+				bayClear = true;
+			}
+			
+			var callBack3 = setInterval(function(){
+				if( bayClear )
 				{
-					actionComplete = false;
-					clearInterval( callBack2 );
-					
-					if( last_location >= 0 && last_location < numCriticalLocations )
-					{
-						releaseShotGun( last_location + minCritSections ); // Release Crit Section to current Location
-					}
+					clearInterval( callBack3 );
+					bayClear = false;
+			
+					var post_data = { inpdirection: location, inpdistance: 5, inpspeed: 7 };
+					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
 
-					Rec_Subroutine( LIST );
+					var callBack2 = setInterval(function(){
+						if( actionComplete )
+						{
+							location = CS_P; //Move Location To Next Step;
+							var post_data = { ip : tokenRing.getMyIP(), "location" : location,  };
+							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
+							actionComplete = false;
+							clearInterval( callBack2 );
+							
+							if( last_location >= 0 && last_location < numCriticalLocations )
+							{
+								Critical_Sections[CS_P] = false;
+								releaseShotGun( last_location + minCritSections ); // Release Crit Section to current Location
+							}
+
+							Rec_Subroutine( LIST );
+						}
+					}, 500);
 				}
+				else
+				{
+					var post_data_bays = { ip: tokenRing.getMyIP() };
+					tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
+				}				
 			}, 500);
 		}
 	}, 500);
@@ -496,6 +520,8 @@ function Rec_Subroutine( LIST )
 function callShotGun(whichCS)
 {
 	reqResource(whichCS);
+	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+	tokenRing.generalPOST( BAG_IP, '/report_lock_request', post_data );
 }
 
 //Enumerate possible states
@@ -580,6 +606,8 @@ function setWORKState(whichCS)
 	STATE[whichCS] = WORK_STATE;
 	if(debug) debugLog ( "resource_approved...working");
 	Critical_Sections[whichCS] = true;
+	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+	tokenRing.generalPOST( BAG_IP, '/report_lock_granted', post_data );
 }
 
 function inGapState(ID,timestamp)
@@ -686,6 +714,7 @@ function gapState(whichCS)
 function releaseShotgun(whichCS)
 {
 	gapState(whichCS);
+	
 	if(debug) debugLog("release shotgun. Current RD : " + ReqDeferred[whichCS]);
 	var numRequests = ReqDeferred[whichCS].length;
 	for (var i = 0; i < numRequests; i++)
@@ -696,6 +725,8 @@ function releaseShotgun(whichCS)
 		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
 
+	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+	tokenRing.generalPOST( BAG_IP, '/report_lock_release', post_data );
 }
 
 /********* END SHOTGUN **********/
@@ -750,7 +781,7 @@ app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Move( " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
-	 displayButton();
+	displayButton();
 });
 
 app.post('/action_turninplace', function(req, res) {
