@@ -437,7 +437,7 @@ function GetPath2( task )
 			clearInterval( callBack1 );
 			for( var i = 0; i < Rev_Path.length-1; i++ )
 			{
-				callShotGun( Rev_List[i]+minCritSections );
+				callShotGun( Rev_Path[i]+minCritSections );
 			}
 			releaseShotgun( 1 );
 			MoveBack( task );
@@ -447,7 +447,7 @@ function GetPath2( task )
 
 function MoveBack( task )
 {
-	Rec_Subroutine( Rev_List );
+	Rec_Subroutine( Rev_Path );
 	
 	var callBack1 = setInterval(function(){
 		if( DoneMoving )

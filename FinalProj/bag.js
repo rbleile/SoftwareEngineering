@@ -319,8 +319,8 @@ function refreshDisplay() {
 function debugLog( msg ) 
 {
 	//log.insertLine(0, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
-	//logTasks.insertLine(0, msg);
-	console.log( msg );
+	logEvents.insertLine(0, msg);
+	//console.log( msg );
 	screen.render();
 	return;
 }
