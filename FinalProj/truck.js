@@ -522,6 +522,16 @@ function Rec_Subroutine( LIST )
 
 function callShotGun(whichCS)
 {
+
+	if( whichCS == 0 )
+		debugLog("Callign Task Shotun " + whichCS);
+	else if( whichCS == 1 )
+		debugLog("Callign Path Shotun " + whichCS);
+	else if( whichCS < 8 )
+		debugLog("Callign location Shotun " + whichCS);
+	else
+		debugLog("No valid CS defined")
+
 	reqResource(whichCS);
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 	tokenRing.generalPOST( Bag_IP, '/report_lock_request', post_data );
