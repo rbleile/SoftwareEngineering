@@ -533,8 +533,8 @@ function callShotGun(whichCS)
 		debugLog("No valid CS defined")
 
 	reqResource(whichCS);
-	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/report_lock_request', post_data );
+//	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+//	tokenRing.generalPOST( Bag_IP, '/report_lock_request', post_data );
 }
 
 //Enumerate possible states
@@ -573,7 +573,7 @@ function reqResource(whichCS)
 
 	if( theRing.length == 1 && theRing[0] == tokenRing.getMyIP())
 	{
-		setWORKState();
+		setWORKState(whichCS);
 	}
 	else
 	{
