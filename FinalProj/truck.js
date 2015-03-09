@@ -521,7 +521,7 @@ function callShotGun(whichCS)
 {
 	reqResource(whichCS);
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( BAG_IP, '/report_lock_request', post_data );
+	tokenRing.generalPOST( Bag_IP, '/report_lock_request', post_data );
 }
 
 //Enumerate possible states
@@ -607,7 +607,7 @@ function setWORKState(whichCS)
 	if(debug) debugLog ( "resource_approved...working");
 	Critical_Sections[whichCS] = true;
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( BAG_IP, '/report_lock_granted', post_data );
+	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
 }
 
 function inGapState(ID,timestamp)
@@ -726,7 +726,7 @@ function releaseShotgun(whichCS)
 	}
 
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( BAG_IP, '/report_lock_release', post_data );
+	tokenRing.generalPOST( Bag_IP, '/report_lock_release', post_data );
 }
 
 /********* END SHOTGUN **********/
