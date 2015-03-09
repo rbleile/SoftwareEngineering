@@ -101,6 +101,7 @@ def main():
 			ans = False
 		elif ans != "":
 			print("Invalid choice. Try again.")
+		time.sleep(.1)
 	
 if __name__=="__main__":
 	main()
