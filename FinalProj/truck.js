@@ -215,7 +215,6 @@ function getTRUCKIPs()
 	TRUCK_IPs = tokenRing.getRoleList(2);
 	
 	if( debug) debugLog("TRUCK_IPs are " + JSON.stringify( TRUCK_IPs) );
-
 }
 
 /********* END TRUCK IPs **********/
@@ -341,6 +340,9 @@ function choosePath( bay )
 
 function BeginTaskRoutine()
 {
+
+debugLog( "Begin Task Routine" );
+
 	callShotGun( 0 );
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[0] )
@@ -354,6 +356,7 @@ function BeginTaskRoutine()
 
 function getWorkFromBag()
 {
+	debugLog( "Get Work From bag" );
 	var post_data = { "ip" : tokenRing.getMyIP() };
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
 }
@@ -606,6 +609,7 @@ function setWORKState(whichCS)
 	STATE[whichCS] = WORK_STATE;
 	if(debug) debugLog ( "resource_approved...working");
 	Critical_Sections[whichCS] = true;
+	if( debug ) debugLog( "Working: " + whichCS + " " + JSON.stringify( Critical_Sections ) );
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
 }
@@ -822,15 +826,14 @@ function initializeTruck()
 		if(bag_found)
 		{
 			clearInterval( responceCheck1 );
-			getTRUCKIPs();	
-
-			if(debug) debugLog( "Calling Shotgun" );
+			getTRUCKIPs();
 
 			getEntrancePoint();
 			
 			var callBack1 = setInterval(function(){
 				if( entrance_set )
 				{
+					debugLog( "Entrace Set" );
 					clearInterval( callBack1 );
 					BeginTaskRoutine();
 				}
