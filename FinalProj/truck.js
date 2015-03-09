@@ -701,7 +701,7 @@ function processApproval(IP, whichCS)
 		if(debug) debugLog("remaining replies: " + PendingReplies[whichCS]);
 		if (PendingReplies[whichCS].length == 0)
 		{
-			setWORKState();
+			setWORKState(whichCS);
 		}
 	}
 	else 
