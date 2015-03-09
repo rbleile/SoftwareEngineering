@@ -378,6 +378,8 @@ app.post( '/do_return_task', function( req, res ){
 		
 		var task = { id: task_id, bayNum : bay_num };
 		
+		debugLog( "Got task" );
+
 		GetPath1( task );
 	}
 	else
@@ -389,10 +391,12 @@ app.post( '/do_return_task', function( req, res ){
 
 function GetPath1( task )
 {
+	debugLog("calling path cs");
 	callShotGun( 1 );
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[1] )
 		{
+			debugLog("got path cs");
 			Critical_Sections[1] = false;
 			clearInterval( callBack1 );
 			choosePath( task.bayNum );
