@@ -382,12 +382,13 @@ app.post('/do_get_task', function(req, res) {
 	debugLog( "Tasks" + JSON.stringify( tasks ) );
 	debugLog( "Task size: " + tasks.length );
 	debugLog("Bays: " + JSON.stringify( bays ) );
+	debugLog("activeTasks: " + JSON.stringify( activeTasks ) );
 
 	//check to see if any task have a bay number that can be entered
 	for(var i = 0; i < tasks.length; i++)
 	{
 		var bay = tasks[i].bayNumber - 1;
-		if(!bays[bay] && !activeTasks[bay]) // bay can be entered and no nobody is has a task to the same bay
+		if(!bays[bay] && !activeTasks[bay].isActive) // bay can be entered and no nobody is has a task to the same bay
 		{
 			debugLog( "Valid Task: " + validTaskIdx );
 			validTaskIdx = i;
