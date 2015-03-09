@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = true;
 
-
 /********* Globals ***********/
 var actionComplete = false;
 var Bag_IP = 0;
@@ -28,15 +27,27 @@ var bay_num = -1;
 var bayClear = false;
 var count = 0;
 
-var D1B1 = 3;
-var D1B2 = 6;
-var D1B3 = 9;
-var D2B1 = 9;
-var D2B2 = 6;
-var D2B3 = 3;
+var minCritSections = 2;
+var numCriticalLocations = 6;
 
-var Dbay = 5;
+// My Current Location
+var Location = -1;
 
+// Last CS Location when moving through location list
+var Last_CS = -1;
+
+//List of critical locations to call
+var Path_List = [];
+var Rev_Path = [];
+
+// Bool List of critical sections to determine if I have it
+var Critcal_Sections = [];
+for(var i = 0; i < numCritSections; i++) {
+    Critical_Sections.push( false );
+}
+
+//Interval Boolean if move routine finished
+var DoneMoving = false;
 /********* END Globals ***********/
 
 
@@ -158,6 +169,8 @@ function setEntranceDoor( door )
 {
 	entrance = door;
 	entrance_set = true;
+	
+	location = entrance;
 
 	entranceButton1.setContent("{center} Enter Door 1 {/center}");
 	entranceButton2.setContent("{center} Enter Door 2 {/center}");
@@ -209,198 +222,272 @@ function getTRUCKIPs()
 
 function getEntrancePoint()
 {
-    
 	doneButton.setContent("{center}D = Action Completed{/center}");
-	doneButton.hidden = true;	
-	
+	doneButton.hidden = true;
+
 	entranceButton1.setContent("{center} Enter Door 1 {/center}");
 	entranceButton2.setContent("{center} Enter Door 2 {/center}");
-	entranceButton1.hidden = false;	
-	entranceButton2.hidden = false;	
+	entranceButton1.hidden = false;
+	entranceButton2.hidden = false;
 
 	screen.render();
 }
 
-function getWorkFromBag()
+/* Truck Worker Process
+ 	
+	Truck Task Routine
+		- Get Critical Task Lock
+		- Get Task from Bag
+		- Release Critical Task Lock
+		- Get Critical Path Lock
+		- Request Critical Sections on Path to Work
+		- Release Critical Path Lock
+		- Begin recursive subroutine
+		- Get Critical Path Lock
+		- Request Critical Sections on Path to Home Location
+		- Release Critical Path Lock
+		- Begin recursive subroutine
+		- Submit result to bag
+	
+	Recursive subroutine
+		- When critical location list is empty return
+		- For path list
+			- get next critical location
+			- move to next critical location
+			- release last critical location
+			- recurse
+*/
+
+//Enumerate possible paths to take
+function choosePath( bay )
 {
-	var post_data = { "ip" : tokenRing.getMyIP() };
-	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );	
-}
-
-function subroutine( bay )
-{
-
-	var task_data = { id : task_id, bayNumber : bay_num };
-
-	debugLog( "Task_data: " + JSON.stringify( task_data ) );
-
 	switch( bay-1 )
 	{
 		case 0:
 			if( entrance == 1 )
 			{
-				subRoutine( task_data, D1B1, Dbay, 1 );
+				Path_List.push( 5 );
+				Path_List.push( 4 );
+				Path_List.push( 3 );
+				Path_List.push( 0 );
+
+				Rev_Path.push( 3 );
+				Rev_Path.push( 4 );
+				Rev_Path.push( 5 );
+				Rev_Path.push( 7 );
 			}
 			else
 			{
-				subRoutine( task_data, D2B1, Dbay, -1 );
+				Path_List.push( 3 );
+				Path_List.push( 0 );
+
+				Rev_Path.push( 3 );
+				Rev_Path.push( 6 );
 			}
 			break;
 		case 1:
 			if( entrance == 1 )
 			{
-				subRoutine( task_data, D1B2, Dbay, 1 );
+				Path_List.push( 5 );
+				Path_List.push( 4 );
+				Path_List.push( 1 );
+
+				Rev_Path.push( 4 );
+				Rev_Path.push( 5 );
+				Rev_Path.push( 7 );
 			}
 			else
 			{
-				subRoutine( task_data, D2B2, Dbay, -1 );
+				Path_List.push( 3 );
+				Path_List.push( 4 );
+				Path_List.push( 1 );
+
+				Rev_Path.push( 4 );
+				Rev_Path.push( 3 );
+				Rev_Path.push( 6 );
 			}
 			break;
 		case 2:
 			if( entrance == 1 )
 			{
-				subRoutine( task_data, D1B3, Dbay, 1 );
+				Path_List.push( 5 );
+				Path_List.push( 2 );
+
+				Rev_Path.push( 5 );
+				Rev_Path.push( 7 );
 			}
 			else
 			{
-				subRoutine( task_data, D2B3, Dbay, -1 );
+				Path_List.push( 3 );
+				Path_List.push( 4 );
+				Path_List.push( 5 );
+				Path_List.push( 2 );
+
+				Rev_Path.push( 5 );
+				Rev_Path.push( 4 );
+				Rev_Path.push( 3 );
+				Rev_Path.push( 6 );
 			}
 			break;
 		default:
 			if( debug ) debugLog( "Default case bay should not be hit" );
 			break;
 	}
+	
+	return;
 }
 
-
-function subRoutine( task, DB, Db, rot )
+function BeginTaskRoutine()
 {
-
-	//debugLog( "subRoutine 1" );
-
-	var post_data1 = { inpdirection: 1, inpdistance: DB, inpspeed: 7 };
-
-	tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data1 );
-
-	//debugLog( "subRoutine 1 posted" );
-
-	//debugLog( "getting action: " + actionComplete );
+	callShotGun( 0 );
 	var callBack1 = setInterval(function(){
-		if( actionComplete )
+		if( Critical_Sections[0] )
 		{
-			actionComplete = false;
+			Critical_Sections[0] = false;
+			clearInterval( callBack1 );
+			getWorkFromBag();
+		}
+	}, 500);
+}
+
+function getWorkFromBag()
+{
+	var post_data = { "ip" : tokenRing.getMyIP() };
+	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
+}
+
+app.post( '/do_return_task', function( req, res ){
+
+	var body = req.body;
+
+    res.json(req.body);
+
+	debugLog( "isValid: " + body.isValid );
+
+	if( body.isValid )
+	{
+		task_id = body.id;
+		bay_num = body.bayNumber;
+		
+		var task = { id: task_id, bayNum : bay_num };
+		
+		releaseShotgun(0);
+		GetPath1( task_id, bay_num );
+	}
+	else
+	{
+		debugLog( "Waiting for work" );
+		setTimeout( getWorkFromBag, 1000 );
+	}
+});
+
+function GetPath1( task, bay_num )
+{
+	callShotGun( 1 );
+	var callBack1 = setInterval(function(){
+		if( Critical_Sections[1] )
+		{
+			Critical_Sections[1] = false;
+			clearInterval( callBack1 );
+			choosePath( bay_num );
+			for( var i = 0; i < Path_List.length; i++ )
+			{
+				callShotGun( Path_List[i]+minCritSections );
+			}
+			releaseShotGun( 1 );
+			MoveForward( task );
+		}
+	}, 500);
+}
+
+function MoveForward( task )
+{
+	Rec_Subroutine( Path_List );
+
+	var callBack1 = setInterval(function(){
+		if( DoneMoving )
+		{
+			DoneMoving = false;
+			clearInterval( callBack1 );
+			GetPath2( task );
+		}
+	}, 500);
+}
+
+function GetPath2( task )
+{
+	callShotGun( 1 );
+	var callBack1 = setInterval(function(){
+		if( Critical_Sections[1] )
+		{
+			Critical_Sections[1] = false;
+			clearInterval( callBack1 );
+			for( var i = 0; i < Rev_Path.length; i++ )
+			{
+				callShotGun( Rev_List[i]+minCritSections );
+			}
+			releaseShotGun( 1 );
+			MoveBack( task );
+		}
+	}, 500);
+}
+
+function MoveBack( task )
+{
+	Rec_Subroutine( Rev_List );
+	
+	var callBack1 = setInterval(function(){
+		if( DoneMoving )
+		{
+			DoneMoving = false;
 			clearInterval( callBack1 );
 
-			var post_data2 = { inpdegrees: rot*90 }; 
+			tokenRing.generalPOST( Bag_IP, '/do_insert_result', task );
+			
+			BeginTaskRoutine();
+		}
+	}, 500);
+}
 
-			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data2 );
+function Rec_Subroutine( LIST )
+{
+	if( LIST.length == 0 )
+	{
+		DoneMoving = true;
+		return;
+	}
 
-			////debugLog( "getting action: " + actionComplete );
-			var callBack2 = setInterval( function()
-			{
+	var CS_P = LIST.splice(0,1) + 2;
+	var callBack1 = setInterval(function(){
+		if( Critical_Sections[CS_P] )
+		{
+			clearInterval( callBack1 );
+			
+			var last_Location = location;
+			
+			location = CS_P; //Move Location To Next Step;
+			
+			var post_data = { inpdirection: location, inpdistance: 5, inpspeed: 7 };
+			tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
+
+			var callBack2 = setInterval(function(){
 				if( actionComplete )
 				{
 					actionComplete = false;
 					clearInterval( callBack2 );
+					
+					if( last_location >= 0 && last_location < numCriticalLocations )
+					{
+						releaseShotGun( last_location + minCritSections ); // Release Crit Section to current Location
+					}
 
-						//debugLog( "bayClear: " + bayClear );
-					var callBack3 = setInterval(function(){
-						if( bayClear )
-						{	
-							clearInterval( callBack3 );
-							bayClear = false;	
-
-							var post_data3 = { inpdirection: 0, inpdistance: Db, inpspeed: 7 };
-
-							tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data3 );
-
-								//debugLog( "getting action: " + actionComplete );
-							var callBack4 = setInterval( function()
-							{
-								if( actionComplete )
-								{
-									actionComplete = false;
-									clearInterval( callBack4 );
-			
-									tokenRing.generalPOST( Bag_IP, '/do_insert_result', task );
-									
-									var post_data4 = { inpdirection: 1, inpdistance: Db, inpspeed: 7 };
-
-									tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data4 );
-
-										//debugLog( "getting action: " + actionComplete );
-									var callBack5 = setInterval( function()
-									{
-										if( actionComplete )
-										{
-											actionComplete = false;
-											clearInterval( callBack5 );
-
-											var post_data5 = { inpdegrees: rot*90 }; 
-
-											tokenRing.generalPOST( tokenRing.getMyIP(), '/action_turninplace', post_data5 );
-
-												//debugLog( "getting action: " + actionComplete );
-											var callBack6 = setInterval( function()
-											{
-												if( actionComplete )
-												{
-													actionComplete = false;
-													clearInterval( callBack6 );
-
-													var post_data6 = { inpdirection: 0, inpdistance: DB, inpspeed: 7 };
-
-													tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data6 );
-
-														//debugLog( "getting action: " + actionComplete );
-													var callBack7 = setInterval( function()
-													{
-														if( actionComplete )
-														{
-															actionComplete = false;
-															clearInterval( callBack7 );
-
-															debugLog( "Releasing Shotgun" );
-															
-															releaseShotgun();
-														}
-													}, 500 );
-												}
-											}, 500 );
-										}
-									}, 500 );
-								}
-							}, 500 );
-						}
-						else
-						{
-							//debugLog( "get Bays"  );
-							var post_data_bays = { ip: tokenRing.getMyIP() };
-							tokenRing.generalPOST( Bag_IP, '/do_get_bays', post_data_bays );
-						}
-					}, 500)
+					Rec_Subroutine( LIST );
 				}
-			}, 500 );
+			}, 500);
 		}
 	}, 500);
-
 }
 
-function MovePI()
-{
-	getEntrancePoint();
-
-	var responseCheck1 = setInterval(function() {
-		if ( entrance_set ) {
-			debugLog( "Entrance set" );
-			entrance_set = false;
-			clearInterval( responseCheck1 );
-			debugLog( "Entrance: " + entrance );
-
-			getWorkFromBag();
-	}}, 100);
-}
-/********* END MovePI **********/
 
 /********* SHUTGUN **********/
 
@@ -410,8 +497,7 @@ function callShotGun(whichCS)
 }
 
 //Arbitrary number of critical sections
-var minCritSections = 2;
-var numCritSections = minCritSections + 6 ;
+var numCritSections = minCritSections + numCriticalLocations;
 
 //Enumerate possible states
 var GAP_STATE = 0;
@@ -494,7 +580,7 @@ function setWORKState(whichCS)
 {
 	STATE[whichCS] = WORK_STATE;
 	if(debug) debugLog ( "resource_approved...working");
-	MovePI();
+	Critical_Sections[whichCS] = true;
 }
 
 function inGapState(ID,timestamp)
@@ -610,37 +696,13 @@ function releaseShotgun(whichCS)
 	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
 		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
-	var nextCS;
 
-	switch(whichCS) {
-		case 1:
-			nextCS = 5;
-			break;
-		case 2:
-			nextCS = 6;
-			break;
-		case 3:
-			nextCS = 7
-			break;
-		case 5:
-			break;
-		case 6:
-			break;
-		case 7:
-			break;
-		default:
-	}
-
-	callShotGun(nextCS);
 }
 
 /********* END SHOTGUN **********/
 
-
-
 function setActionComplete()
 {
-
 	debugLog( "Setting Action Complete" );
 
 	doneButton.setContent("{center}D = Action Completed{/center}");
@@ -667,29 +729,6 @@ function displayButton()
 	screen.render();
 }
 
-app.post( '/do_return_task', function( req, res ){
-
-	var body = req.body;
-
-    res.json(req.body);
-
-	debugLog( "isValid: " + body.isValid );
-
-	if( body.isValid )
-	{
-		task_id = body.id;
-		bay_num = body.bayNumber; 
-
-		subroutine( bay_num );
-
-	}
-	else
-	{
-		debugLog( "Waiting for work" );
-		setTimeout( getWorkFromBag, 1000 );
-	}
-});
-
 app.post('/do_recievedBays', function(req, res){
 
 	var the_body = req.body;  
@@ -713,7 +752,6 @@ app.post('/action_move', function(req, res) {
     if(debug) debugLog ("Run Command: Move( " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 	 displayButton();
-
 });
 
 app.post('/action_turninplace', function(req, res) {
@@ -758,10 +796,15 @@ function initializeTruck()
 
 			if(debug) debugLog( "Calling Shotgun" );
 
-			//which CS are you initially requesting?
-			//probably should enable entrance buttons here
-			var wantCSnumber = 1;
-			callShotGun(wantCSnumber);
+			getEntrancePoint();
+			
+			var callBack1 = setInterval(function(){
+				if( entrance_set )
+				{
+					
+				}
+			}, 500);
+
 		} 
 		else
 		{
