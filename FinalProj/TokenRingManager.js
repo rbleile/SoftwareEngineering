@@ -38,12 +38,8 @@ function failSoHard(ip)
 {
   if(callBackFunction != undefined)
   {
-    var idx = tokenRing.indexOf(ip);
-
-    if(ringRoles[idx] == node_functionality)
-    {
-      callBackFunction(ip);
-    }
+      var idx = tokenRing.indexOf(ip);
+      callBackFunction(ip,ringRoles[idx]);
   }
 }
 

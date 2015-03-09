@@ -16,6 +16,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var tasks = [];
 var results = [];
 var bays = [];
+//each bay has information about the active task; activeTasks[0] = bay 0 info
+var activeTasks = [];
+
+var aTaskProperties = { isActive : false, ip : "0.0.0.0", id : -1 };
+activeTasks[0] = aTaskProperties; //bay 0 
+activeTasks[1] = aTaskProperties; //bay 1
+activeTasks[2] = aTaskProperties; //bay 2
+
 bays[0] = true;
 bays[1] = true; //init bays full
 bays[2] = true;
@@ -311,7 +319,7 @@ function refreshDisplay() {
 function debugLog( msg ) 
 {
 	//log.insertLine(0, ""+highestTS+" (high) : "+myTS+" (mine) : "+msg);
-	logEvents.insertLine(0, msg);
+	logTasks.insertLine(0, msg);
 	screen.render();
 	return;
 }
@@ -342,9 +350,11 @@ app.post('/do_insert_result', function(req, res) {
 	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
 	results.push(task);
 	var resString =  "Result inserted "+JSON.stringify(task);
-	var res_data = { result : resString, id : task.id };    
+	var res_data = { result : resString, id : task.id };  
+	activeTasks[the_body.bayNumber].isActive = false;
 	res.json(res_data);
-refreshDisplay();
+    refreshDisplay();
+
 });
 
 app.post('/do_get_bays', function(req, res){
@@ -359,7 +369,7 @@ app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "received task request: " + JSON.stringify( the_body) );
 	var validTaskIdx = -1;
-
+    
 	debugLog( "Tasks" + JSON.stringify( tasks ) );
 	debugLog( "Task size: " + tasks.length );
 	debugLog("Bays: " + JSON.stringify( bays ) );
@@ -368,7 +378,7 @@ app.post('/do_get_task', function(req, res) {
 	for(var i = 0; i < tasks.length; i++)
 	{
 		var bay = tasks[i].bayNumber - 1;
-		if(!bays[bay]) // bay can be entered
+		if(!bays[bay] && !activeTasks[bay]) // bay can be entered and no nobody is has a task to the same bay
 		{
 			validTaskIdx = i;
 			break;
@@ -382,6 +392,10 @@ app.post('/do_get_task', function(req, res) {
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 		res.json(trueResponse);	
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
+		activeTasks[task.bayNumber].isActive = true;
+		activeTasks[task.bayNumber].ip = the_body.ip;
+		activeTasks[task.bayNumber].id = task.id;
+
 	}
 	else
 	{
@@ -436,6 +450,8 @@ function printIPs()
 function callback(ip)
 {
 	debugLog(" Test failurecallack "+ ip);
+	console.log("SDGSGDFSDFSD");
+
 }
 
 tokenRing.registerFailureCallback(callback);
