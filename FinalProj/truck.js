@@ -368,7 +368,7 @@ app.post( '/do_return_task', function( req, res ){
 
     res.json(req.body);
 
-	debugLog( "isValid: " + body.isValid );
+	//debugLog( "isValid: " + body.isValid );
 
 	if( body.isValid )
 	{
@@ -391,12 +391,12 @@ app.post( '/do_return_task', function( req, res ){
 
 function GetPath1( task )
 {
-	debugLog("calling path cs");
+	//debugLog("calling path cs");
 	callShotGun( 1 );
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[1] )
 		{
-			debugLog("got path cs");
+			//debugLog("got path cs");
 			Critical_Sections[1] = false;
 			clearInterval( callBack1 );
 			choosePath( task.bayNum );
@@ -475,10 +475,10 @@ function Rec_Subroutine( LIST )
 
 	var arr_CS_P = LIST.splice(0,1);
 	var CS_P = arr_CS_P[0];
-	debugLog("Spliced CS: " + CS_P);
-	debugLog("CriticalSections Array: " + Critical_Sections);
-	debugLog("VAL: " + Critical_Sections[CS_P+2]);
-	debugLog("After splice: " + LIST);
+	//debugLog("Spliced CS: " + CS_P);
+	//debugLog("CriticalSections Array: " + Critical_Sections);
+	//debugLog("VAL: " + Critical_Sections[CS_P+2]);
+	//debugLog("After splice: " + LIST);
 	if (CS_P > 5)
 	{
 		Critical_Sections[CS_P+2] = true;
@@ -486,7 +486,7 @@ function Rec_Subroutine( LIST )
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[CS_P+2] )
 		{
-			debugLog("first if statement");
+			//debugLog("first if statement");
 			if( CS_P < numCriticalLocations)
 			{
 				Critical_Sections[CS_P+2] = false;
@@ -494,29 +494,29 @@ function Rec_Subroutine( LIST )
 			clearInterval( callBack1 );
 			
 			var last_location = location;
-			debugLog("Location: " + last_location);
+			//debugLog("Location: " + last_location);
 
 			if( CS_P >= 3 )
 			{
-				debugLog("setting bay clear");
+				//debugLog("setting bay clear");
 				bayClear = true;
 			}
 			
 			var callBack3 = setInterval(function(){
 				if( bayClear )
 				{
-					debugLog("callback3");
+					//debugLog("callback3");
 					clearInterval( callBack3 );
 					bayClear = false;
 			
 					var post_data = { inpdirection: CS_P, inpdistance: 5, inpspeed: 7 };
 					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
-					debugLog("generalPOST");
+					//debugLog("generalPOST");
 
 					var callBack2 = setInterval(function(){
 						if( actionComplete )
 						{
-							debugLog("callback2");
+							//debugLog("callback2");
 							location = CS_P; //Move Location To Next Step;
 							var post_data = { ip : tokenRing.getMyIP(), "location" : location,  };
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
