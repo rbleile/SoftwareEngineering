@@ -363,7 +363,7 @@ function getWorkFromBag()
 }
 
 app.post( '/do_return_task', function( req, res ){
-
+j
 	var body = req.body;
 
     res.json(req.body);
@@ -375,8 +375,9 @@ app.post( '/do_return_task', function( req, res ){
 		releaseShotgun(0);
 		task_id = body.id;
 		bay_num = body.bayNumber;
+		valid = body.isValid;
 		
-		var task = { id: task_id, bayNum : bay_num };
+		var task = { id: task_id, bayNum : bay_num, val: valid };
 		
 		debugLog( "Got task" );
 
@@ -413,7 +414,7 @@ function GetPath1( task )
 function MoveForward( task )
 {
 
-	debugLog("Move Forward: " + task + " " + Path_List );
+	//debugLog("Move Forward: " + task + " " + Path_List );
 
 	Rec_Subroutine( Path_List );
 
@@ -645,7 +646,7 @@ function setWORKState(whichCS)
 	STATE[whichCS] = WORK_STATE;
 	if(debug) debugLog ( "resource_approved...working");
 	Critical_Sections[whichCS] = true;
-	if( debug ) debugLog( "Working: " + whichCS + " " + JSON.stringify( Critical_Sections ) );
+	if( debug ) debugLog( "Working: " + whichCS + " "); //+ JSON.stringify( Critical_Sections ) );
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 //	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
 }
@@ -818,9 +819,9 @@ app.post('/do_recievedBays', function(req, res){
 });
 
 app.post('/action_move', function(req, res) {
-	debugLog( "moving" );
+	//debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: Move to CS " + the_body.inpdirection + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    if(debug) debugLog ("Run Command: Move to CS " + the_body.inpdirection); //+ ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 	displayButton();
 });
