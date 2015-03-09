@@ -491,7 +491,7 @@ function Rec_Subroutine( LIST )
 			}
 			clearInterval( callBack1 );
 			
-			var last_Location = location;
+			var last_location = location;
 
 			if( CS_P >= 3 )
 			{
