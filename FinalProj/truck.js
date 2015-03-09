@@ -358,6 +358,7 @@ function getWorkFromBag()
 {
 	debugLog( "Get Work From bag" );
 	var post_data = { "ip" : tokenRing.getMyIP() };
+	debugLog( JSON.stringify(post_data) );
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
 }
 

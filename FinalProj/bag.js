@@ -397,12 +397,14 @@ app.post('/do_get_task', function(req, res) {
 		}
 	}
 
+	debugLog( "Valid Task: " + validTaskIdx );
 	if(validTaskIdx != -1)
 	{
 		var task = tasks[validTaskIdx];
 		tasks.splice(validTaskIdx, 1);
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 		res.json(trueResponse);	
+		debugLog( "Returning True" );
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
 		activeTasks[task.bayNumber].isActive = true;
 		activeTasks[task.bayNumber].ip = the_body.ip;
