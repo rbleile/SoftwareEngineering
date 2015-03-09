@@ -59,7 +59,7 @@ var logEvents = blessed.scrollabletext({
 		fg: 'white'
 	},
 	style: {
-		fg: 'grey',
+		fg: 'white',
 		bg: 'black',
 		bold: false,
 		border: {
@@ -90,7 +90,8 @@ var logTasks = blessed.scrollabletext({
 		fg: 'white',
 		bg: '#002200',
 		bold: true,
-	}
+	},
+	hidden: false
 });
 
 
@@ -339,10 +340,10 @@ app.post('/do_insert_task', function(req, res) {
 		var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
 		tasks.push(task);
 	
-		debugLog( "Task Length: " + tasks.length );
+		//debugLog( "Task Length: " + tasks.length );
 	
 		var resString =  "task inserted at bay "+ JSON.stringify(task.bayNumber);
-		debugLog(resString);
+		//debugLog(resString);
 		var res_data = { result : resString, id : task.id };    
 		res.json(res_data);
 		refreshDisplay();
@@ -355,6 +356,7 @@ app.post('/do_insert_result', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Result received: " + JSON.stringify( the_body) );
 	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
+	debugLog("VAL: " + the_body.bayNumber-1);
 	results.push(task);
 	var resString =  "Result inserted "+JSON.stringify(task);
 	var res_data = { result : resString, id : task.id };  
@@ -376,35 +378,35 @@ app.post('/do_get_bays', function(req, res){
 
 app.post('/do_get_task', function(req, res) {
 	var the_body = req.body;  
-	debugLog ( "received task request: " + JSON.stringify( the_body) );
+	//debugLog ( "received task request: " + JSON.stringify( the_body) );
 	var validTaskIdx = -1;
     
-	debugLog( "Tasks" + JSON.stringify( tasks ) );
-	debugLog( "Task size: " + tasks.length );
-	debugLog("Bays: " + JSON.stringify( bays ) );
-	debugLog("activeTasks: " + JSON.stringify( activeTasks ) );
+	//debugLog( "Tasks" + JSON.stringify( tasks ) );
+	//debugLog( "Task size: " + tasks.length );
+	//debugLog("Bays: " + JSON.stringify( bays ) );
+	//debugLog("activeTasks: " + JSON.stringify( activeTasks ) );
 
 	//check to see if any task have a bay number that can be entered
 	for(var i = 0; i < tasks.length; i++)
 	{
 		var bay = tasks[i].bayNumber - 1;
-		debugLog("activeTasks: " + bay );
+		//debugLog("activeTasks: " + bay );
 		if(!bays[bay] && !activeTasks[bay].isActive) // bay can be entered and no nobody is has a task to the same bay
 		{
 			validTaskIdx = i;
-			debugLog( "Valid Task: " + validTaskIdx );
+			//debugLog( "Valid Task: " + validTaskIdx );
 			break;
 		}
 	}
 
-	debugLog( "Valid Task: " + validTaskIdx );
+	//debugLog( "Valid Task: " + validTaskIdx );
 	if(validTaskIdx != -1)
 	{
 		var task = tasks[validTaskIdx];
 		tasks.splice(validTaskIdx, 1);
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 		res.json(trueResponse);	
-		debugLog( "Returning True" );
+		//debugLog( "Returning True" );
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
 		activeTasks[task.bayNumber-1].isActive = true;
 		activeTasks[task.bayNumber-1].ip = the_body.ip;
@@ -414,7 +416,7 @@ app.post('/do_get_task', function(req, res) {
 	else
 	{
 		var falseResponse = { isValid : false };
-		debugLog("Returing false" +JSON.stringify(falseResponse));
+		//debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",falseResponse);
 	}
@@ -423,7 +425,7 @@ refreshDisplay();
 
 app.post('/do_get_result', function(req, res) {
 	var the_body = req.body;  
-	debugLog ( "received result request: " + JSON.stringify( the_body) );
+	//debugLog ( "received result request: " + JSON.stringify( the_body) );
 	
 	if(results.length > 0)
 	{
@@ -436,7 +438,7 @@ app.post('/do_get_result', function(req, res) {
 	else
 	{
 		var falseResponse = { isValid : false };
-		debugLog("Returing false" +JSON.stringify(falseResponse));
+		//debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
 
 		tokenRing.generalPOST(the_body.ip, "/do_return_result",falseResponse);
@@ -463,8 +465,8 @@ function printIPs()
 
 function callback(ip)
 {
-	debugLog(" Test failurecallack "+ ip);
-	console.log("SDGSGDFSDFSD");
+	//debugLog(" Test failurecallack "+ ip);
+	//console.log("SDGSGDFSDFSD");
 
 }
 

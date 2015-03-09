@@ -356,9 +356,9 @@ debugLog( "Begin Task Routine" );
 
 function getWorkFromBag()
 {
-	debugLog( "Get Work From bag" );
+	//debugLog( "Get Work From bag" );
 	var post_data = { "ip" : tokenRing.getMyIP() };
-	debugLog( JSON.stringify(post_data) );
+	//debugLog( JSON.stringify(post_data) );
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
 }
 
@@ -548,7 +548,6 @@ function Rec_Subroutine( LIST )
 
 function callShotGun(whichCS)
 {
-
 	if( whichCS == 0 )
 		debugLog("Callign Task Shotun " + whichCS);
 	else if( whichCS == 1 )
@@ -821,7 +820,7 @@ app.post('/do_recievedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: Move( " + the_body.inpdirection + " " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    if(debug) debugLog ("Run Command: Move to CS " + the_body.inpdirection + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 	displayButton();
 });
