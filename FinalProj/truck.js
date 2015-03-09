@@ -475,10 +475,11 @@ function Rec_Subroutine( LIST )
 
 	var CS_P = LIST.splice(0,1);
 	debugLog("Spliced CS: " + CS_P);
+	debugLog("VAL: " + Critical_Sections[CS_P+2];
 	debugLog("After splice: " + LIST);
 	var callBack1 = setInterval(function(){
-		debugLog("inside callback");
-		debugLog("CriticalSections Array: " + Critical_Sections);
+		//debugLog("inside callback");
+		//debugLog("CriticalSections Array: " + Critical_Sections);
 		if( Critical_Sections[CS_P+2] )
 		{
 			debugLog("first if statement");
