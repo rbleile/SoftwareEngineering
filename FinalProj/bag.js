@@ -332,6 +332,9 @@ function debugLog( msg )
 app.post('/do_insert_task', function(req, res) {
 	var the_body = req.body;  
 	debugLog ( "Task received: " + JSON.stringify( the_body) );
+
+	if( the_body.bayNumber == 1 || the_body.bayNumber == 2 || the_body.bayNumber == 3 ){ 
+
 	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
 	tasks.push(task);
 
@@ -341,7 +344,10 @@ app.post('/do_insert_task', function(req, res) {
 	debugLog(resString);
 	var res_data = { result : resString, id : task.id };    
 	res.json(res_data);
-refreshDisplay();
+	refreshDisplay();
+
+	}
+
 });
 
 app.post('/do_insert_result', function(req, res) {
@@ -352,6 +358,8 @@ app.post('/do_insert_result', function(req, res) {
 	var resString =  "Result inserted "+JSON.stringify(task);
 	var res_data = { result : resString, id : task.id };  
 	activeTasks[the_body.bayNumber].isActive = false;
+	activeTasks[the_body.bayNumber].ip = "0.0.0.0";
+	activeTasks[the_body.bayNumber].id = -1;
 	res.json(res_data);
     refreshDisplay();
 
