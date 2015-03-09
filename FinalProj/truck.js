@@ -477,6 +477,8 @@ function Rec_Subroutine( LIST )
 	debugLog("Spliced CS: " + CS_P);
 	debugLog("After splice: " + LIST);
 	var callBack1 = setInterval(function(){
+		debugLog("inside callback");
+		debugLog("CriticalSections Array: " + Critical_Sections);
 		if( Critical_Sections[CS_P+2] )
 		{
 			debugLog("first if statement");
