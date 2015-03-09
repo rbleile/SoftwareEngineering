@@ -358,9 +358,9 @@ app.post('/do_insert_result', function(req, res) {
 	results.push(task);
 	var resString =  "Result inserted "+JSON.stringify(task);
 	var res_data = { result : resString, id : task.id };  
-	activeTasks[the_body.bayNumber].isActive = false;
-	activeTasks[the_body.bayNumber].ip = "0.0.0.0";
-	activeTasks[the_body.bayNumber].id = -1;
+	activeTasks[the_body.bayNumber-1].isActive = false;
+	activeTasks[the_body.bayNumber-1].ip = "0.0.0.0";
+	activeTasks[the_body.bayNumber-1].id = -1;
 	res.json(res_data);
     refreshDisplay();
 
@@ -406,9 +406,9 @@ app.post('/do_get_task', function(req, res) {
 		res.json(trueResponse);	
 		debugLog( "Returning True" );
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
-		activeTasks[task.bayNumber].isActive = true;
-		activeTasks[task.bayNumber].ip = the_body.ip;
-		activeTasks[task.bayNumber].id = task.id;
+		activeTasks[task.bayNumber-1].isActive = true;
+		activeTasks[task.bayNumber-1].ip = the_body.ip;
+		activeTasks[task.bayNumber-1].id = task.id;
 
 	}
 	else
