@@ -28,7 +28,7 @@ var bayClear = false;
 var count = 0;
 
 var minCritSections = 2;
-var numCriticalLocations = 6;
+var numCriticalLocations = 8;
 //Arbitrary number of critical sections
 var numCritSections = minCritSections + numCriticalLocations;
 
@@ -45,7 +45,7 @@ var Rev_Path = [];
 // Bool List of critical sections to determine if I have it
 var Critical_Sections = [];
 for(var i = 0; i < numCritSections; i++) {
-    Critical_Sections.push( false );
+	Critical_Sections.push( false );
 }
 
 //Interval Boolean if move routine finished
@@ -479,6 +479,10 @@ function Rec_Subroutine( LIST )
 	debugLog("CriticalSections Array: " + Critical_Sections);
 	debugLog("VAL: " + Critical_Sections[CS_P+2]);
 	debugLog("After splice: " + LIST);
+	if (CS_P > 5)
+	{
+		Critical_Sections[CS_P+2] = true;
+	}
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[CS_P+2] )
 		{
