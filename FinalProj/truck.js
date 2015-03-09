@@ -746,8 +746,8 @@ function releaseShotgun(whichCS)
 		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
 
-	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/report_lock_release', post_data );
+//	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+//	tokenRing.generalPOST( Bag_IP, '/report_lock_release', post_data );
 }
 
 /********* END SHOTGUN **********/
