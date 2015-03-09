@@ -29,6 +29,8 @@ var count = 0;
 
 var minCritSections = 2;
 var numCriticalLocations = 6;
+//Arbitrary number of critical sections
+var numCritSections = minCritSections + numCriticalLocations;
 
 // My Current Location
 var Location = -1;
@@ -41,15 +43,15 @@ var Path_List = [];
 var Rev_Path = [];
 
 // Bool List of critical sections to determine if I have it
-var Critcal_Sections = [];
+var Critical_Sections = [];
 for(var i = 0; i < numCritSections; i++) {
     Critical_Sections.push( false );
 }
 
 //Interval Boolean if move routine finished
 var DoneMoving = false;
-/********* END Globals ***********/
 
+/********* END Globals ***********/
 
 // Create a screen object.
 var screen = blessed.screen();
@@ -366,13 +368,13 @@ app.post( '/do_return_task', function( req, res ){
 
 	if( body.isValid )
 	{
+		releaseShotgun(0);
 		task_id = body.id;
 		bay_num = body.bayNumber;
 		
 		var task = { id: task_id, bayNum : bay_num };
 		
-		releaseShotgun(0);
-		GetPath1( task_id, bay_num );
+		GetPath1( task );
 	}
 	else
 	{
@@ -381,7 +383,7 @@ app.post( '/do_return_task', function( req, res ){
 	}
 });
 
-function GetPath1( task, bay_num )
+function GetPath1( task )
 {
 	callShotGun( 1 );
 	var callBack1 = setInterval(function(){
@@ -389,7 +391,7 @@ function GetPath1( task, bay_num )
 		{
 			Critical_Sections[1] = false;
 			clearInterval( callBack1 );
-			choosePath( bay_num );
+			choosePath( task.bayNum );
 			for( var i = 0; i < Path_List.length; i++ )
 			{
 				callShotGun( Path_List[i]+minCritSections );
@@ -422,7 +424,7 @@ function GetPath2( task )
 		{
 			Critical_Sections[1] = false;
 			clearInterval( callBack1 );
-			for( var i = 0; i < Rev_Path.length; i++ )
+			for( var i = 0; i < Rev_Path.length-1; i++ )
 			{
 				callShotGun( Rev_List[i]+minCritSections );
 			}
@@ -495,9 +497,6 @@ function callShotGun(whichCS)
 {
 	reqResource(whichCS);
 }
-
-//Arbitrary number of critical sections
-var numCritSections = minCritSections + numCriticalLocations;
 
 //Enumerate possible states
 var GAP_STATE = 0;
@@ -801,7 +800,8 @@ function initializeTruck()
 			var callBack1 = setInterval(function(){
 				if( entrance_set )
 				{
-					
+					clearInterval( callBack1 );
+					BeginTaskRoutine();
 				}
 			}, 500);
 
