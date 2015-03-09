@@ -490,6 +490,7 @@ function Rec_Subroutine( LIST )
 			clearInterval( callBack1 );
 			
 			var last_location = location;
+			debugLog("Location: " + last_location);
 
 			if( CS_P >= 3 )
 			{
@@ -520,7 +521,7 @@ function Rec_Subroutine( LIST )
 							
 							if( last_location >= 0 && last_location < numCriticalLocations )
 							{
-								Critical_Sections[CS_P] = false;
+								Critical_Sections[CS_P+2] = false;
 								releaseShotgun( last_location + minCritSections ); // Release Crit Section to current Location
 							}
 
