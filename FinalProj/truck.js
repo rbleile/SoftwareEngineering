@@ -412,6 +412,9 @@ function GetPath1( task )
 
 function MoveForward( task )
 {
+
+	debugLog("Move Forward: " + task + " " PATH_LIST );
+
 	Rec_Subroutine( Path_List );
 
 	var callBack1 = setInterval(function(){
@@ -461,6 +464,9 @@ function MoveBack( task )
 
 function Rec_Subroutine( LIST )
 {
+
+	debugLog( "Rec Subroutine: " + LIST  );
+
 	if( LIST.length == 0 )
 	{
 		DoneMoving = true;
@@ -627,7 +633,7 @@ function setWORKState(whichCS)
 	Critical_Sections[whichCS] = true;
 	if( debug ) debugLog( "Working: " + whichCS + " " + JSON.stringify( Critical_Sections ) );
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
+//	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
 }
 
 function inGapState(ID,timestamp)
