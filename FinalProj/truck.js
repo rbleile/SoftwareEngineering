@@ -400,7 +400,7 @@ function GetPath1( task )
 			{
 				callShotGun( Path_List[i]+minCritSections );
 			}
-			releaseShotGun( 1 );
+			releaseShotgun( 1 );
 			MoveForward( task );
 		}
 	}, 500);
@@ -432,7 +432,7 @@ function GetPath2( task )
 			{
 				callShotGun( Rev_List[i]+minCritSections );
 			}
-			releaseShotGun( 1 );
+			releaseShotgun( 1 );
 			MoveBack( task );
 		}
 	}, 500);
@@ -501,7 +501,7 @@ function Rec_Subroutine( LIST )
 							if( last_location >= 0 && last_location < numCriticalLocations )
 							{
 								Critical_Sections[CS_P] = false;
-								releaseShotGun( last_location + minCritSections ); // Release Crit Section to current Location
+								releaseShotgun( last_location + minCritSections ); // Release Crit Section to current Location
 							}
 
 							Rec_Subroutine( LIST );
