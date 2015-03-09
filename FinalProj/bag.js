@@ -335,16 +335,16 @@ app.post('/do_insert_task', function(req, res) {
 
 	if( the_body.bayNumber == 1 || the_body.bayNumber == 2 || the_body.bayNumber == 3 ){ 
 
-	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
-	tasks.push(task);
-
-	debugLog( "Task Length: " + tasks.length );
-
-	var resString =  "task inserted at bay "+ JSON.stringify(task.bayNumber);
-	debugLog(resString);
-	var res_data = { result : resString, id : task.id };    
-	res.json(res_data);
-	refreshDisplay();
+		var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
+		tasks.push(task);
+	
+		debugLog( "Task Length: " + tasks.length );
+	
+		var resString =  "task inserted at bay "+ JSON.stringify(task.bayNumber);
+		debugLog(resString);
+		var res_data = { result : resString, id : task.id };    
+		res.json(res_data);
+		refreshDisplay();
 
 	}
 
@@ -388,6 +388,7 @@ app.post('/do_get_task', function(req, res) {
 		var bay = tasks[i].bayNumber - 1;
 		if(!bays[bay] && !activeTasks[bay]) // bay can be entered and no nobody is has a task to the same bay
 		{
+			debugLog( "Valid Task: " + validTaskIdx );
 			validTaskIdx = i;
 			break;
 		}
