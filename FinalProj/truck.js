@@ -28,12 +28,12 @@ var bayClear = false;
 var count = 0;
 
 var minCritSections = 2;
-var numCriticalLocations = 8;
+var numCriticalLocations = 8; //same as in bag.js
 //Arbitrary number of critical sections
 var numCritSections = minCritSections + numCriticalLocations;
 
 // My Current Location
-var Location = -1;
+var location = -1;
 
 // Last CS Location when moving through location list
 var Last_CS = -1;
@@ -172,6 +172,10 @@ function setEntranceDoor( door )
 	entrance = door;
 	entrance_set = true;
 	
+	//Does the webpage need to know where the truck starts?
+	//var post_data = { ip : tokenRing.getMyIP(), "startDoor" : entrance };
+	//tokenRing.generalPOST(Bag_IP, "/do_update_start_point", post_data);
+
 	location = entrance;
 
 	entranceButton1.setContent("{center} Enter Door 1 {/center}");
@@ -518,8 +522,10 @@ function Rec_Subroutine( LIST )
 						{
 							if (debug) debugLog("callback2");
 							location = CS_P; //Move Location To Next Step;
-							var post_data = { ip : tokenRing.getMyIP(), "location" : location,  };
+							var post_data = { ip : tokenRing.getMyIP(), "location" : location  };
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
+    						tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
+
 							actionComplete = false;
 							clearInterval( callBack2 );
 							
@@ -558,8 +564,9 @@ function callShotGun(whichCS)
 		debugLog("No valid CS defined")
 
 	reqResource(whichCS);
-//	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-//	tokenRing.generalPOST( Bag_IP, '/report_lock_request', post_data );
+	
+	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+	tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 }
 
 //Enumerate possible states
@@ -646,8 +653,9 @@ function setWORKState(whichCS)
 	if(debug) debugLog ( "Resource_approved...working");
 	Critical_Sections[whichCS] = true;
 	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
+	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-//	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
+	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
 }
 
 function inGapState(ID,timestamp)
@@ -766,8 +774,8 @@ function releaseShotgun(whichCS)
 		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
 
-//	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-//	tokenRing.generalPOST( Bag_IP, '/report_lock_release', post_data );
+	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+	tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
 
 /********* END SHOTGUN **********/
@@ -822,6 +830,10 @@ app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Move to critical section " + the_body.inpdirection);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
+
+    //var post_data = { ip : tokenRing.getMyIP(), "nextCS" : the_body.inpdirection };
+    //tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
+
 	displayButton();
 });
 
@@ -853,9 +865,7 @@ app.post('/action_readsensor', function(req, res) {
 
 function initializeTruck()
 {
-
 	debugLog( "Initalizing Truck PI" );
-
 
 	debugLog( "Getting Bag IP" );
 

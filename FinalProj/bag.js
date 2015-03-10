@@ -29,6 +29,27 @@ bays[0] = false;
 bays[1] = false; //init bays full
 bays[2] = false;
 
+var numCriticalLocations = 8; //same as in truck.js
+var request_array = [];
+var working_array = [];
+var numTrucks = 0;
+var TRUCK_IPs = [];
+for (var i = 0; i < numCriticalLocations; i++)
+{
+	request_array.push(["0.0.0.0"]);
+	working_array.push("0.0.0.0");
+}
+for (var i = 0; i < numCriticalLocations; i++)
+{
+	for (var j = 1; j < numTrucks; j++)
+	{
+		request_array[i].push("0.0.0.0");	
+	}
+}
+
+console.log("numTrucks: " + numTrucks);
+console.log("request_array: " + request_array);
+console.log("working_array:" + working_array);
 
 /**************************************************
  ****** START : WINDOW CODE ***********************
@@ -451,14 +472,59 @@ app.post("/do_sensor_update", function(req, res) {
 	
 	bays[the_body.bayNumber] = the_body.isFull;
 	debugLog("Recieved Sensor update from bay "+ ( parseInt(the_body.bayNumber) + 1 ) + " " +the_body.isFull);
-refreshDisplay();
+	refreshDisplay();
 });
 
+var truckLocations = [];
+
+app.post("/do_update_move", function(req, res) {
+	var the_body = req.body; // ip, location
+	
+	for (var i = 0; i < truckLocations.length; i++)
+	{
+		if (the_body.ip != truckLocations[i].ip)
+		{
+			var obj = {"ip": the_body.ip, "currLocation": the_body.location};
+			truckLocations.push(obj);	
+		}
+		else if (the_body.ip == truckLocations[i].ip)
+		{
+			truckLocations[i].currLocation = the_body.location;
+		}
+	}
+});
+
+/*
+ * Does the webpage need to know where the truck starts?
+app.post("/do_update_start_point", function(req, res) {
+	var the_body = req.body; // ip, nextCS
+	
+	startLocation = the_body.startDoor;
+});
+*/
+
+app.post("/do_update_request", function(req, res) {
+	var the_body = req.body; // ip, lock
+	request_array[the_body.ip][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
+});
+
+app.post("/do_update_work", function(req, res) {
+	var the_body = req.body; // ip, lock
+	working_array[the_body.lock] = the_body.ip;
+});
+
+app.post("/do_update_release_shotgun", function(req, res) {
+	var the_body = req.body; // ip, lock
+	working_array[the_body.lock] = "0.0.0.0";
+})
 
 function printIPs()
 {
 	var list =  tokenRing.getRing();
 	var list2 = tokenRing.getRoleList(1);
+	TRUCK_IPs = tokenRing.getRoleList(2);
+	numTrucks = TRUCK_IPs.length;
+	
 	//console.log(list+" "+list2);
 }
 
@@ -466,7 +532,6 @@ function callback(ip)
 {
 	if (debug) debugLog(" Test failurecallack "+ ip);
 	//console.log("SDGSGDFSDFSD");
-
 }
 
 tokenRing.registerFailureCallback(callback);
