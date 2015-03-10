@@ -598,7 +598,7 @@ function reqResource(whichCS)
 
 	if( theRing.length == 1 && theRing[0] == tokenRing.getMyIP())
 	{
-		debugLog( "Setting Work: " + whichCS );
+		if (debug) debugLog( "Setting Work: " + whichCS );
 		setWORKState(whichCS);
 	}
 	else
@@ -727,7 +727,7 @@ function processApproval(IP, whichCS)
 		if(debug) debugLog("remaining replies: " + PendingReplies[whichCS]);
 		if (PendingReplies[whichCS].length == 0)
 		{
-			debugLog( "Setting Work " + whichCS );
+			if (debug) debugLog( "Setting Work " + whichCS );
 			setWORKState(whichCS);
 		}
 	}
@@ -888,6 +888,6 @@ app.set('port', process.env.PORT || 3000);
 
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port ");
-	debugLog("Five Seconds for discovery");
+	if (debug) debugLog("Five Seconds for discovery");
 	setTimeout( initializeTruck, 5000 );
 });
