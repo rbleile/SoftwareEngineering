@@ -477,6 +477,16 @@ app.post("/do_sensor_update", function(req, res) {
 
 var truckLocations = [];
 
+app.post("/do_update_trucks", function(req, res) {
+	var the_body = req.body;
+	TRUCK_IPs = the_body.trucks;
+	numTrucks = TRUCK_IPs.length;
+
+	debugLog("num_TRUCKS " + numTrucks);
+	debugLog("TRUCKS " + TRUCK_IPs);
+	
+});
+
 app.post("/do_update_move", function(req, res) {
 	var the_body = req.body; // ip, location
 	
@@ -505,7 +515,8 @@ app.post("/do_update_start_point", function(req, res) {
 
 app.post("/do_update_request", function(req, res) {
 	var the_body = req.body; // ip, lock
-	request_array[the_body.ip][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
+	console.log("the_body.ip: " + the_body.ip + ", TRUCK_IPS: " , TRUCK_IPs);
+	//request_array[the_body.ip][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
 });
 
 app.post("/do_update_work", function(req, res) {
@@ -522,9 +533,7 @@ function printIPs()
 {
 	var list =  tokenRing.getRing();
 	var list2 = tokenRing.getRoleList(1);
-	TRUCK_IPs = tokenRing.getRoleList(2);
-	numTrucks = TRUCK_IPs.length;
-	
+
 	//console.log(list+" "+list2);
 }
 

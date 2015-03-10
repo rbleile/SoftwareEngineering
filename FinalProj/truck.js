@@ -217,6 +217,8 @@ function getBagIP()
 function getTRUCKIPs()
 {
 	TRUCK_IPs = tokenRing.getRoleList(2);
+	var post_data = { "trucks" : TRUCK_IPs };
+	tokenRing.generalPOST(Bag_IP, '/do_update_trucks', post_data);
 	
 	if( debug) debugLog("TRUCK_IPs are " + JSON.stringify( TRUCK_IPs) );
 }
