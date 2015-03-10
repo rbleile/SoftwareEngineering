@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-var debug = true;
+var debug = false;
 
 /********* Globals ***********/
 var actionComplete = false;
@@ -341,7 +341,7 @@ function choosePath( bay )
 function BeginTaskRoutine()
 {
 
-debugLog( "Begin Task Routine" );
+if (debug) debugLog( "Begin Task Routine" );
 
 	callShotGun( 0 );
 	var callBack1 = setInterval(function(){
@@ -356,9 +356,9 @@ debugLog( "Begin Task Routine" );
 
 function getWorkFromBag()
 {
-	//debugLog( "Get Work From bag" );
+	if (debug) debugLog( "Get Work From bag" );
 	var post_data = { "ip" : tokenRing.getMyIP() };
-	//debugLog( JSON.stringify(post_data) );
+	if (debug) debugLog( JSON.stringify(post_data) );
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
 }
 
@@ -368,7 +368,7 @@ app.post( '/do_return_task', function( req, res ){
 
     res.json(req.body);
 
-	//debugLog( "isValid: " + body.isValid );
+	if (debug) debugLog( "isValid: " + body.isValid );
 
 	if( body.isValid )
 	{
@@ -378,7 +378,7 @@ app.post( '/do_return_task', function( req, res ){
 		
 		var task = { id: task_id, bayNum : bay_num };
 		
-		debugLog( "Got task from bag!!" + JSON.stringify(task) );
+		debugLog( "Got task: " + JSON.stringify(task) );
 
 		GetPath1( task );
 	}
@@ -391,12 +391,12 @@ app.post( '/do_return_task', function( req, res ){
 
 function GetPath1( task )
 {
-	//debugLog("calling path cs");
+	if (debug) debugLog("calling path cs");
 	callShotGun( 1 );
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[1] )
 		{
-			//debugLog("got path cs");
+			if (debug) debugLog("got path cs");
 			Critical_Sections[1] = false;
 			clearInterval( callBack1 );
 			choosePath( task.bayNum );
@@ -413,7 +413,7 @@ function GetPath1( task )
 function MoveForward( task )
 {
 
-	//debugLog("Move Forward: " + task + " " + Path_List );
+	if (debug) debugLog("Move Forward: " + task + " " + Path_List );
 
 	Rec_Subroutine( Path_List );
 
@@ -465,7 +465,7 @@ function MoveBack( task )
 function Rec_Subroutine( LIST )
 {
 
-	//debugLog( "Rec Subroutine: " + LIST  );
+	if (debug) debugLog( "Rec Subroutine: " + LIST  );
 
 	if( LIST.length == 0 )
 	{
@@ -475,10 +475,10 @@ function Rec_Subroutine( LIST )
 
 	var arr_CS_P = LIST.splice(0,1);
 	var CS_P = arr_CS_P[0];
-	//debugLog("Spliced CS: " + CS_P);
-	//debugLog("CriticalSections Array: " + Critical_Sections);
-	//debugLog("VAL: " + Critical_Sections[CS_P+2]);
-	//debugLog("After splice: " + LIST);
+	if (debug) debugLog("Spliced CS: " + CS_P);
+	if (debug) debugLog("CriticalSections Array: " + Critical_Sections);
+	if (debug) debugLog("VAL: " + Critical_Sections[CS_P+2]);
+	if (debug) debugLog("After splice: " + LIST);
 	if (CS_P > 5)
 	{
 		Critical_Sections[CS_P+2] = true;
@@ -486,7 +486,7 @@ function Rec_Subroutine( LIST )
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[CS_P+2] )
 		{
-			//debugLog("first if statement");
+			if (debug) debugLog("first if statement");
 			if( CS_P < numCriticalLocations)
 			{
 				Critical_Sections[CS_P+2] = false;
@@ -494,29 +494,29 @@ function Rec_Subroutine( LIST )
 			clearInterval( callBack1 );
 			
 			var last_location = location;
-			//debugLog("Location: " + last_location);
+			if (debug) debugLog("Location: " + last_location);
 
 			if( CS_P >= 3 )
 			{
-				//debugLog("setting bay clear");
+				if (debug) debugLog("setting bay clear");
 				bayClear = true;
 			}
 			
 			var callBack3 = setInterval(function(){
 				if( bayClear )
 				{
-					//debugLog("callback3");
+					if (debug) debugLog("callback3");
 					clearInterval( callBack3 );
 					bayClear = false;
 			
 					var post_data = { inpdirection: CS_P, inpdistance: 5, inpspeed: 7 };
 					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
-					//debugLog("generalPOST");
+					if (debug) debugLog("generalPOST");
 
 					var callBack2 = setInterval(function(){
 						if( actionComplete )
 						{
-							//debugLog("callback2");
+							if (debug) debugLog("callback2");
 							location = CS_P; //Move Location To Next Step;
 							var post_data = { ip : tokenRing.getMyIP(), "location" : location,  };
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
@@ -645,7 +645,7 @@ function setWORKState(whichCS)
 	STATE[whichCS] = WORK_STATE;
 	if(debug) debugLog ( "Resource_approved...working");
 	Critical_Sections[whichCS] = true;
-	if( debug ) debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
+	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 //	tokenRing.generalPOST( Bag_IP, '/report_lock_granted', post_data );
 }
@@ -774,7 +774,7 @@ function releaseShotgun(whichCS)
 
 function setActionComplete()
 {
-	//debugLog( "Setting Action Complete" );
+	if (debug) debugLog( "Setting Action Complete" );
 
 	doneButton.setContent("{center}D = Action Completed{/center}");
 	doneButton.hidden = true;	
@@ -807,8 +807,8 @@ app.post('/do_receivedBays', function(req, res){
 	
 	bays = the_body;
 
-	//debugLog( "Bays: " );
-	//debugLog( JSON.stringify( bays ) );
+	if (debug) debugLog( "Bays: " );
+	if (debug) debugLog( JSON.stringify( bays ) );
 
 	if( !bays[bay_num-1] )
 	{
@@ -818,7 +818,7 @@ app.post('/do_receivedBays', function(req, res){
 });
 
 app.post('/action_move', function(req, res) {
-	//debugLog( "moving" );
+	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Move to critical section " + the_body.inpdirection);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
@@ -826,7 +826,7 @@ app.post('/action_move', function(req, res) {
 });
 
 app.post('/action_turninplace', function(req, res) {
-	debugLog( "Rotating" );
+	if (debug) debugLog( "Rotating" );
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Rotate( " + the_body.inpdegrees + " degrees )");
     res.json(req.body);
@@ -857,7 +857,7 @@ function initializeTruck()
 	debugLog( "Initalizing Truck PI" );
 
 
-	if( debug) debugLog( "Getting Bag IP" );
+	debugLog( "Getting Bag IP" );
 
 	var responceCheck1 = setInterval( function() {
 		if(bag_found)
@@ -870,7 +870,7 @@ function initializeTruck()
 			var callBack1 = setInterval(function(){
 				if( entrance_set )
 				{
-					//debugLog( "Entrace Set" );
+					if (debug) debugLog( "Entrace Set" );
 					clearInterval( callBack1 );
 					BeginTaskRoutine();
 				}
