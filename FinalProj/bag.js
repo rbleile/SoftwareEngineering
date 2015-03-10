@@ -480,11 +480,7 @@ var truckLocations = [];
 app.post("/do_update_trucks", function(req, res) {
 	var the_body = req.body;
 	TRUCK_IPs = the_body.trucks;
-	numTrucks = TRUCK_IPs.length;
-
-	debugLog("num_TRUCKS " + numTrucks);
-	debugLog("TRUCKS " + TRUCK_IPs);
-	
+	numTrucks = the_body.trucks.length;
 });
 
 app.post("/do_update_move", function(req, res) {
@@ -515,7 +511,10 @@ app.post("/do_update_start_point", function(req, res) {
 
 app.post("/do_update_request", function(req, res) {
 	var the_body = req.body; // ip, lock
-	console.log("the_body.ip: " + the_body.ip + ", TRUCK_IPS: " , TRUCK_IPs);
+
+	debugLog("num_TRUCKS " + numTrucks);
+	debugLog("TRUCKS " + TRUCK_IPs);
+	debugLog("Index" + TRUCK_IPs.indexOf(the_body.ip));
 	//request_array[the_body.ip][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
 });
 
