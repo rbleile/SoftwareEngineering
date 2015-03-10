@@ -807,8 +807,8 @@ app.post('/do_recievedBays', function(req, res){
 	
 	bays = the_body;
 
-	debugLog( "Bays: " );
-	debugLog( JSON.stringify( bays ) );
+	//debugLog( "Bays: " );
+	//debugLog( JSON.stringify( bays ) );
 
 	if( !bays[bay_num-1] )
 	{
@@ -820,7 +820,7 @@ app.post('/do_recievedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	//debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    if(debug) debugLog ("Run Command: Move to CS " + the_body.inpdirection);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    if(debug) debugLog ("Run Command: Move to critical section " + the_body.inpdirection);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 	displayButton();
 });

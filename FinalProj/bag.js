@@ -360,9 +360,9 @@ app.post('/do_insert_result', function(req, res) {
 	results.push(task);
 	var resString =  "Result inserted "+JSON.stringify(task);
 	var res_data = { result : resString, id : task.id };  
-	activeTasks[the_body.bayNumber-1].isActive = false;
-	activeTasks[the_body.bayNumber-1].ip = "0.0.0.0";
-	activeTasks[the_body.bayNumber-1].id = -1;
+	activeTasks[task.bayNum-1].isActive = false;
+	activeTasks[task.bayNum-1].ip = "0.0.0.0";
+	activeTasks[task.bayNum-1].id = -1;
 	res.json(res_data);
     refreshDisplay();
 
