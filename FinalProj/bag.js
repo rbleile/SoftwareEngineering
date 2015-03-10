@@ -273,7 +273,7 @@ function refreshDisplay() {
 
 	var pendingResults = "Total = {bold}" + results.length + "{/bold}\n";
 	for (var i = 0; i < results.length; i++) {
-		pendingResults += "[" + results[i].id + "] @ Bay " + results[i].bayNumber + "\n";
+		pendingResults += "[" + results[i].id + "] @ Bay " + results[i].bayNum + "\n";
 	};
 
 	bay1Work.setContent("" + bay1TaskCount);
@@ -373,7 +373,7 @@ app.post('/do_get_bays', function(req, res){
 	var the_body = req.body;  
 	res.json(the_body);
 
-	tokenRing.generalPOST( the_body.ip, '/do_recievedBays', bays );
+	tokenRing.generalPOST( the_body.ip, '/do_receivedBays', bays );
 });
 
 app.post('/do_get_task', function(req, res) {

@@ -378,13 +378,13 @@ app.post( '/do_return_task', function( req, res ){
 		
 		var task = { id: task_id, bayNum : bay_num };
 		
-		debugLog( "Got task" );
+		debugLog( "Got task from bag!!" + JSON.stringify(task) );
 
 		GetPath1( task );
 	}
 	else
 	{
-		debugLog( "Waiting for work" );
+		debugLog( "Waiting for work..." );
 		setTimeout( getWorkFromBag, 1000 );
 	}
 });
@@ -396,7 +396,7 @@ function GetPath1( task )
 	var callBack1 = setInterval(function(){
 		if( Critical_Sections[1] )
 		{
-			debugLog("got path cs");
+			//debugLog("got path cs");
 			Critical_Sections[1] = false;
 			clearInterval( callBack1 );
 			choosePath( task.bayNum );
@@ -465,7 +465,7 @@ function MoveBack( task )
 function Rec_Subroutine( LIST )
 {
 
-	debugLog( "Rec Subroutine: " + LIST  );
+	//debugLog( "Rec Subroutine: " + LIST  );
 
 	if( LIST.length == 0 )
 	{
@@ -549,11 +549,11 @@ function Rec_Subroutine( LIST )
 function callShotGun(whichCS)
 {
 	if( whichCS == 0 )
-		debugLog("Callign Task Shotun " + whichCS);
+		debugLog("Calling Task Shotgun: " + whichCS);
 	else if( whichCS == 1 )
-		debugLog("Callign Path Shotun " + whichCS);
+		debugLog("Calling Path Shotgun: " + whichCS);
 	else if( whichCS < 8 )
-		debugLog("Callign location Shotun " + whichCS);
+		debugLog("Calling Location Shotgun: " + whichCS);
 	else
 		debugLog("No valid CS defined")
 
@@ -643,7 +643,7 @@ function processReq(ID, timestamp, whichCS)
 function setWORKState(whichCS)
 {
 	STATE[whichCS] = WORK_STATE;
-	if(debug) debugLog ( "resource_approved...working");
+	if(debug) debugLog ( "Resource_approved...working");
 	Critical_Sections[whichCS] = true;
 	if( debug ) debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
@@ -774,7 +774,7 @@ function releaseShotgun(whichCS)
 
 function setActionComplete()
 {
-	debugLog( "Setting Action Complete" );
+	//debugLog( "Setting Action Complete" );
 
 	doneButton.setContent("{center}D = Action Completed{/center}");
 	doneButton.hidden = true;	
@@ -800,7 +800,7 @@ function displayButton()
 	screen.render();
 }
 
-app.post('/do_recievedBays', function(req, res){
+app.post('/do_receivedBays', function(req, res){
 
 	var the_body = req.body;  
 	res.json(the_body);
