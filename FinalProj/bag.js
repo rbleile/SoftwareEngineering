@@ -353,10 +353,10 @@ app.post('/do_insert_task', function(req, res) {
 });
 
 app.post('/do_insert_result', function(req, res) {
-	var the_body = req.body;  
-	debugLog ( "Result received: " + JSON.stringify( the_body) );
-	var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
-	debugLog("VAL: " + the_body.bayNumber-1);
+	var task = req.body;  
+	debugLog ( "Result received: " + JSON.stringify( task ) );
+	//var task = { id : the_body.id,  bayNumber : the_body.bayNumber}
+	debugLog("VAL: " + task.bayNum-1);
 	results.push(task);
 	var resString =  "Result inserted "+JSON.stringify(task);
 	var res_data = { result : resString, id : task.id };  
