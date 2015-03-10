@@ -413,7 +413,7 @@ function GetPath1( task )
 function MoveForward( task )
 {
 
-	debugLog("Move Forward: " + task + " " + Path_List );
+	//debugLog("Move Forward: " + task + " " + Path_List );
 
 	Rec_Subroutine( Path_List );
 
@@ -494,7 +494,7 @@ function Rec_Subroutine( LIST )
 			clearInterval( callBack1 );
 			
 			var last_location = location;
-			debugLog("Location: " + last_location);
+			//debugLog("Location: " + last_location);
 
 			if( CS_P >= 3 )
 			{
@@ -870,7 +870,7 @@ function initializeTruck()
 			var callBack1 = setInterval(function(){
 				if( entrance_set )
 				{
-					debugLog( "Entrace Set" );
+					//debugLog( "Entrace Set" );
 					clearInterval( callBack1 );
 					BeginTaskRoutine();
 				}
