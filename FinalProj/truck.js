@@ -375,9 +375,8 @@ j
 		releaseShotgun(0);
 		task_id = body.id;
 		bay_num = body.bayNumber;
-		valid = body.isValid;
 		
-		var task = { id: task_id, bayNum : bay_num, val: valid };
+		var task = { id: task_id, bayNum : bay_num };
 		
 		debugLog( "Got task" );
 
