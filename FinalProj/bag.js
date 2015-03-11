@@ -32,19 +32,19 @@ bays[2] = false;
 var numCriticalLocations = 8; //same as in truck.js
 var request_array = [];
 var working_array = [];
-var numTrucks = 0;
+var numTrucks = 2;
 var TRUCK_IPs = [];
 for (var i = 0; i < numCriticalLocations; i++)
 {
-	var temp = [];
-	temp.push("0.0.0.0");
-	temp.push("0.0.0.0");
-	request_array.push(temp);
+	//var temp = [];
+	//temp.push("0.0.0.0");
+	//temp.push("0.0.0.0");
+	//request_array.push(temp);
 	working_array.push("0.0.0.0");
 }
 for (var i = 0; i < numCriticalLocations; i++)
 {
-	for (var j = 1; j < numTrucks; j++)
+	for (var j = 0; j < numTrucks; j++)
 	{
 		request_array[i].push("0.0.0.0");	
 	}
