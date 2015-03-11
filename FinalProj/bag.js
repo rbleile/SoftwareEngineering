@@ -445,7 +445,7 @@ refreshDisplay();
 app.post('/do_get_result', function(req, res) {
 	var the_body = req.body;  
 	if (debug) debugLog ( "received result request: " + JSON.stringify( the_body) );
-	
+	res.json(the_body);
 	if(results.length > 0)
 	{
 		var task = results.pop();
@@ -472,6 +472,7 @@ app.post("/do_sensor_update", function(req, res) {
 	bays[the_body.bayNumber] = the_body.isFull;
 	debugLog("Recieved Sensor update from bay "+ ( parseInt(the_body.bayNumber) + 1 ) + " " +the_body.isFull);
 	refreshDisplay();
+	res.json(the_body);
 });
 
 var truckLocations = [];
@@ -483,12 +484,13 @@ app.post("/do_update_trucks", function(req, res) {
 
 	debugLog("num_TRUCKS " + numTrucks);
 	debugLog("TRUCKS " + TRUCK_IPs);
+	res.json(the_body);
 });
 
 app.post("/do_update_move", function(req, res) {
 	var the_body = req.body; // ip, location
 	debugLog("/do_update_move");
-	
+	res.json(the_body);
 	for (var i = 0; i < truckLocations.length; i++)
 	{
 		if (the_body.ip != truckLocations[i].ip)
@@ -517,6 +519,7 @@ app.post("/do_update_request", function(req, res) {
 	debugLog("/do_update_request");
 	//debugLog("lock: " + the_body.lock);
 	request_array[the_body.lock][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
+	res.json(the_body);
 	for (var i = 0; i < request_array.length; i++)
 	{
 		for (var j = 0; j < numTrucks; j++)
@@ -532,6 +535,7 @@ app.post("/do_update_work", function(req, res) {
 	working_array[the_body.lock] = the_body.ip;
 	for (var i = 0; i < working_array.length; i++)
 		debugLog("working_array[" + i + "]: " + working_array[i]);
+	res.json(the_body);
 });
 
 app.post("/do_update_release_shotgun", function(req, res) {
@@ -540,6 +544,7 @@ app.post("/do_update_release_shotgun", function(req, res) {
 	working_array[the_body.lock] = "0.0.0.0";
 	for (var i = 0; i < working_array.length; i++)
 		debugLog("working_array[" + i + "]: " + working_array[i]);
+	res.json(the_body);
 })
 
 function printIPs()
