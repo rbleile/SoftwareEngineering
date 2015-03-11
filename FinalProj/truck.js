@@ -777,6 +777,7 @@ function releaseShotgun(whichCS)
 	}
 
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+	deblog("Sending shotgun update to bag")
 	tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
 

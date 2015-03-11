@@ -36,7 +36,10 @@ var numTrucks = 0;
 var TRUCK_IPs = [];
 for (var i = 0; i < numCriticalLocations; i++)
 {
-	request_array.push(["0.0.0.0"]);
+	var temp = [];
+	temp.push("0.0.0.0");
+	temp.push("0.0.0.0");
+	request_array.push(temp);
 	working_array.push("0.0.0.0");
 }
 for (var i = 0; i < numCriticalLocations; i++)
