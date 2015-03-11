@@ -47,10 +47,6 @@ for (var i = 0; i < numCriticalLocations; i++)
 	}
 }
 
-console.log("numTrucks: " + numTrucks);
-console.log("request_array: " + request_array);
-console.log("working_array:" + working_array);
-
 /**************************************************
  ****** START : WINDOW CODE ***********************
  **************************************************/
@@ -481,6 +477,9 @@ app.post("/do_update_trucks", function(req, res) {
 	var the_body = req.body;
 	TRUCK_IPs = the_body.trucks;
 	numTrucks = the_body.trucks.length;
+
+	debugLog("num_TRUCKS " + numTrucks);
+	debugLog("TRUCKS " + TRUCK_IPs);
 });
 
 app.post("/do_update_move", function(req, res) {
@@ -511,21 +510,30 @@ app.post("/do_update_start_point", function(req, res) {
 
 app.post("/do_update_request", function(req, res) {
 	var the_body = req.body; // ip, lock
-
-	debugLog("num_TRUCKS " + numTrucks);
-	debugLog("TRUCKS " + TRUCK_IPs);
-	debugLog("Index" + TRUCK_IPs.indexOf(the_body.ip));
-	//request_array[the_body.ip][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
+	debugLog(JSON.stringify(the_body));
+	//debugLog("lock: " + the_body.lock);
+	request_array[the_body.lock][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
+	for (var i = 0; i < request_array.length; i++)
+	{
+		for (var j = 0; j < numTrucks; j++)
+		{
+			debugLog("request_array[" + i + "][" + j + "]: " + request_array[i][j]);
+		}
+	}
 });
 
 app.post("/do_update_work", function(req, res) {
 	var the_body = req.body; // ip, lock
 	working_array[the_body.lock] = the_body.ip;
+	for (var i = 0; i < working_array.length; i++)
+		debugLog("working_array[" + i + "]: " + working_array[i]);
 });
 
 app.post("/do_update_release_shotgun", function(req, res) {
 	var the_body = req.body; // ip, lock
 	working_array[the_body.lock] = "0.0.0.0";
+	for (var i = 0; i < working_array.length; i++)
+		debugLog("working_array[" + i + "]: " + working_array[i]);
 })
 
 function printIPs()
