@@ -526,7 +526,7 @@ function Rec_Subroutine( LIST )
 							location = CS_P; //Move Location To Next Step;
 							var post_data = { ip : tokenRing.getMyIP(), "location" : location  };
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
-    						tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
+    						//tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
 
 							actionComplete = false;
 							clearInterval( callBack2 );
@@ -568,7 +568,7 @@ function callShotGun(whichCS)
 	reqResource(whichCS);
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
+	//tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 }
 
 //Enumerate possible states
@@ -657,7 +657,7 @@ function setWORKState(whichCS)
 	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
+	//tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
 }
 
 function inGapState(ID,timestamp)
@@ -777,7 +777,7 @@ function releaseShotgun(whichCS)
 	}
 
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
+	//tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
 
 /********* END SHOTGUN **********/
@@ -832,9 +832,6 @@ app.post('/action_move', function(req, res) {
     var the_body = req.body;  //see connect package above
     if(debug) debugLog ("Run Command: Move to critical section " + the_body.inpdirection);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
-
-    //var post_data = { ip : tokenRing.getMyIP(), "nextCS" : the_body.inpdirection };
-    //tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
 
 	displayButton();
 });
