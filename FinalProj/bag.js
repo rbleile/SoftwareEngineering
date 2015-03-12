@@ -597,6 +597,7 @@ function writedata()
 	bayTasks[0] = 0;
 	bayTasks[1] = 0;
 	bayTasks[2] = 0;
+	
 	for(var i = 0; i < tasks.length; i++)
 	{
 		bayTasks[task.bayNumber]++;
