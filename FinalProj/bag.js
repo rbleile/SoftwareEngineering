@@ -558,6 +558,7 @@ app.post("/do_update_request", function(req, res) {
 
 app.post("/do_update_truck_initial", function(req, res) {
 	var the_body = req.body; // initLock
+	//debugLog("truck at CS (door)" + the_body.initLock);
 	res.json(the_body);
 });
 
@@ -596,6 +597,7 @@ app.get('/do_get_state', function (req, res){
 	res.json(global_state);
 });
 
+/*
 function writedata()
 {
 	var bayTasks = [];
@@ -630,6 +632,7 @@ function writedata()
 
 	setTimeout( writedata , 500 );
 }
+*/
 
 function printIPs()
 {
@@ -650,6 +653,7 @@ tokenRing.registerFailureCallback(callback);
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	setTimeout( writedata , 500 );
+	setTimeout(printIPs, 8000);
+	//setTimeout( writedata , 500 );
 	
 });
