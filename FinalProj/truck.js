@@ -568,12 +568,12 @@ function callShotGun(whichCS)
 		debugLog("Calling Path Shotgun: " + whichCS);
 	else if( whichCS < 8 )
 	{
+		debugLog("Calling Location Shotgun: " + (whichCS-2));
 		var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 		tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
-		debugLog("Calling Location Shotgun: " + whichCS-2);
 	}
 	else
-		debugLog("No valid CS defined")
+		debugLog("No valid CS defined");
 
 	reqResource(whichCS);
 }
@@ -849,7 +849,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2));// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2))g;// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
