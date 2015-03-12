@@ -524,7 +524,7 @@ app.post("/do_update_request", function(req, res) {
 	{
 		for (var j = 0; j < numTrucks; j++)
 		{
-			debugLog("request_array[" + i -2+ "][" + j + "]: " + request_array[i][j]);
+			debugLog("request_array[" + i+ "][" + j + "]: " + request_array[i][j]);
 		}
 	}
 });
@@ -534,7 +534,7 @@ app.post("/do_update_work", function(req, res) {
 	debugLog("/do_update_work");
 	working_array[the_body.lock] = the_body.ip;
 	for (var i = 2; i < working_array.length; i++)
-		debugLog("working_array[" + i -2+ "]: " + working_array[i]);
+		debugLog("working_array[" + i+ "]: " + working_array[i]);
 	res.json(the_body);
 });
 
@@ -543,7 +543,7 @@ app.post("/do_update_release_shotgun", function(req, res) {
 	debugLog("/do_update_release_shotgun");
 	working_array[the_body.lock] = "0.0.0.0";
 	for (var i = 2; i < working_array.length; i++)
-		debugLog("working_array[" + i-2 + "]: " + working_array[i]);
+		debugLog("working_array[" + i + "]: " + working_array[i]);
 	res.json(the_body);
 })
 
