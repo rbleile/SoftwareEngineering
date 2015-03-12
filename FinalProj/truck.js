@@ -500,6 +500,7 @@ function Rec_Subroutine( LIST )
 			clearInterval( callBack1 );
 			
 			var last_location = location;
+			
 			if (debug) debugLog("Location: " + last_location);
 
 			if( CS_P >= 3 )
@@ -515,7 +516,8 @@ function Rec_Subroutine( LIST )
 					clearInterval( callBack3 );
 					bayClear = false;
 			
-					var post_data = { inpdirection: CS_P+2, inpdistance: 5, inpspeed: 7, lastLoc : last_location };
+
+					var post_data = { inpdirection: CS_P+2, inpdistance: 5, inpspeed: 7, lastLoc : last_location+2 };
 					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
 					if (debug) debugLog("generalPOST");
 
