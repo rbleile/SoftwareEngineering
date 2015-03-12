@@ -661,7 +661,7 @@ function processReq(ID, timestamp, whichCS)
 function setWORKState(whichCS)
 {
 	STATE[whichCS] = WORK_STATE;
-	if(debug) debugLog ( "Resource_approved...working");
+	debugLog ( "Resource_approved...working");
 	Critical_Sections[whichCS] = true;
 	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	
@@ -746,22 +746,22 @@ function processApproval(IP, whichCS)
 	if (STATE[whichCS] == REQUEST_STATE && PendingReplies[whichCS].indexOf(IP) != -1)
 	{
 		PendingReplies[whichCS].splice(PendingReplies.indexOf(IP),1);
-		if(debug) debugLog("remaining replies: " + PendingReplies[whichCS]);
+		debugLog("remaining replies: " + PendingReplies[whichCS]);
 		if (PendingReplies[whichCS].length == 0)
 		{
-			if (debug) debugLog( "Setting Work " + whichCS );
+			debugLog( "Setting Work " + whichCS );
 			setWORKState(whichCS);
 		}
 	}
 	else 
 	{ 
-		if(debug) debugLog ( "I never requested, shouldn't be approving. Node down.");
+		debugLog ( "I never requested, shouldn't be approving. Node down.");
 	}
 }
 
 app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
-	if(debug) debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
+	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
 	
 	processApproval(the_body.myIP);
 
