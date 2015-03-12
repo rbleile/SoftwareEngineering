@@ -700,14 +700,14 @@ function inRequestState(ID,timestamp,whichCS)
 		else
 		{
 			var post_data = { myIP : tokenRing.getMyIP() }; 
-			debugLog("resource_approved");
+			debugLog("1resource_approved");
 			tokenRing.generalPOST(ID, '/resource_approved', post_data); 
 		}
 	}	
 	else
 	{
 		var post_data = { myIP : tokenRing.getMyIP() }; 
-		debugLog("resource_approved");
+		debugLog("2resource_approved");
 		tokenRing.generalPOST(ID, '/resource_approved', post_data);	
 	}
 }
