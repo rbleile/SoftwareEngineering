@@ -32,6 +32,18 @@ function refreshVariables() {
 		"locations" : truckLocations
 	};*/
 
+	var xmlhttp = new XMLHttpRequest();
+	var url = "http://localhost:3000/do_get_state";
+
+	xmlhttp.onreadystatechange = function() {
+	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+	        var state = JSON.parse(xmlhttp.responseText);
+	        console.log(state);
+	    }
+	}
+	xmlhttp.open("GET", url, true);
+	xmlhttp.send();
+
 	return;
 }
 

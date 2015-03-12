@@ -20,10 +20,13 @@ var bays = [];
 //each bay has information about the active task; activeTasks[0] = bay 0 info
 var activeTasks = [];
 
-var aTaskProperties = { isActive : false, ip : "0.0.0.0", id : -1 };
-activeTasks[0] = aTaskProperties; //bay 0 
-activeTasks[1] = aTaskProperties; //bay 1
-activeTasks[2] = aTaskProperties; //bay 2
+var aTaskProperties1 = { isActive : false, ip : "0.0.0.0", id : -1 };
+var aTaskProperties2 = { isActive : false, ip : "0.0.0.0", id : -1 };
+var aTaskProperties3 = { isActive : false, ip : "0.0.0.0", id : -1 };
+
+activeTasks[0] = aTaskProperties1; //bay 0 
+activeTasks[1] = aTaskProperties2; //bay 1
+activeTasks[2] = aTaskProperties3; //bay 2
 
 bays[0] = false;
 bays[1] = false; //init bays full
@@ -427,15 +430,17 @@ app.post('/do_get_task', function(req, res) {
 		res.json(trueResponse);	
 		debugLog( "Returning True" );
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
+		if (debug) debugLog("before AT: " + JSON.stringify(activeTasks));
 		activeTasks[task.bayNumber-1].isActive = true;
 		activeTasks[task.bayNumber-1].ip = the_body.ip;
 		activeTasks[task.bayNumber-1].id = task.id;
+		if (debug) debugLog("after AT: " + JSON.stringify(activeTasks));
 
 	}
 	else
 	{
 		var falseResponse = { isValid : false };
-		debugLog("Returing false" +JSON.stringify(falseResponse));
+		if (debug) debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",falseResponse);
 	}
@@ -450,7 +455,7 @@ app.post('/do_get_result', function(req, res) {
 	{
 		var task = results.pop();
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
-		debugLog("Returning result "+JSON.stringify(trueResponse));
+		if (debug) debugLog("Returning result "+JSON.stringify(trueResponse));
 		res.json(trueResponse);	
 		tokenRing.generalPOST(the_body.ip, "/do_return_result",trueResponse);
 	}
@@ -476,10 +481,11 @@ app.post("/do_sensor_update", function(req, res) {
 });
 
 var truckLocations = [];
-var objobjojb = {"ip": "0.0.0.0", "currLocation": -1};
+var objobjojb1 = {"ip": "0.0.0.0", "currLocation": -1};
+var objobjojb2 = {"ip": "0.0.0.0", "currLocation": -1};
 
-truckLocations.push(objobjojb);
-truckLocations.push(objobjojb);
+truckLocations.push(objobjojb1);
+truckLocations.push(objobjojb2);
 
 
 function indexInTruckInList(ip)
