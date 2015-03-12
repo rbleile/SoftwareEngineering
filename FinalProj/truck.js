@@ -515,7 +515,7 @@ function Rec_Subroutine( LIST )
 					clearInterval( callBack3 );
 					bayClear = false;
 			
-					var post_data = { inpdirection: CS_P+2, inpdistance: 5, inpspeed: 7 };
+					var post_data = { inpdirection: CS_P+2, inpdistance: 5, inpspeed: 7, lastLoc : last_location };
 					tokenRing.generalPOST( tokenRing.getMyIP(), '/action_move', post_data );
 					if (debug) debugLog("generalPOST");
 
@@ -524,7 +524,7 @@ function Rec_Subroutine( LIST )
 						{
 							if (debug) debugLog("callback2");
 							location = CS_P; //Move Location To Next Step;
-							var post_data = { ip : tokenRing.getMyIP(), "location" : location  };
+							var post_data = { ip : tokenRing.getMyIP(), "location" : location };
 							tokenRing.generalPOST( tokenRing.getMyIP(), '/report_move', post_data );
     						tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
 
@@ -561,14 +561,15 @@ function callShotGun(whichCS)
 	else if( whichCS == 1 )
 		debugLog("Calling Path Shotgun: " + whichCS);
 	else if( whichCS < 8 )
+	{
+		var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
+		tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 		debugLog("Calling Location Shotgun: " + whichCS);
+	}
 	else
 		debugLog("No valid CS defined")
 
 	reqResource(whichCS);
-	
-	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	//tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 }
 
 //Enumerate possible states
@@ -831,7 +832,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Command: Move to critical section " + the_body.inpdirection);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Command: Move to critical section " + the_body.inpdirection + "Last location: " + the_body.lastLoc);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
