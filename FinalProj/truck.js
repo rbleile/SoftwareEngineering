@@ -362,9 +362,8 @@ if (debug) debugLog( "Begin Task Routine" );
 
 function getWorkFromBag()
 {
-	debugLog( "Get Work From bag" );
+	if (debug) debugLog( "Get Work From bag" );
 	var post_data = { "ip" : tokenRing.getMyIP() };
-	debugLog( JSON.stringify(post_data) );
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
 }
 
@@ -374,7 +373,7 @@ app.post( '/do_return_task', function( req, res ){
 
     res.json(req.body);
 
-	debugLog( "isValid: " + body.isValid );
+	if (debug) debugLog( "isValid: " + body.isValid );
 
 	if( body.isValid )
 	{
@@ -658,7 +657,7 @@ function processReq(ID, timestamp, whichCS)
 function setWORKState(whichCS)
 {
 	STATE[whichCS] = WORK_STATE;
-	debugLog ( "Resource_approved...working");
+	debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
 	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	
@@ -727,7 +726,7 @@ function inWorkState(ID,timestamp,whichCS)
 app.post('/process_resource_request', function(req, res) {
 	var the_body = req.body;  
 
-	debugLog ( "process_resource_request " + JSON.stringify( the_body) );
+	if (debug) debugLog ( "process_resource_request " + JSON.stringify( the_body) );
 
 	processReq(the_body.myIP, the_body.myTS, the_body.myReqCS);
 
