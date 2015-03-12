@@ -570,7 +570,7 @@ function callShotGun(whichCS)
 	{
 		var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 		tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
-		debugLog("Calling Location Shotgun: " + whichCS);
+		debugLog("Calling Location Shotgun: " + whichCS-2);
 	}
 	else
 		debugLog("No valid CS defined")
@@ -662,7 +662,7 @@ function processReq(ID, timestamp, whichCS)
 function setWORKState(whichCS)
 {
 	STATE[whichCS] = WORK_STATE;
-	debugLog ( "Resource_approved...working on " + whichCS);
+	if (debug) debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
 	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	
@@ -792,6 +792,9 @@ function releaseShotgun(whichCS)
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 	if (debug) debugLog("Sending shotgun update to bag");
 
+	if (whichCS > 1)
+		debugLog("Releasing CS location " + whichCS-2);
+	
 	if (whichCS < 8)
 		tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
@@ -846,7 +849,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Cmd: Move to CS " + the_body.inpdirection + ", Curr location is " + the_body.lastLoc);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
