@@ -682,11 +682,12 @@ function inGapState(ID,timestamp)
 
 function inRequestState(ID,timestamp,whichCS)
 {
+	debugLog("in request state");
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
 		ReqDeferred[whichCS].push(ID);
-		if(debug) debugLog("request in request state new timestamp");
+		debugLog("request in request state new timestamp");
 	}
 	else if (timestamp == highestTS)
 	{
@@ -698,12 +699,14 @@ function inRequestState(ID,timestamp,whichCS)
 		else
 		{
 			var post_data = { myIP : tokenRing.getMyIP() }; 
+			debugLog("resource_approved");
 			tokenRing.generalPOST(ID, '/resource_approved', post_data); 
 		}
 	}	
 	else
 	{
 		var post_data = { myIP : tokenRing.getMyIP() }; 
+		debugLog("resource_approved");
 		tokenRing.generalPOST(ID, '/resource_approved', post_data);	
 	}
 }
