@@ -476,11 +476,36 @@ app.post("/do_sensor_update", function(req, res) {
 });
 
 var truckLocations = [];
+var objobjojb = {"ip": "0.0.0.0", "currLocation": -1};
+
+truckLocations.push(objobjojb);
+truckLocations.push(objobjojb);
+
+
+function indexInTruckInList(ip)
+{
+	for(var i = 0; i<truckLocations.length;i++)
+	{
+		if(ip == truckLocations[i].ip) return i;
+	}
+	return -1;
+}
+
+function getEmptyTruckListIndex()
+{
+	for(var i = 0; i<truckLocations.length;i++)
+	{
+		if("0.0.0.0" == truckLocations[i].ip) return i;
+	}
+
+	return -1
+}
 
 app.post("/do_update_trucks", function(req, res) {
 	var the_body = req.body;
 	TRUCK_IPs = the_body.trucks;
 	numTrucks = the_body.trucks.length;
+   
 
 	debugLog("num_TRUCKS " + numTrucks);
 	debugLog("TRUCKS " + TRUCK_IPs);
@@ -491,18 +516,14 @@ app.post("/do_update_move", function(req, res) {
 	var the_body = req.body; // ip, location
 	debugLog("/do_update_move");
 	res.json(the_body);
-	for (var i = 0; i < truckLocations.length; i++)
-	{
-		if (the_body.ip != truckLocations[i].ip)
-		{
-			var obj = {"ip": the_body.ip, "currLocation": the_body.location};
-			truckLocations.push(obj);	
-		}
-		else if (the_body.ip == truckLocations[i].ip)
-		{
-			truckLocations[i].currLocation = the_body.location;
-		}
-	}
+	var obj = {"ip": the_body.ip, "currLocation": the_body.location};
+	var idx = indexInTruckInList(the_body.ip);
+	if(idx == -1) idx = getEmptyTruckListIndex();
+
+	truckLocations[idx].ip = the_body.ip;
+	truckLocations[idx].currLocation = the_body.location+2; //this is to match the truck locations
+	debugLog("Truck " + truckLocations[idx].ip + " at " + truckLocations[idx].currLocation);
+
 });
 
 /*
@@ -516,7 +537,7 @@ app.post("/do_update_start_point", function(req, res) {
 
 app.post("/do_update_request", function(req, res) {
 	var the_body = req.body; // ip, lock
-	debugLog("/do_update_request");
+	debugLog("/do_update_request at "+the_body.lock);
 	//debugLog("lock: " + the_body.lock);
 	request_array[the_body.lock][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
 	res.json(the_body);
@@ -531,7 +552,7 @@ app.post("/do_update_request", function(req, res) {
 
 app.post("/do_update_work", function(req, res) {
 	var the_body = req.body; // ip, lock
-	debugLog("/do_update_work");
+	debugLog("/do_update_work at "+the_body.lock);
 	working_array[the_body.lock] = the_body.ip;
 	for (var i = 2; i < working_array.length; i++)
 		debugLog("working_array[" + i+ "]: " + working_array[i]);
@@ -540,7 +561,7 @@ app.post("/do_update_work", function(req, res) {
 
 app.post("/do_update_release_shotgun", function(req, res) {
 	var the_body = req.body; // ip, lock
-	debugLog("/do_update_release_shotgun");
+	debugLog("/do_update_release_shotgun at "+the_body.lock);
 	working_array[the_body.lock] = "0.0.0.0";
 	for (var i = 2; i < working_array.length; i++)
 		debugLog("working_array[" + i + "]: " + working_array[i]);
