@@ -276,7 +276,7 @@ function choosePath( bay )
 	switch( bay-1 )
 	{
 		case 0:
-			if( entrance == 1 )
+			if( entrance == 7 )
 			{
 				Path_List.push( 5 );
 				Path_List.push( 4 );
@@ -288,7 +288,7 @@ function choosePath( bay )
 				Rev_Path.push( 5 );
 				Rev_Path.push( 7 );
 			}
-			else
+			else if (entrance == 6)
 			{
 				Path_List.push( 3 );
 				Path_List.push( 0 );
@@ -298,7 +298,7 @@ function choosePath( bay )
 			}
 			break;
 		case 1:
-			if( entrance == 1 )
+			if( entrance == 7 )
 			{
 				Path_List.push( 5 );
 				Path_List.push( 4 );
@@ -308,7 +308,7 @@ function choosePath( bay )
 				Rev_Path.push( 5 );
 				Rev_Path.push( 7 );
 			}
-			else
+			else if (entrance == 6)
 			{
 				Path_List.push( 3 );
 				Path_List.push( 4 );
@@ -320,7 +320,7 @@ function choosePath( bay )
 			}
 			break;
 		case 2:
-			if( entrance == 1 )
+			if( entrance == 7 )
 			{
 				Path_List.push( 5 );
 				Path_List.push( 2 );
@@ -328,7 +328,7 @@ function choosePath( bay )
 				Rev_Path.push( 5 );
 				Rev_Path.push( 7 );
 			}
-			else
+			else if (entrance == 6)
 			{
 				Path_List.push( 3 );
 				Path_List.push( 4 );
@@ -794,7 +794,7 @@ function releaseShotgun(whichCS)
 
 	if (whichCS > 1)
 		debugLog("Releasing CS location " + whichCS-2);
-	
+
 	if (whichCS < 8)
 		tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
@@ -849,7 +849,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2));// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
