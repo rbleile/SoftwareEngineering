@@ -602,12 +602,12 @@ for (var i = 0; i < numCritSections; i++)
 function reqResource(whichCS)
 {
 	STATE[whichCS] = REQUEST_STATE;
-	debugLog("STATE ARR: " + STATE);
+	if (debug) debugLog("STATE ARR: " + STATE);
 	highestTS++;
 	myTS = highestTS;
 
 	var theRing = TRUCK_IPs; 
-	debugLog("theRing: " + theRing);
+	if (debug) debugLog("theRing: " + theRing);
 
 	if( theRing.length == 1 && theRing[0] == tokenRing.getMyIP())
 	{
@@ -616,17 +616,14 @@ function reqResource(whichCS)
 	}
 	else
 	{
-		debugLog("in else statement");
 		for (var i = 0; i < theRing.length; i++)
 		{
 			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP(), myReqCS : whichCS };
 
 			if (theRing[i] != tokenRing.getMyIP())
 			{
-				debugLog("sending to someone else in ring");
 				tokenRing.generalPOST(theRing[i], '/process_resource_request', post_data); 
 				PendingReplies[whichCS].push(theRing[i]);
-				debugLog("pendingreplies: " + PendingReplies);
 			}  
 		}
 	}
@@ -642,7 +639,7 @@ function getNextRequestDeferred(whichCS)
 
 function processReq(ID, timestamp, whichCS)
 {
-	debugLog("state of CS: " + STATE[whichCS]);
+	if (debug) debugLog("state of CS: " + STATE[whichCS]);
 	switch(STATE[whichCS]) {
 		case GAP_STATE:
 			inGapState(ID,timestamp,whichCS);
@@ -683,12 +680,11 @@ function inGapState(ID,timestamp,whichCS)
 
 function inRequestState(ID,timestamp,whichCS)
 {
-	debugLog("in request state");
 	if (timestamp > highestTS)
 	{
 		highestTS = timestamp;
 		ReqDeferred[whichCS].push(ID);
-		debugLog("request in request state new timestamp");
+		if (debug) debugLog("request in request state new timestamp");
 	}
 	else if (timestamp == highestTS)
 	{
@@ -700,14 +696,12 @@ function inRequestState(ID,timestamp,whichCS)
 		else
 		{
 			var post_data = { myIP : tokenRing.getMyIP() , reqCS : whichCS}; 
-			debugLog("1resource_approved");
 			tokenRing.generalPOST(ID, '/resource_approved', post_data); 
 		}
 	}	
 	else
 	{
 		var post_data = { myIP : tokenRing.getMyIP() , reqCS : whichCS}; 
-		debugLog("2resource_approved");
 		tokenRing.generalPOST(ID, '/resource_approved', post_data);	
 	}
 }
@@ -743,28 +737,26 @@ app.post('/process_resource_request', function(req, res) {
 
 function processApproval(IP, whichCS)
 {
-	debugLog("state arr" + STATE + "CS: " + whichCS);
-
-	debugLog("state = " + STATE[whichCS] + "PendReplies = " + PendingReplies[whichCS] + "IP = " + IP);
+	if (debug) debugLog("state = " + STATE[whichCS] + "PendReplies = " + PendingReplies[whichCS] + "IP = " + IP);
 	if (STATE[whichCS] == REQUEST_STATE && PendingReplies[whichCS].indexOf(IP) != -1)
 	{
 		PendingReplies[whichCS].splice(PendingReplies.indexOf(IP),1);
-		debugLog("remaining replies: " + PendingReplies[whichCS]);
+		if (debug) debugLog("remaining replies: " + PendingReplies[whichCS]);
 		if (PendingReplies[whichCS].length == 0)
 		{
-			debugLog( "Setting Work " + whichCS );
+			if (debug) debugLog( "Setting Work " + whichCS );
 			setWORKState(whichCS);
 		}
 	}
 	else 
 	{ 
-		debugLog ( "I never requested, shouldn't be approving. Node down.");
+		if (debug) debugLog ( "I never requested, shouldn't be approving. Node down.");
 	}
 }
 
 app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
-	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
+	if (debug) debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
 	
 	processApproval(the_body.myIP, the_body.reqCS);
 
