@@ -607,6 +607,7 @@ function reqResource(whichCS)
 	myTS = highestTS;
 
 	var theRing = TRUCK_IPs; 
+	debugLog("theRing: " + theRing);
 
 	if( theRing.length == 1 && theRing[0] == tokenRing.getMyIP())
 	{
@@ -615,11 +616,13 @@ function reqResource(whichCS)
 	}
 	else
 	{
+		debugLog("in else statement");
 		for (var i = 0; i < theRing.length; i++)
 		{
 			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP(), myReqCS : whichCS }; 
 			if (theRing[i] != tokenRing.getMyIP())
 			{
+				debugLog("sending to someone else in ring");
 				tokenRing.generalPOST(theRing[i], '/process_resource_request', post_data); 
 				PendingReplies[whichCS].push(theRing[i]);
 			}  
