@@ -425,7 +425,7 @@ app.post('/do_get_task', function(req, res) {
 		tasks.splice(validTaskIdx, 1);
 		var trueResponse = { isValid : true, id : task.id, bayNumber : task.bayNumber};
 		res.json(trueResponse);	
-		if (debug) debugLog( "Returning True" );
+		debugLog( "Returning True" );
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",trueResponse);
 		activeTasks[task.bayNumber-1].isActive = true;
 		activeTasks[task.bayNumber-1].ip = the_body.ip;
@@ -435,7 +435,7 @@ app.post('/do_get_task', function(req, res) {
 	else
 	{
 		var falseResponse = { isValid : false };
-		if (debug) debugLog("Returing false" +JSON.stringify(falseResponse));
+		debugLog("Returing false" +JSON.stringify(falseResponse));
 		res.json(falseResponse);
 		tokenRing.generalPOST(the_body.ip, "/do_return_task",falseResponse);
 	}
