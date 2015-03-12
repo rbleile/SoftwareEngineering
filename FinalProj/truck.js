@@ -743,6 +743,7 @@ app.post('/process_resource_request', function(req, res) {
 
 function processApproval(IP, whichCS)
 {
+	debugLog("state = " + STATE[whichCS] + "PendReplies = " + PendingReplies[whichCS] + "IP = " + IP);
 	if (STATE[whichCS] == REQUEST_STATE && PendingReplies[whichCS].indexOf(IP) != -1)
 	{
 		PendingReplies[whichCS].splice(PendingReplies.indexOf(IP),1);
