@@ -780,7 +780,7 @@ function releaseShotgun(whichCS)
 	}
 
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	debugLog("Sending shotgun update to bag");
+	if (debug) debugLog("Sending shotgun update to bag");
 	tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
 
@@ -834,7 +834,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Command: Move to critical section " + the_body.inpdirection + ", Last location: " + the_body.lastLoc);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + the_body.inpdirection + ", Curr location is " + the_body.lastLoc);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
