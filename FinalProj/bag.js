@@ -520,11 +520,11 @@ app.post("/do_update_request", function(req, res) {
 	//debugLog("lock: " + the_body.lock);
 	request_array[the_body.lock][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
 	res.json(the_body);
-	for (var i = 0; i < request_array.length; i++)
+	for (var i = 2; i < request_array.length; i++)
 	{
 		for (var j = 0; j < numTrucks; j++)
 		{
-			debugLog("request_array[" + i + "][" + j + "]: " + request_array[i][j]);
+			debugLog("request_array[" + i -2+ "][" + j + "]: " + request_array[i][j]);
 		}
 	}
 });
@@ -533,8 +533,8 @@ app.post("/do_update_work", function(req, res) {
 	var the_body = req.body; // ip, lock
 	debugLog("/do_update_work");
 	working_array[the_body.lock] = the_body.ip;
-	for (var i = 0; i < working_array.length; i++)
-		debugLog("working_array[" + i + "]: " + working_array[i]);
+	for (var i = 2; i < working_array.length; i++)
+		debugLog("working_array[" + i -2+ "]: " + working_array[i]);
 	res.json(the_body);
 });
 
@@ -542,8 +542,8 @@ app.post("/do_update_release_shotgun", function(req, res) {
 	var the_body = req.body; // ip, lock
 	debugLog("/do_update_release_shotgun");
 	working_array[the_body.lock] = "0.0.0.0";
-	for (var i = 0; i < working_array.length; i++)
-		debugLog("working_array[" + i + "]: " + working_array[i]);
+	for (var i = 2; i < working_array.length; i++)
+		debugLog("working_array[" + i-2 + "]: " + working_array[i]);
 	res.json(the_body);
 })
 

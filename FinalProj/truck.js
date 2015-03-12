@@ -568,7 +568,7 @@ function callShotGun(whichCS)
 	reqResource(whichCS);
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
+	//tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 }
 
 //Enumerate possible states
