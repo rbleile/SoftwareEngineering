@@ -669,7 +669,7 @@ function setWORKState(whichCS)
 	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
 }
 
-function inGapState(ID,timestamp)
+function inGapState(ID,timestamp,whichCS)
 {
 	if (timestamp > highestTS)
 	{
@@ -677,7 +677,7 @@ function inGapState(ID,timestamp)
     	if(debug) debugLog("request in gap state new timestamp");
 	}
 
-	var post_data = { myIP : tokenRing.getMyIP() }; 
+	var post_data = { myIP : tokenRing.getMyIP(), reqCS : whichCS }; 
 	tokenRing.generalPOST(ID, '/resource_approved', post_data); 
 }
 
@@ -699,14 +699,14 @@ function inRequestState(ID,timestamp,whichCS)
 		}
 		else
 		{
-			var post_data = { myIP : tokenRing.getMyIP() }; 
+			var post_data = { myIP : tokenRing.getMyIP() , reqCS : whichCS}; 
 			debugLog("1resource_approved");
 			tokenRing.generalPOST(ID, '/resource_approved', post_data); 
 		}
 	}	
 	else
 	{
-		var post_data = { myIP : tokenRing.getMyIP() }; 
+		var post_data = { myIP : tokenRing.getMyIP() , reqCS : whichCS}; 
 		debugLog("2resource_approved");
 		tokenRing.generalPOST(ID, '/resource_approved', post_data);	
 	}
@@ -743,8 +743,8 @@ app.post('/process_resource_request', function(req, res) {
 
 function processApproval(IP, whichCS)
 {
-	debugLog("state arr" + STATE);
-	
+	debugLog("state arr" + STATE + "CS: " + whichCS);
+
 	debugLog("state = " + STATE[whichCS] + "PendReplies = " + PendingReplies[whichCS] + "IP = " + IP);
 	if (STATE[whichCS] == REQUEST_STATE && PendingReplies[whichCS].indexOf(IP) != -1)
 	{
@@ -766,7 +766,7 @@ app.post('/resource_approved', function(req, res) {
 	var the_body = req.body;  
 	debugLog("recieved resource approved from : "+ the_body.myIP + " before decrement NRR " + PendingReplies);
 	
-	processApproval(the_body.myIP);
+	processApproval(the_body.myIP, the_body.reqCS);
 
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
@@ -786,7 +786,7 @@ function releaseShotgun(whichCS)
 	for (var i = 0; i < numRequests; i++)
 	{
 		var nextPendingRequest = getNextRequestDeferred(whichCS);
-		var post_data = { myIP : tokenRing.getMyIP() };
+		var post_data = { myIP : tokenRing.getMyIP() , reqCS : whichCS};
 	    if(debug) debugLog("Sending approval to : " + nextPendingRequest); 	
 		tokenRing.generalPOST(nextPendingRequest, '/resource_approved', post_data); 
 	}
