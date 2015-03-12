@@ -662,7 +662,9 @@ function setWORKState(whichCS)
 	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
+
+	if (whichCS < 8)
+		tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
 }
 
 function inGapState(ID,timestamp,whichCS)
@@ -784,7 +786,9 @@ function releaseShotgun(whichCS)
 
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 	if (debug) debugLog("Sending shotgun update to bag");
-	tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
+
+	if (whichCS < 8)
+		tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
 
 /********* END SHOTGUN **********/
