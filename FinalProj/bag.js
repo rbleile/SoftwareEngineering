@@ -450,7 +450,7 @@ refreshDisplay();
 app.post('/do_get_result', function(req, res) {
 	var the_body = req.body;  
 	if (debug) debugLog ( "received result request: " + JSON.stringify( the_body) );
-	res.json(the_body);
+	//res.json(the_body);
 	if(results.length > 0)
 	{
 		var task = results.pop();
