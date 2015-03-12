@@ -9,9 +9,41 @@ var bay3Stall = { locked: false, color: '', ref: document.getElementById('bay3St
 var bay1Sensor = { locked: false, color: '', ref: document.getElementById('bay1Sensor') };
 var bay2Sensor = { locked: false, color: '', ref: document.getElementById('bay2Sensor') };
 var bay3Sensor = { locked: false, color: '', ref: document.getElementById('bay3Sensor') };
+
+var baySensors = [];
+var bayStalls = [];
+
+baySensors[0] = bay1Sensor;
+baySensors[1] = bay2Sensor;
+baySensors[2] = bay3Sensor;
+
+bayStalls[0] = bay1Stall;
+bayStalls[1] = bay2Stall;
+bayStalls[2] = bay3Stall;
+
 var bay1Corridor = { locked: false, color: '', ref: document.getElementById('bay1Corridor') };
 var bay2Corridor = { locked: false, color: '', ref: document.getElementById('bay2Corridor') };
 var bay3Corridor = { locked: false, color: '', ref: document.getElementById('bay3Corridor') };
+
+
+var positions = [];
+positions[0] = 0;
+positions[1] = 0;
+
+positions[2] = bay1Stall;
+positions[3] = bay2Stall;
+positions[4] = bay3Stall;
+
+positions[5] = bay1Corridor;
+positions[6] = bay2Corridor;
+positions[7] = bay3Corridor;
+
+positions[8] = parkingNorth;
+positions[9] = parkingSouth;
+
+
+
+
 
 var items = [	parkingNorth,
 				parkingSouth,
@@ -33,12 +65,42 @@ function refreshVariables() {
 	};*/
 
 	var xmlhttp = new XMLHttpRequest();
-	var url = "http://localhost:3000/do_get_state";
+	var url = "state.json";
 
 	xmlhttp.onreadystatechange = function() {
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 	        var state = JSON.parse(xmlhttp.responseText);
 	        console.log(state);
+
+	  //       bay1Sensor.locked = true;
+			// bay2Sensor.locked = true;
+			// bay3Sensor.locked = true;
+
+			for(var i = 0; i < 3; i++)
+			{
+				if(state.bayState[i])
+				{
+					
+					baySensors[i].ref.style.backgroundImage = "url('img/lightRed.png')";
+					bayStalls[i].ref.style.backgroundImage = "url('img/fire.gif')";
+					bayStalls[i].ref.querySelector('.signOpen').style.display = 'none';
+					bayStalls[i].ref.querySelector('.signClosed').style.display = 'block';
+				}
+				else
+				{
+					baySensors[i].ref.style.backgroundImage = "url('img/lightGreen.png')";
+					bayStalls[i].ref.style.backgroundImage = "url('img/warehouse.png')";
+					bayStalls[i].ref.querySelector('.signOpen').style.display = 'block';
+					bayStalls[i].ref.querySelector('.signClosed').style.display = 'none';
+				}
+			}
+			
+
+
+			bay1Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[0];
+			bay2Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[1];
+			bay3Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[2];
+
 	    }
 	}
 	xmlhttp.open("GET", url, true);

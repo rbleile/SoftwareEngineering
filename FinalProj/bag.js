@@ -5,7 +5,7 @@ var blessed = require('blessed');
 var bodyParser = require('body-parser');
 var app = express();
 var tokenRing = require('./TokenRingManager');
-
+var fs = require('fs');
 tokenRing.setRole(1);
 
 app.use(bodyParser.urlencoded());
@@ -577,17 +577,53 @@ app.post("/do_update_release_shotgun", function(req, res) {
 app.get('/do_get_state', function (req, res){
 	var the_body = req.query;
 	console.log ( "get body: " + the_body );
-	
-	var global_state = {
-		"bayState" : bays,
-		"requestedLocks" : request_array,
-		"actualLocks" : working_array,
-		"locations" : truckLocations
+	var bayTasks = [];
+
+
+	var global_state = 
+	{
+			bayState : bays,
+			requestedLocks : request_array,
+			actualLocks : working_array,
+			locations : truckLocations
 	};
 
 	res.json(global_state);
 });
 
+function writedata()
+{
+	var bayTasks = [];
+	bayTasks[0] = 0;
+	bayTasks[1] = 0;
+	bayTasks[2] = 0;
+	for(var i = 0; i < tasks.length; i++)
+	{
+		bayTasks[task.bayNumber]++;
+	}
+
+	var global_state = 
+	{
+			bayState : bays,
+			bayTaskCount : bayTasks,
+			requestedLocks : request_array,
+			actualLocks : working_array,
+			locations : truckLocations
+	};
+
+
+	var outputFilename = 'html/state.json';
+
+	fs.writeFile(outputFilename, JSON.stringify(global_state, null, 4), function(err) {
+	    if(err) {
+	      console.log(err);
+	    } else {
+	      //console.log("JSON saved to " + outputFilename);
+	    }
+	}); 
+
+	setTimeout( writedata , 500 );
+}
 
 function printIPs()
 {
@@ -608,5 +644,6 @@ tokenRing.registerFailureCallback(callback);
 app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
-	setTimeout( printIPs , 8000 );
+	setTimeout( writedata , 500 );
+	
 });
