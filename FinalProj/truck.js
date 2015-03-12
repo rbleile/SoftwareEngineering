@@ -362,9 +362,9 @@ if (debug) debugLog( "Begin Task Routine" );
 
 function getWorkFromBag()
 {
-	if (debug) debugLog( "Get Work From bag" );
+	debugLog( "Get Work From bag" );
 	var post_data = { "ip" : tokenRing.getMyIP() };
-	if (debug) debugLog( JSON.stringify(post_data) );
+	debugLog( JSON.stringify(post_data) );
 	tokenRing.generalPOST( Bag_IP, '/do_get_task', post_data  );
 }
 
@@ -374,7 +374,7 @@ app.post( '/do_return_task', function( req, res ){
 
     res.json(req.body);
 
-	if (debug) debugLog( "isValid: " + body.isValid );
+	debugLog( "isValid: " + body.isValid );
 
 	if( body.isValid )
 	{
