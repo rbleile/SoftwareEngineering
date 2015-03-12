@@ -642,6 +642,7 @@ function getNextRequestDeferred(whichCS)
 
 function processReq(ID, timestamp, whichCS)
 {
+	debugLog("state of CS: " + STATE[whichCS]);
 	switch(STATE[whichCS]) {
 		case GAP_STATE:
 			inGapState(ID,timestamp,whichCS);
