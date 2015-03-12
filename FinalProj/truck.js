@@ -132,10 +132,10 @@ var entranceButton1 = blessed.box({
     hidden: true 
 });
 entranceButton1.on('click', function(data) {
-	setEntranceDoor( 1 );
+	setEntranceDoor( 7 );
 });
 screen.key(['1'], function(ch, key) {
-	setEntranceDoor( 1 );
+	setEntranceDoor( 7 );
 });
 
 var entranceButton2 = blessed.box({
@@ -151,10 +151,10 @@ var entranceButton2 = blessed.box({
     hidden: true 
 });
 entranceButton2.on('click', function(data) {
-	setEntranceDoor( 2 );
+	setEntranceDoor( 6 );
 });
 screen.key(['2'], function(ch, key) {
-	setEntranceDoor( 2 );
+	setEntranceDoor( 6 );
 });
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
@@ -177,6 +177,9 @@ function setEntranceDoor( door )
 	//tokenRing.generalPOST(Bag_IP, "/do_update_start_point", post_data);
 
 	location = entrance;
+
+	var post_data = { initLock : door }
+	tokenRing.generalPOST(Bag_IP, '/do_update_truck_initial', post_data);
 
 	entranceButton1.setContent("{center} Enter Door 1 {/center}");
 	entranceButton2.setContent("{center} Enter Door 2 {/center}");

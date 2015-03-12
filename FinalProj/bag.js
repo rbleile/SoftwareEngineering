@@ -556,6 +556,11 @@ app.post("/do_update_request", function(req, res) {
 	}
 });
 
+app.post("/do_update_truck_initial", function(req, res) {
+	var the_body = req.body; // initLock
+	res.json(the_body);
+});
+
 app.post("/do_update_work", function(req, res) {
 	var the_body = req.body; // ip, lock
 	debugLog("/do_update_work at "+the_body.lock);
