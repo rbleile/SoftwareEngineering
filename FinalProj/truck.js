@@ -619,12 +619,14 @@ function reqResource(whichCS)
 		debugLog("in else statement");
 		for (var i = 0; i < theRing.length; i++)
 		{
-			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP(), myReqCS : whichCS }; 
+			var post_data = { myTS : myTS, myIP : tokenRing.getMyIP(), myReqCS : whichCS };
+
 			if (theRing[i] != tokenRing.getMyIP())
 			{
 				debugLog("sending to someone else in ring");
 				tokenRing.generalPOST(theRing[i], '/process_resource_request', post_data); 
 				PendingReplies[whichCS].push(theRing[i]);
+				debugLog("pendingreplies: " + PendingReplies);
 			}  
 		}
 	}
@@ -727,7 +729,7 @@ function inWorkState(ID,timestamp,whichCS)
 app.post('/process_resource_request', function(req, res) {
 	var the_body = req.body;  
 
-	if(debug) debugLog ( "process_resource_request " + JSON.stringify( the_body) );
+	debugLog ( "process_resource_request " + JSON.stringify( the_body) );
 
 	processReq(the_body.myIP, the_body.myTS, the_body.myReqCS);
 
