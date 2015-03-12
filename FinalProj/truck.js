@@ -602,7 +602,7 @@ for (var i = 0; i < numCritSections; i++)
 function reqResource(whichCS)
 {
 	STATE[whichCS] = REQUEST_STATE;
-
+	debugLog("STATE ARR: " + STATE);
 	highestTS++;
 	myTS = highestTS;
 
@@ -743,6 +743,8 @@ app.post('/process_resource_request', function(req, res) {
 
 function processApproval(IP, whichCS)
 {
+	debugLog("state arr" + STATE);
+	
 	debugLog("state = " + STATE[whichCS] + "PendReplies = " + PendingReplies[whichCS] + "IP = " + IP);
 	if (STATE[whichCS] == REQUEST_STATE && PendingReplies[whichCS].indexOf(IP) != -1)
 	{
