@@ -25,7 +25,12 @@ var items = [	parkingNorth,
 
 function refreshVariables() {
 
-	//TODO: Download some JSON
+	/*var global_state = {
+		"bayState" : bays,
+		"requestedLocks" : request_array,
+		"actualLocks" : working_array,
+		"locations" : truckLocations
+	};*/
 
 	return;
 }

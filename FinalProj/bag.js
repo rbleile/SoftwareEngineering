@@ -568,6 +568,21 @@ app.post("/do_update_release_shotgun", function(req, res) {
 	res.json(the_body);
 })
 
+app.get('/do_get_state', function (req, res){
+	var the_body = req.query;
+	console.log ( "get body: " + the_body );
+	
+	var global_state = {
+		"bayState" : bays,
+		"requestedLocks" : request_array,
+		"actualLocks" : working_array,
+		"locations" : truckLocations
+	};
+
+	res.json(global_state);
+});
+
+
 function printIPs()
 {
 	var list =  tokenRing.getRing();
