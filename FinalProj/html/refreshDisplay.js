@@ -87,7 +87,7 @@ function resetElements() {
 };
 
 function refreshVariables() {
-    resetElements();
+    //resetElements();
 	/*var global_state = {
 		"bayState" : bays,
 		"requestedLocks" : request_array,
@@ -132,20 +132,39 @@ function refreshVariables() {
 			bay2Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[1];
 			bay3Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[2];
 
-			positions[state.blueLoc].ref.querySelector('.truckBlue').style.display = 'block';
-			positions[state.redLoc].ref.querySelector('.truckRed').style.display = 'block';
+			//positions[state.blueLoc].ref.querySelector('.truckBlue').style.display = 'block';
+			//positions[state.redLoc].ref.querySelector('.truckRed').style.display = 'block';
 			for(var i = 2; i < 8; i++)
 			{
-				if(state.locks[i]=='red') positions[i].ref.querySelector('.lockRed').style.display = 'block';
-				else if(state.locks[i]=='blue') positions[i].ref.querySelector('.lockBlue').style.display = 'block';
+				if(i == state.blueLoc) positions[i].ref.querySelector('.truckBlue').style.display = 'block';
+				else if(i == state.redLoc ) positions[i].ref.querySelector('.truckRed').style.display = 'block';
+				else positions[i].ref.querySelector('.truckRed').style.display = 'block';
+
 			}
 
 			for(var i = 2; i < 8; i++)
 			{
-				if(state.requestedLocks[i][0]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
-				if(state.requestedLocks[i][0]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
-				if(state.requestedLocks[i][1]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
-				if(state.requestedLocks[i][1]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
+				if(state.locks[i]=='red') positions[i].ref.querySelector('.lockRed').style.display = 'block';
+				else if(state.locks[i]=='blue') positions[i].ref.querySelector('.lockBlue').style.display = 'block';
+				else 
+				{
+					positions[i].ref.querySelector('.lockBlue').style.display = 'none';
+					positions[i].ref.querySelector('.lockRed').style.display = 'none';
+				}
+			}
+
+			for(var i = 2; i < 8; i++)
+			{
+				if(state.requestedLocks[i][0]=='red' || state.requestedLocks[i][1]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
+				else if(state.requestedLocks[i][0]=='blue' || state.requestedLocks[i][1]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
+				else 
+				{
+					positions[i].ref.querySelector('.lockReservedRed').style.display = 'none';
+					positions[i].ref.querySelector('.lockReservedBlue').style.display = 'none';
+				}
+
+				//if(state.requestedLocks[i][1]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
+				//if(state.requestedLocks[i][1]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
 			}
 	    }
 	}
@@ -218,7 +237,8 @@ function updateDisplay() {
 
 
 resetElements();
-updateDisplay();
+//updateDisplay();
+
 
 setTimeout(refreshVariables, 500);
 refreshVariables();

@@ -556,7 +556,7 @@ app.post("/do_update_start_point", function(req, res) {
 
 app.post("/do_update_request", function(req, res) {
 	var the_body = req.body; // ip, lock
-	debugLog("/do_update_request at "+the_body.lock);
+	debugLog("/do_update_request at "+the_body.lock+ " " +the_body.ip);
 	//debugLog("lock: " + the_body.lock);
 	request_array[the_body.lock][TRUCK_IPs.indexOf(the_body.ip)] = the_body.ip;
 	res.json(the_body);
@@ -577,7 +577,7 @@ app.post("/do_update_truck_initial", function(req, res) {
 
 app.post("/do_update_work", function(req, res) {
 	var the_body = req.body; // ip, lock
-	debugLog("/do_update_work at "+the_body.lock);
+	debugLog("/do_update_work at "+the_body.lock + " " +the_body.ip);
 	working_array[the_body.lock] = the_body.ip;
 	for (var i = 2; i < working_array.length; i++)
 		debugLog("working_array[" + i+ "]: " + working_array[i]);
@@ -597,10 +597,11 @@ app.post("/do_update_work", function(req, res) {
 	res.json(the_body);
 });
 
+
 app.post("/do_update_release_shotgun", function(req, res) {
 	var the_body = req.body; // ip, lock
-	debugLog("/do_update_release_shotgun at "+the_body.lock);
-	working_array[the_body.lock] = "0.0.0.0";
+	debugLog("/do_update_release_shotgun at "+the_body.lock+ " " +the_body.ip);
+	if ( working_array[the_body.lock] == the_body.ip ) working_array[the_body.lock] = "0.0.0.0";
 	for (var i = 2; i < working_array.length; i++)
 		debugLog("working_array[" + i + "]: " + working_array[i]);
 	res.json(the_body);
