@@ -615,12 +615,12 @@ function writedata()
 
 	if(blueTruck != -1)  bPos = truckLocations[blueTruck].currLocation;
 	else bPos = 9;
-	if(redTruck != -1)  bPos = truckLocations[redTruck].currLocation;
+	if(redTruck != -1)  rPos = truckLocations[redTruck].currLocation;
 	else rPos = 8;
 	
 	for(var i = 0; i < tasks.length; i++)
 	{
-		bayTasks[task.bayNumber]++;
+		bayTasks[tasks[i].bayNumber]++;
 	}
 
 	var locks = [];
@@ -682,7 +682,7 @@ function writedata()
 			blueIp : blueIp
 	};
 
-
+	debugLog("Red loc "+ rPos +"  blue loc "+bPos);
 	var outputFilename = 'html/state.json';
 
 	fs.writeFile(outputFilename, JSON.stringify(global_state, null, 4), function(err) {
