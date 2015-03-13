@@ -665,16 +665,24 @@ function setWORKState(whichCS)
 	if (debug) debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
 	if (whichCS == 0)
+	{
 		debugLog("Got task lock");
-	if (whichCS == 1)
+	}
+	else if (whichCS == 1)
+	{
 		debugLog("Got path lock");
-	if (whichCS > 1)
+	}
+	else if (whichCS < 8)
+	{
 		debugLog( "Got location: " + whichCS-2);
+	}
+	else
+	{
+		debugLog( "WTF Man: " + whichCS);
+	}
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-
-	if (whichCS < 8)
-		tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
+	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
 }
 
 function inGapState(ID,timestamp,whichCS)

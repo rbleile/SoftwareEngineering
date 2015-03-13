@@ -152,6 +152,7 @@ function refreshVariables() {
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send();
 
+	setTimeout(refreshVariables, 500);
 	return;
 }
 
@@ -219,6 +220,7 @@ function updateDisplay() {
 resetElements();
 updateDisplay();
 
+setTimeout(refreshVariables, 500);
 refreshVariables();
 
 //Done.

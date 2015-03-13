@@ -581,6 +581,19 @@ app.post("/do_update_work", function(req, res) {
 	working_array[the_body.lock] = the_body.ip;
 	for (var i = 2; i < working_array.length; i++)
 		debugLog("working_array[" + i+ "]: " + working_array[i]);
+	if(the_body.lock >1)
+	{
+		var idx = request_array[the_body.lock].indexOf(the_body.ip);
+		if(idx != -1)
+		{
+			request_array[the_body.lock][idx] = "0.0.0.0";
+		}
+		else
+		{
+			debugLog("This should never happen" +request_array[the_body.lock]);
+		} 
+	}
+	
 	res.json(the_body);
 });
 
@@ -610,7 +623,7 @@ app.get('/do_get_state', function (req, res){
 	res.json(global_state);
 });
 
-/*
+
 function writedata()
 {
 	var bayTasks = [];
@@ -627,7 +640,7 @@ function writedata()
 	
 	for(var i = 0; i < tasks.length; i++)
 	{
-		bayTasks[tasks[i].bayNumber]++;
+		bayTasks[tasks[i].bayNumber-1]++;
 	}
 
 	var locks = [];
@@ -671,6 +684,10 @@ function writedata()
 			{
 				requestlocks[i][j] = 'red';
 			}
+			else 
+			{
+				requestlocks[i][j] = 'none';	
+			}
 
 		}
 		
@@ -689,7 +706,7 @@ function writedata()
 			blueIp : blueIp
 	};
 
-	debugLog("Red loc "+ rPos +"  blue loc "+bPos);
+	//debugLog("Red loc "+ rPos +"  blue loc "+bPos);
 	var outputFilename = 'html/state.json';
 
 	fs.writeFile(outputFilename, JSON.stringify(global_state, null, 4), function(err) {
@@ -702,7 +719,7 @@ function writedata()
 
 	setTimeout( writedata , 500 );
 }
-*/
+
 
 function printIPs()
 {
@@ -724,6 +741,6 @@ app.set('port', process.env.PORT || 3000);
 http.createServer(app).listen(app.get('port'), function(){
 	debugLog("Express server listening on port " + app.get('port'));
 	setTimeout(printIPs, 8000);
-	//setTimeout( writedata , 500 );
+	setTimeout( writedata , 500 );
 	
 });
