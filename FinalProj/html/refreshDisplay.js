@@ -116,6 +116,8 @@ function refreshVariables() {
 					bayStalls[i].ref.style.backgroundImage = "url('img/fire.gif')";
 					bayStalls[i].ref.querySelector('.signOpen').style.display = 'none';
 					bayStalls[i].ref.querySelector('.signClosed').style.display = 'block';
+					if(i == (state.blueLoc -2)) document.getElementById('audiotag1').play();
+					if(i == (state.redLoc  -2)) document.getElementById('audiotag1').play();
 				}
 				else
 				{
@@ -134,18 +136,30 @@ function refreshVariables() {
 
 			//positions[state.blueLoc].ref.querySelector('.truckBlue').style.display = 'block';
 			//positions[state.redLoc].ref.querySelector('.truckRed').style.display = 'block';
-			for(var i = 2; i < 8; i++)
+			for(var i = 2; i < 10; i++)
 			{
 				if(i == state.blueLoc) positions[i].ref.querySelector('.truckBlue').style.display = 'block';
 				else if(i == state.redLoc ) positions[i].ref.querySelector('.truckRed').style.display = 'block';
-				else positions[i].ref.querySelector('.truckRed').style.display = 'block';
+				else
+				{
+					positions[i].ref.querySelector('.truckBlue').style.display = 'none';
+					positions[i].ref.querySelector('.truckRed').style.display = 'none';	
+				} 
 
 			}
 
 			for(var i = 2; i < 8; i++)
 			{
-				if(state.locks[i]=='red') positions[i].ref.querySelector('.lockRed').style.display = 'block';
-				else if(state.locks[i]=='blue') positions[i].ref.querySelector('.lockBlue').style.display = 'block';
+				if(state.locks[i]=='red') 
+				{
+					positions[i].ref.querySelector('.lockRed').style.display = 'block';
+					positions[i].ref.querySelector('.lockBlue').style.display = 'none';
+				}
+				else if(state.locks[i]=='blue') 
+				{
+					positions[i].ref.querySelector('.lockBlue').style.display = 'block';
+					positions[i].ref.querySelector('.lockRed').style.display = 'none';
+				}
 				else 
 				{
 					positions[i].ref.querySelector('.lockBlue').style.display = 'none';
@@ -166,6 +180,10 @@ function refreshVariables() {
 				//if(state.requestedLocks[i][1]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
 				//if(state.requestedLocks[i][1]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
 			}
+
+
+			if()
+			//document.getElementById('audiotag1').play();
 	    }
 	}
 	xmlhttp.open("GET", url, true);
