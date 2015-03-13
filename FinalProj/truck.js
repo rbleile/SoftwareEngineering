@@ -678,8 +678,8 @@ function setWORKState(whichCS)
 		debugLog("Got location " + whichCS);
 	}
 	
-	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
+	var post_data = { ip : tokenRing.getMyIP(), lock : whichCS };
+	tokenRing.generalPOST( Bag_IP, 'do_update_work', post_data);
 }
 
 function inGapState(ID,timestamp,whichCS)
