@@ -664,6 +664,9 @@ function setWORKState(whichCS)
 	STATE[whichCS] = WORK_STATE;
 	if (debug) debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
+
+	debugLog("WhichCS at set WOORK state-> " + whichCS);
+
 	if (whichCS == 0)
 	{
 		debugLog("Got task lock");
