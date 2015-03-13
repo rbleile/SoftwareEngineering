@@ -664,7 +664,12 @@ function setWORKState(whichCS)
 	STATE[whichCS] = WORK_STATE;
 	if (debug) debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
-	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
+	if (whichCS == 0)
+		debugLog("Got task lock");
+	if (whichCS == 1)
+		debugLog("Got path lock");
+	if (whichCS > 1)
+		debugLog( "Got location: " + whichCS-2);
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 
@@ -849,7 +854,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2))g;// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2));// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
