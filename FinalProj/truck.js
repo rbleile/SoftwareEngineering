@@ -666,7 +666,7 @@ function setWORKState(whichCS)
 	Critical_Sections[whichCS] = true;
 
 	debugLog("WhichCS at set WOORK state-> " + whichCS);
-	whichCS = parseInt(whichCS);
+	//whichCS = parseInt(whichCS);
 	if (whichCS == 0)
 	{
 		debugLog("Got task lock");
@@ -675,7 +675,11 @@ function setWORKState(whichCS)
 	{
 		debugLog("Got path lock");
 	}
-
+	else
+	{
+		debugLog("ELSE");
+	}
+	/*
 	if (whichCS == 2)
 		debugLog( "2Got location: " + whichCS-2);
 	if (whichCS == 3)
@@ -688,6 +692,7 @@ function setWORKState(whichCS)
 		debugLog( "6Got location: " + whichCS-2);
 	if (whichCS == 7)
 		debugLog( "7Got location: " + whichCS-2);
+	*/
 
 
 	/*
