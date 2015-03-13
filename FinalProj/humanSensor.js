@@ -159,7 +159,7 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 isFullButton.focus();
 app.post('/do_sensor', function(req, res) {
 	var the_body = req.body;  //see connect package above
-	debugLog("HUMAN : Pi demands to know if bay is FULL or EMPTY.");
+	//debugLog("HUMAN : Pi demands to know if bay is FULL or EMPTY.");
 	isFullButton.hidden = false;
 	isEmptyButton.hidden = false;
 	screen.render();

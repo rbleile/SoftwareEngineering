@@ -568,7 +568,7 @@ function callShotGun(whichCS)
 		debugLog("Calling Path Shotgun: " + whichCS);
 	else if( whichCS < 8 )
 	{
-		debugLog("Calling Location Shotgun: " + (whichCS-2));
+		debugLog("Calling Location Shotgun: " + whichCS);
 		var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 		tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 	}
