@@ -675,6 +675,22 @@ function setWORKState(whichCS)
 	{
 		debugLog("Got path lock");
 	}
+
+	if (whichCS == 2)
+		debugLog( "2Got location: " + whichCS-2);
+	if (whichCS == 3)
+		debugLog( "3Got location: " + whichCS-2);
+	if (whichCS == 4)
+		debugLog( "4Got location: " + whichCS-2);
+	if (whichCS == 5)
+		debugLog( "5Got location: " + whichCS-2);
+	if (whichCS == 6)
+		debugLog( "6Got location: " + whichCS-2);
+	if (whichCS == 7)
+		debugLog( "7Got location: " + whichCS-2);
+
+
+	/*
 	else if (whichCS < 8)
 	{
 		debugLog( "Got location: " + whichCS-2);
@@ -683,6 +699,7 @@ function setWORKState(whichCS)
 	{
 		debugLog( "WTF Man: " + whichCS);
 	}
+	*/
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
