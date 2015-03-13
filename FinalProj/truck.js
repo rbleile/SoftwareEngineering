@@ -677,7 +677,7 @@ function setWORKState(whichCS)
 	}
 	else
 	{
-		debugLog("ELSE");
+		debugLog("Got Location " + whichCS);
 	}
 	/*
 	if (whichCS == 2)
