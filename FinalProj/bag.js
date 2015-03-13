@@ -477,8 +477,8 @@ refreshDisplay();
 app.post("/do_sensor_update", function(req, res) {
 	var the_body = req.body;
 	
-	bays[the_body.bayNumber] = the_body.isFull;
-	debugLog("Recieved Sensor update from bay "+ ( parseInt(the_body.bayNumber) + 1 ) + " " +the_body.isFull);
+	bays[the_body.bayNumber-1] = the_body.isFull;
+	debugLog("Recieved Sensor update from bay "+ ( parseInt(the_body.bayNumber) ) + " " +the_body.isFull);
 	refreshDisplay();
 	res.json(the_body);
 });
@@ -727,6 +727,7 @@ function printIPs()
 	var list =  tokenRing.getRing();
 	var list2 = tokenRing.getRoleList(1);
 
+	refreshDisplay();
 	//console.log(list+" "+list2);
 }
 

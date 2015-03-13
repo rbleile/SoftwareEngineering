@@ -568,7 +568,7 @@ function callShotGun(whichCS)
 		debugLog("Calling Path Shotgun: " + whichCS);
 	else if( whichCS < 8 )
 	{
-		debugLog("Calling Location Shotgun: " + (whichCS-2));
+		debugLog("Calling Location Shotgun: " + whichCS);
 		var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 		tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
 	}
@@ -665,8 +665,6 @@ function setWORKState(whichCS)
 	if (debug) debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
 
-	debugLog("WhichCS at set WOORK state-> " + whichCS);
-	whichCS = parseInt(whichCS);
 	if (whichCS == 0)
 	{
 		debugLog("Got task lock");
@@ -675,17 +673,13 @@ function setWORKState(whichCS)
 	{
 		debugLog("Got path lock");
 	}
-	else if (whichCS < 8)
-	{
-		debugLog( "Got location: " + whichCS-2);
-	}
 	else
 	{
-		debugLog( "WTF Man: " + whichCS);
+		debugLog("Got location " + whichCS);
 	}
 	
-	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
-	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data );
+	var post_data = { ip : tokenRing.getMyIP(), lock : whichCS };
+	tokenRing.generalPOST( Bag_IP, '/do_update_work', post_data);
 }
 
 function inGapState(ID,timestamp,whichCS)

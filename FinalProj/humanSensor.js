@@ -124,15 +124,17 @@ var isFullButton = blessed.box({
 
 function sendCommandResposne(isFull)
 {
-	debugLog("HUMAN has updated sensor data. Initiating response to master control BAG.");
-	debugLog("HUMAM :  update sensor when situtation has changed." +Bag_IP);
+	//debugLog("HUMAN has updated sensor data. Initiating response to master control BAG.");
+	//debugLog("HUMAM :  update sensor when situtation has changed." +Bag_IP);
 	//isFullButton.setContent("");
 	//isEmptyButton.setContent("");
 	//isFullButton.hidden = true;
 	//isEmptyButton.hidden = true;
+	debugLog("Sending " + isFull + " to bag.");
 	screen.render();
 	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull , bayNumber : whichBay};
 	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', sresponse);
+
 }
 
 isEmptyButton.on('click', function(data) {
@@ -159,7 +161,7 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 isFullButton.focus();
 app.post('/do_sensor', function(req, res) {
 	var the_body = req.body;  //see connect package above
-	debugLog("HUMAN : Pi demands to know if bay is FULL or EMPTY.");
+	//debugLog("HUMAN : Pi demands to know if bay is FULL or EMPTY.");
 	isFullButton.hidden = false;
 	isEmptyButton.hidden = false;
 	screen.render();

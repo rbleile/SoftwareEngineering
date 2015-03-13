@@ -270,15 +270,12 @@ function getBagIP()
 	if (bag.length > 1)
 	{
 		if (debug) debugLog("Problem!! Bag does not exist yet or more than one bag exists.");
+		setTimeout(getBagIP, 1000);
 	}
-	else if (bag.length == 1)
+	else 
 	{
 		Bag_IP = bag[0];
 		debugLog("Bag_IP is " + Bag_IP);
-	}
-	else if (bag.length == 0)
-	{
-		setTimeout(getBagIP, 2000);
 	}
 }
 
