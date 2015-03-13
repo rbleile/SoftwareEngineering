@@ -726,6 +726,7 @@ function printIPs()
 	var list =  tokenRing.getRing();
 	var list2 = tokenRing.getRoleList(1);
 
+	refreshDisplay();
 	//console.log(list+" "+list2);
 }
 
