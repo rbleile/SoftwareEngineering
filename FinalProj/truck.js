@@ -132,10 +132,10 @@ var entranceButton1 = blessed.box({
     hidden: true 
 });
 entranceButton1.on('click', function(data) {
-	setEntranceDoor( 1 );
+	setEntranceDoor( 6 );
 });
 screen.key(['1'], function(ch, key) {
-	setEntranceDoor( 1 );
+	setEntranceDoor( 6 );
 });
 
 var entranceButton2 = blessed.box({
@@ -151,10 +151,10 @@ var entranceButton2 = blessed.box({
     hidden: true 
 });
 entranceButton2.on('click', function(data) {
-	setEntranceDoor( 2 );
+	setEntranceDoor( 7 );
 });
 screen.key(['2'], function(ch, key) {
-	setEntranceDoor( 2 );
+	setEntranceDoor( 7 );
 });
 screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
     return process.exit(0);
@@ -177,6 +177,11 @@ function setEntranceDoor( door )
 	//tokenRing.generalPOST(Bag_IP, "/do_update_start_point", post_data);
 
 	location = entrance;
+
+	debugLog("Truck starting from door (CS) " + door);
+
+	var post_data = { initLock : door }
+	tokenRing.generalPOST(Bag_IP, '/do_update_truck_initial', post_data);
 
 	entranceButton1.setContent("{center} Enter Door 1 {/center}");
 	entranceButton2.setContent("{center} Enter Door 2 {/center}");
@@ -271,7 +276,7 @@ function choosePath( bay )
 	switch( bay-1 )
 	{
 		case 0:
-			if( entrance == 1 )
+			if( entrance == 7 )
 			{
 				Path_List.push( 5 );
 				Path_List.push( 4 );
@@ -283,7 +288,7 @@ function choosePath( bay )
 				Rev_Path.push( 5 );
 				Rev_Path.push( 7 );
 			}
-			else
+			else if (entrance == 6)
 			{
 				Path_List.push( 3 );
 				Path_List.push( 0 );
@@ -293,7 +298,7 @@ function choosePath( bay )
 			}
 			break;
 		case 1:
-			if( entrance == 1 )
+			if( entrance == 7 )
 			{
 				Path_List.push( 5 );
 				Path_List.push( 4 );
@@ -303,7 +308,7 @@ function choosePath( bay )
 				Rev_Path.push( 5 );
 				Rev_Path.push( 7 );
 			}
-			else
+			else if (entrance == 6)
 			{
 				Path_List.push( 3 );
 				Path_List.push( 4 );
@@ -315,7 +320,7 @@ function choosePath( bay )
 			}
 			break;
 		case 2:
-			if( entrance == 1 )
+			if( entrance == 7 )
 			{
 				Path_List.push( 5 );
 				Path_List.push( 2 );
@@ -323,7 +328,7 @@ function choosePath( bay )
 				Rev_Path.push( 5 );
 				Rev_Path.push( 7 );
 			}
-			else
+			else if (entrance == 6)
 			{
 				Path_List.push( 3 );
 				Path_List.push( 4 );
@@ -563,12 +568,12 @@ function callShotGun(whichCS)
 		debugLog("Calling Path Shotgun: " + whichCS);
 	else if( whichCS < 8 )
 	{
+		debugLog("Calling Location Shotgun: " + (whichCS-2));
 		var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 		tokenRing.generalPOST( Bag_IP, '/do_update_request', post_data );
-		debugLog("Calling Location Shotgun: " + whichCS);
 	}
 	else
-		debugLog("No valid CS defined")
+		debugLog("No valid CS defined");
 
 	reqResource(whichCS);
 }
@@ -657,9 +662,14 @@ function processReq(ID, timestamp, whichCS)
 function setWORKState(whichCS)
 {
 	STATE[whichCS] = WORK_STATE;
-	debugLog ( "Resource_approved...working on " + whichCS);
+	if (debug) debugLog ( "Resource_approved...working on " + whichCS);
 	Critical_Sections[whichCS] = true;
-	debugLog( "Working: " + whichCS);// + " " + JSON.stringify( Critical_Sections ) );
+	if (whichCS == 0)
+		debugLog("Got task lock");
+	if (whichCS == 1)
+		debugLog("Got path lock");
+	if (whichCS > 1)
+		debugLog( "Got location: " + whichCS-2);
 	
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 
@@ -787,6 +797,9 @@ function releaseShotgun(whichCS)
 	var post_data = { ip : tokenRing.getMyIP(), "lock" : whichCS };
 	if (debug) debugLog("Sending shotgun update to bag");
 
+	if (whichCS > 1)
+		debugLog("Releasing CS location " + whichCS-2);
+
 	if (whichCS < 8)
 		tokenRing.generalPOST( Bag_IP, '/do_update_release_shotgun', post_data );
 }
@@ -841,7 +854,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Cmd: Move to CS " + the_body.inpdirection + ", Curr location is " + the_body.lastLoc);// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2));// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
