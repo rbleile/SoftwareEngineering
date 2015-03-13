@@ -13,7 +13,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var debug = false;
-
+var blueTruck = -1;
+var blueIp = "0.0.0.1";
+var redIp = "0.0.0.2";
+var redTruck = -1;
 var tasks = [];
 var results = [];
 var bays = [];
@@ -528,6 +531,16 @@ app.post("/do_update_move", function(req, res) {
 
 	truckLocations[idx].ip = the_body.ip;
 	truckLocations[idx].currLocation = the_body.location+2; //this is to match the truck locations
+	if(truckLocations[idx].currLocation == 8)
+	{
+		redTruck = idx;
+		redIp = truckLocations[idx].ip;
+	}
+	else if(truckLocations[idx].currLocation == 9)
+	{
+		blueTruck = idx;
+		blueIp = truckLocations[idx].ip;
+	}
 	debugLog("Truck " + truckLocations[idx].ip + " at " + truckLocations[idx].currLocation);
 
 });
@@ -597,19 +610,76 @@ function writedata()
 	bayTasks[0] = 0;
 	bayTasks[1] = 0;
 	bayTasks[2] = 0;
+	var bPos; 
+	var rPos;
+
+	if(blueTruck != -1)  bPos = truckLocations[blueTruck].currLocation;
+	else bPos = 9;
+	if(redTruck != -1)  bPos = truckLocations[redTruck].currLocation;
+	else rPos = 8;
 	
 	for(var i = 0; i < tasks.length; i++)
 	{
 		bayTasks[task.bayNumber]++;
 	}
 
+	var locks = [];
+	for(var i = 0; i < working_array.length; i++)
+	{
+		if(working_array[i] == blueIp)
+		{
+			locks[i] = 'blue';
+		}
+		else if(working_array[i] == redIp)
+		{
+			locks[i] = 'red';
+		}
+		else
+		{
+			locks[i] = 'none';
+		}
+	}
+
+
+	var requestlocks = [];
+	
+	for(var i = 0; i < request_array.length; i++)
+	{
+		var temp= [];
+		temp.push('none');
+		temp.push('none');
+		requestlocks.push(temp);
+	}
+
+	for(var i = 0; i < request_array.length; i++)
+	{	
+
+		for(var j = 0; j < 2; j++)
+		{
+			if(request_array[i][j] == blueIp)
+			{
+				requestlocks[i][j] = 'blue';
+			}
+			else if(request_array[i][j] == redIp)
+			{
+				requestlocks[i][j] = 'red';
+			}
+
+		}
+		
+		
+	}
+
 	var global_state = 
 	{
 			bayState : bays,
 			bayTaskCount : bayTasks,
-			requestedLocks : request_array,
-			actualLocks : working_array,
-			locations : truckLocations
+			requestedLocks : requestlocks,
+			locks : locks,
+			blueLoc : bPos,
+			redLoc : rPos,
+			redIp : redIp,
+			blueIp : blueIp
 	};
 
 

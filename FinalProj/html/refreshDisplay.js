@@ -27,8 +27,8 @@ var bay3Corridor = { locked: false, color: '', ref: document.getElementById('bay
 
 
 var positions = [];
-positions[0] = 0;
-positions[1] = 0;
+positions[0] = 0;          
+positions[1] = 0;		   
 
 positions[2] = bay1Stall;
 positions[3] = bay2Stall;
@@ -55,8 +55,39 @@ var items = [	parkingNorth,
 				bay3Corridor
 			];
 
-function refreshVariables() {
 
+
+function resetElements() {
+	console.log("Clearing");
+	for (var i = 0; i < items.length; i++) {
+		items[i].ref.querySelector('.lockBlue').style.display = 'none';
+		items[i].ref.querySelector('.lockRed').style.display = 'none';
+		items[i].ref.querySelector('.lockReservedBlue').style.display = 'none';
+		items[i].ref.querySelector('.lockReservedRed').style.display = 'none';
+		items[i].ref.querySelector('.truckBlue').style.display = 'none';
+		items[i].ref.querySelector('.truckRed').style.display = 'none';
+	}
+
+	bay1Sensor.ref.style.backgroundImage = "url('img/lightGreen.png')";
+	bay1Stall.ref.style.backgroundImage = "url('img/warehouse.png')";
+	bay1Stall.ref.querySelector('.signOpen').style.display = 'block';
+	bay1Stall.ref.querySelector('.signClosed').style.display = 'none';
+
+	bay2Sensor.ref.style.backgroundImage = "url('img/lightGreen.png')";
+	bay2Stall.ref.style.backgroundImage = "url('img/warehouse.png')";
+	bay2Stall.ref.querySelector('.signOpen').style.display = 'block';
+	bay2Stall.ref.querySelector('.signClosed').style.display = 'none';
+
+	bay3Sensor.ref.style.backgroundImage = "url('img/lightGreen.png')";
+	bay3Stall.ref.style.backgroundImage = "url('img/warehouse.png')";
+	bay3Stall.ref.querySelector('.signOpen').style.display = 'block';
+	bay3Stall.ref.querySelector('.signClosed').style.display = 'none';
+
+	return;
+};
+
+function refreshVariables() {
+    resetElements();
 	/*var global_state = {
 		"bayState" : bays,
 		"requestedLocks" : request_array,
@@ -95,12 +126,27 @@ function refreshVariables() {
 				}
 			}
 			
-
+			 
 
 			bay1Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[0];
 			bay2Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[1];
 			bay3Sensor.ref.querySelector('.taskCount').innerHTML = ''+ state.bayTaskCount[2];
 
+			positions[state.blueLoc].ref.querySelector('.truckBlue').style.display = 'block';
+			positions[state.redLoc].ref.querySelector('.truckRed').style.display = 'block';
+			for(var i = 2; i < 8; i++)
+			{
+				if(state.locks[i]=='red') positions[i].ref.querySelector('.lockRed').style.display = 'block';
+				else if(state.locks[i]=='blue') positions[i].ref.querySelector('.lockBlue').style.display = 'block';
+			}
+
+			for(var i = 2; i < 8; i++)
+			{
+				if(state.requestedLocks[i][0]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
+				if(state.requestedLocks[i][0]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
+				if(state.requestedLocks[i][1]=='red') positions[i].ref.querySelector('.lockReservedRed').style.display = 'block';
+				if(state.requestedLocks[i][1]=='blue') positions[i].ref.querySelector('.lockReservedBlue').style.display = 'block';
+			}
 	    }
 	}
 	xmlhttp.open("GET", url, true);
@@ -109,34 +155,6 @@ function refreshVariables() {
 	return;
 }
 
-function resetElements() {
-
-	for (var i = 0; i < items.length; i++) {
-		items[i].ref.querySelector('.lockBlue').style.display = 'none';
-		items[i].ref.querySelector('.lockRed').style.display = 'none';
-		items[i].ref.querySelector('.lockReservedBlue').style.display = 'none';
-		items[i].ref.querySelector('.lockReservedRed').style.display = 'none';
-		items[i].ref.querySelector('.truckBlue').style.display = 'none';
-		items[i].ref.querySelector('.truckRed').style.display = 'none';
-	}
-
-	bay1Sensor.ref.style.backgroundImage = "url('img/lightGreen.png')";
-	bay1Stall.ref.style.backgroundImage = "url('img/warehouse.png')";
-	bay1Stall.ref.querySelector('.signOpen').style.display = 'block';
-	bay1Stall.ref.querySelector('.signClosed').style.display = 'none';
-
-	bay2Sensor.ref.style.backgroundImage = "url('img/lightGreen.png')";
-	bay2Stall.ref.style.backgroundImage = "url('img/warehouse.png')";
-	bay2Stall.ref.querySelector('.signOpen').style.display = 'block';
-	bay2Stall.ref.querySelector('.signClosed').style.display = 'none';
-
-	bay3Sensor.ref.style.backgroundImage = "url('img/lightGreen.png')";
-	bay3Stall.ref.style.backgroundImage = "url('img/warehouse.png')";
-	bay3Stall.ref.querySelector('.signOpen').style.display = 'block';
-	bay3Stall.ref.querySelector('.signClosed').style.display = 'none';
-
-	return;
-};
 
 function updateDisplay() {
 	console.log('[' + Date.now() + '] refreshDisplay() called.');
@@ -151,8 +169,8 @@ function updateDisplay() {
 		bay2Stall.ref.querySelector('.signOpen').style.display = 'none';
 		bay2Stall.ref.querySelector('.signClosed').style.display = 'block';
 		//show the trucks:
-		bay1Stall.ref.querySelector('.truckBlue').style.display = 'block';
-		bay2Corridor.ref.querySelector('.truckRed').style.display = 'block';
+		parkingSouth.ref.querySelector('.truckBlue').style.display = 'block';
+		parkingNorth.ref.querySelector('.truckRed').style.display = 'block';
 		//put some tasks in the bays:
 		bay1Sensor.ref.querySelector('.taskCount').innerHTML = '5';
 		bay2Sensor.ref.querySelector('.taskCount').innerHTML = '2';
@@ -197,8 +215,10 @@ function updateDisplay() {
 
 //This is where code execution begins  (This needs to be in a timer-based loop):
 
-refreshVariables();
+
 resetElements();
 updateDisplay();
+
+refreshVariables();
 
 //Done.
