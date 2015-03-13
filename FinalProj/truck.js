@@ -180,8 +180,8 @@ function setEntranceDoor( door )
 
 	debugLog("Truck starting from door (CS) " + door);
 
-	var post_data = { initLock : door }
-	tokenRing.generalPOST(Bag_IP, '/do_update_truck_initial', post_data);
+	var post_data = { "location" : door , ip : tokenRing.getMyIP() };
+	tokenRing.generalPOST(Bag_IP, '/do_update_move', post_data);
 
 	entranceButton1.setContent("{center} Enter Door 1 {/center}");
 	entranceButton2.setContent("{center} Enter Door 2 {/center}");
