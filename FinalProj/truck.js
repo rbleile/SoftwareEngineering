@@ -854,7 +854,7 @@ app.post('/do_receivedBays', function(req, res){
 app.post('/action_move', function(req, res) {
 	if (debug) debugLog( "moving" );
     var the_body = req.body;  //see connect package above
-    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection-2) + ", Curr location is " + (the_body.lastLoc-2));// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
+    debugLog ("Run Cmd: Move to CS " + (the_body.inpdirection) + ", Curr location is " + (the_body.lastLoc));// + ", " + the_body.inpdistance + "inches at a speed of " + the_body.inpspeed + ")" );
     res.json(req.body);
 
 	displayButton();
