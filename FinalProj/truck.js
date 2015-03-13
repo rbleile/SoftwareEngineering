@@ -666,7 +666,7 @@ function setWORKState(whichCS)
 	Critical_Sections[whichCS] = true;
 
 	debugLog("WhichCS at set WOORK state-> " + whichCS);
-
+	whichCS = parseInt(whichCS);
 	if (whichCS == 0)
 	{
 		debugLog("Got task lock");
