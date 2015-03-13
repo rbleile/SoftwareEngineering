@@ -130,9 +130,11 @@ function sendCommandResposne(isFull)
 	//isEmptyButton.setContent("");
 	//isFullButton.hidden = true;
 	//isEmptyButton.hidden = true;
+	debugLog("Sending " + isFull + " to bag.");
 	screen.render();
 	var sresponse = {"ip" :  tokenRing.getMyIP(), "isFull" : isFull , bayNumber : whichBay};
 	tokenRing.generalPOST(Bag_IP, '/do_sensor_update', sresponse);
+
 }
 
 isEmptyButton.on('click', function(data) {
