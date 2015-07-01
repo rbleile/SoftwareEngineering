@@ -182,7 +182,7 @@ function refreshVariables() {
 			}
 
 
-			if()
+			
 			//document.getElementById('audiotag1').play();
 	    }
 	}
