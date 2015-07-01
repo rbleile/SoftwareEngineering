@@ -1,0 +1,60 @@
+{
+    "bayState": [
+        true,
+        false,
+        true
+    ],
+    "bayTaskCount": [
+        0,
+        0,
+        0
+    ],
+    "requestedLocks": [
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ],
+        [
+            "none",
+            "none"
+        ]
+    ],
+    "locks": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+    ],
+    "blueLoc": 9,
+    "redLoc": 8,
+    "redIp": "0.0.0.2",
+    "blueIp": "0.0.0.1"
+}

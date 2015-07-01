@@ -159,6 +159,8 @@ screen.key(['escape', 'q', 'Q', 'C-c'], function(ch, key) {
 });
 
 isFullButton.focus();
+
+/*
 app.post('/do_sensor', function(req, res) {
 	var the_body = req.body;  //see connect package above
 	//debugLog("HUMAN : Pi demands to know if bay is FULL or EMPTY.");
@@ -167,6 +169,7 @@ app.post('/do_sensor', function(req, res) {
 	screen.render();
 	res.json({"ip": tokenRing.getMyIP(), "body" : the_body});
 });
+*/
 
 screen.render();
 
